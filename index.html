@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camarocho — Mascota Virtual 3D</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Web Component de Google para modelos 3D -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f1ebe1;       /* Fondo claro cálido */
+      --bg-alt: #e8dfd0;   /* Fondo alternativo */
+      --fg: #1a1814;       /* Texto oscuro */
+      --muted: #8a7e6e;    /* Texto atenuado */
+      --accent: #ff4d1f;   /* Acento naranja terracota (similar al logo) */
+      --accent-2: #2a8c4a; /* Verde del logo */
+      --border: rgba(26, 24, 20, 0.14);
+      --card: #ebe3d6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media (min-width: 769px) {
+      body { cursor: none; }
+      a, button, input, .interactive { cursor: none; }
+    }
+
+    .font-display {
+      font-family: 'Fraunces', serif;
+      font-optical-sizing: auto;
+      font-variation-settings: "opsz" 144;
+    }
+
+    /* Cursor Personalizado */
+    .cursor-dot, .cursor-ring {
+      position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+      border-radius: 50%; transform: translate(-50%, -50%); mix-blend-mode: difference;
+    }
+    .cursor-dot { width: 6px; height: 6px; background: #fff; transition: transform 0.15s ease, opacity 0.3s ease; }
+    .cursor-ring { width: 36px; height: 36px; border: 1px solid #fff; transition: transform 0.25s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease; }
+    .cursor-ring.hover { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.1); }
+    @media (max-width: 768px) { .cursor-dot, .cursor-ring { display: none; } }
+
+    /* Fondo con grano sutil */
+    .grain::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.3;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Marquee */
+    .marquee { display: flex; overflow: hidden; user-select: none; gap: 3rem; }
+    .marquee-track { display: flex; gap: 3rem; animation: marquee 40s linear infinite; flex-shrink: 0; }
+    @keyframes marquee { to { transform: translateX(-100%); } }
+
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* Navegación */
+    .nav-link { position: relative; overflow: hidden; display: inline-block; }
+    .nav-link span { display: inline-block; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
+    .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
+    .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
+
+    /* VISOR 3D */
+    model-viewer {
+      display: block;
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+      cursor: grab;
+    }
+    model-viewer::part(default-progress-bar) { display: none; }
+    
+    .model-error-msg {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; background: var(--bg); color: var(--fg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease;
+    }
+    .model-error-msg.hide { opacity: 0; pointer-events: none; }
+
+    /* =========================================
+       INTERFAZ DE MASCOTA VIRTUAL (HUD)
+       ========================================= */
+    .pet-hud {
+      background: rgba(26, 24, 20, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: var(--bg);
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem; /* Reducido para que quepan las nuevas barras */
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      width: 70px;
+    }
+
+    .stat-bar-bg {
+      flex-grow: 1;
+      height: 8px;
+      background: rgba(241, 235, 225, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+    }
+    .fill-xp { background: var(--accent); }
+    .fill-hunger { background: #ffcc00; }
+    .fill-happy { background: var(--accent-2); }
+    .fill-health { background: #ff4d4d; } /* Rojo para salud */
+    .fill-sleep { background: #8a4dff; } /* Morado para sueño */
+
+    .pet-action-btn {
+      background: var(--fg);
+      color: var(--bg);
+      padding: 0.7rem 1.2rem; /* Ligeramente más pequeño para quepan 3 botones */
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      font-size: 0.8rem;
+      transition: transform 0.2s, background 0.2s;
+      border: 1px solid transparent;
+      width: 100%;
+      justify-content: center;
+    }
+    .pet-action-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Animación de subida de nivel */
+    @keyframes levelUpAnim {
+      0% { transform: scale(1); color: var(--bg); }
+      50% { transform: scale(1.5); color: var(--accent); }
+      100% { transform: scale(1); color: var(--bg); }
+    }
+    .level-up {
+      animation: levelUpAnim 1s ease;
+    }
+
+    /* Formulario */
+    .form-field { position: relative; border-bottom: 1px solid var(--border); transition: border-color 0.4s ease; }
+    .form-field:focus-within { border-color: var(--accent); }
+    .form-field input, .form-field textarea { background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 1.125rem; color: var(--fg); resize: none; }
+    .form-field label { position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s cubic-bezier(0.7, 0, 0.2, 1); pointer-events: none; font-size: 1.125rem; }
+    .form-field input:focus + label, .form-field input:not(:placeholder-shown) + label, .form-field textarea:focus + label, .form-field textarea:not(:placeholder-shown) + label { top: 0; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .btn-primary { position: relative; overflow: hidden; background: var(--fg); color: var(--bg); padding: 1.25rem 2.5rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 500; transition: color 0.4s ease; isolation: isolate; }
+    .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateY(101%); transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); z-index: -1; }
+    .btn-primary:hover::before { transform: translateY(0); }
+    .btn-primary .arrow { transition: transform 0.4s ease; }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+
+    .section-num { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; color: var(--accent); }
+    .tag-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .tag-pill::before { content: ''; width: 6px; height: 6px; background: var(--accent-2); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--fg); color: var(--bg); padding: 1rem 1.75rem; border-radius: 999px; font-size: 0.875rem; z-index: 10000; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); display: flex; align-items: center; gap: 0.6rem; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast::before { content: ''; width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%; }
+    
+    .mobile-menu { position: fixed; inset: 0; background: var(--fg); color: var(--bg); z-index: 100; transform: translateY(-100%); transition: transform 0.6s cubic-bezier(0.7, 0, 0.2, 1); display: flex; flex-direction: column; justify-content: center; padding: 2rem; }
+    .mobile-menu.open { transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+
+<body class="grain">
+
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAVEGACIÓN (Con el logo de Camarocho) -->
+  <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4" style="backdrop-filter: blur(8px); background: rgba(241, 235, 225, 0.8);">
+    <nav class="flex items-center justify-between max-w-[1800px] mx-auto">
+      <a href="#pet" class="interactive" aria-label="Camarocho inicio">
+        <!-- Logo escala natural (x1) -->
+        <img src="https://z-cdn-media.chatglm.cn/files/76e7429d-be6c-451a-9b8c-8f4d878dc4b4.png?auth_key=1886556685-890ed228347a4a999441d1e7c3582086-0-d96a15dcc464c4bad66aa49244a6a084" alt="Camarocho Logo" class="w-auto h-auto max-h-16 object-contain">
+      </a>
+      <ul class="hidden md:flex items-center gap-10 text-sm">
+        <li><a href="#pet" class="nav-link interactive"><span>Mascota</span><span>Mascota</span></a></li>
+        <li><a href="#specs" class="nav-link interactive"><span>Specs</span><span>Specs</span></a></li>
+        <li><a href="#gallery" class="nav-link interactive"><span>Galería</span><span>Galería</span></a></li>
+        <li><a href="#contacto" class="nav-link interactive"><span>Contacto</span><span>Contacto</span></a></li>
+      </ul>
+      <div class="hidden md:flex items-center gap-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
+        <span class="tag-pill">Mascota Online</span>
+      </div>
+      <button id="menuToggle" class="md:hidden flex flex-col gap-1.5 p-2 interactive" aria-label="Abrir menú">
+        <span class="block w-6 h-px bg-current"></span>
+        <span class="block w-6 h-px bg-current"></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button id="menuClose" class="absolute top-6 right-6 text-3xl interactive" aria-label="Cerrar menú">×</button>
+    <ul class="space-y-6">
+      <li><a href="#pet" class="font-display text-5xl font-light mobile-link interactive">Mascota</a></li>
+      <li><a href="#specs" class="font-display text-5xl font-light mobile-link interactive">Specs</a></li>
+      <li><a href="#gallery" class="font-display text-5xl font-light mobile-link interactive">Galería</a></li>
+      <li><a href="#contacto" class="font-display text-5xl font-light mobile-link interactive">Contacto</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <!-- 1. HERO (Mascota Centrada) -->
+    <section id="pet" class="relative min-h-screen flex flex-col justify-between pt-32 pb-8 px-6 md:px-12 overflow-hidden">
+      
+      <div class="absolute top-32 left-0 right-0 h-px" style="background: var(--border);"></div>
+      <div class="absolute bottom-20 left-0 right-0 h-px" style="background: var(--border);"></div>
+
+      <div class="relative z-10 flex justify-between items-start text-xs uppercase tracking-widest reveal" style="color: var(--muted);">
+        <div><div>N.° 01 — Mascota Virtual</div><div class="mt-1">Jorge A. Mena Riezco</div></div>
+        <div class="text-right hidden md:block"><div>Real-time WebGL</div><div class="mt-1">Guardado Local</div></div>
+      </div>
+
+      <!-- Contenedor Principal (Personaje al Centro) -->
+      <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-12">
+        
+        <!-- Columna Izquierda: Título -->
+        <div class="md:col-span-3 text-center md:text-right">
+          <h1 class="font-display font-light tracking-tight leading-[0.92]" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+            <span class="block reveal">Tu</span>
+            <span class="block reveal reveal-delay-1"><span class="font-display italic font-normal" style="color: var(--accent);">compañero</span></span>
+            <span class="block reveal reveal-delay-2">virtual</span>
+          </h1>
+        </div>
+
+        <!-- Columna Centro: Modelo 3D Gigante -->
+        <div class="md:col-span-6 relative reveal reveal-delay-2">
+          <div class="aspect-[4/5] md:aspect-square relative max-w-[600px] mx-auto">
+            
+            <div class="model-error-msg" id="modelErrorMsg">
+              <div class="font-display text-2xl italic font-light">Cargando mascota...</div>
+              <p class="text-sm" style="color: var(--muted);">Abre este HTML con Live Server y asegúrate de que "modelo.glb" exista.</p>
+            </div>
+
+            <model-viewer 
+              src="modelo.glb" 
+              alt="Camarocho 3D interactivo" 
+              auto-rotate 
+              camera-controls 
+              ar
+              autoplay
+              shadow-intensity="0.8"
+              camera-orbit="0deg 80deg 105deg"
+              min-camera-orbit="auto auto 50%"
+              max-camera-orbit="auto auto 200%"
+              style="background-color: transparent; width: 100%; height: 100%;"
+              id="modelViewer3D">
+            </model-viewer>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: HUD de Estado (Base de datos local) -->
+        <div class="md:col-span-3 reveal reveal-delay-3">
+          <div class="pet-hud mx-auto">
+            <div class="flex justify-between items-baseline mb-4">
+              <div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Nombre</div>
+              <div class="font-display text-xl italic">Camarocho</div>
+            </div>
+            
+            <div class="flex justify-between items-baseline mb-4">
+              <div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Nivel</div>
+              <div class="font-display text-3xl" id="petLevel">1</div>
+            </div>
+
+            <!-- Barras de Estado -->
+            <div class="stat-row">
+              <div class="stat-label">Salud</div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Sueño</div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Hambre</div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">Felicidad</div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-label">XP</div>
+              <div class="stat-bar-bg"><div class="stat-bar-fill fill-xp" id="xpBar" style="width: 0%;"></div></div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="mt-6 grid grid-cols-1 gap-3">
+              <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar</button>
+              <button class="pet-action-btn interactive" id="btnPlay">🎮 Jugar</button>
+              <button class="pet-action-btn interactive" id="btnSleep">💤 Dormir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative z-10 flex justify-between items-end gap-6">
+        <div class="flex items-center gap-4 text-xs uppercase tracking-widest reveal" style="color: var(--muted);">
+          <div><div>Scroll para explorar</div><div class="mt-1">04 secciones</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee py-6 border-y" style="border-color: var(--border); background: var(--bg-alt);">
+      <div class="marquee-track font-display text-4xl md:text-6xl font-light italic">
+        <span class="flex items-center gap-12">Interactivo <span style="color: var(--accent);">✦</span> Tiempo Real <span style="color: var(--accent);">✦</span> WebGL <span style="color: var(--accent);">✦</span> Mascota Virtual <span style="color: var(--accent);">✦</span> Jorge A. Mena Riezco <span style="color: var(--accent);">✦</span></span>
+        <span class="flex items-center gap-12" aria-hidden="true">Interactivo <span style="color: var(--accent);">✦</span> Tiempo Real <span style="color: var(--accent);">✦</span> WebGL <span style="color: var(--accent);">✦</span> Mascota Virtual <span style="color: var(--accent);">✦</span> Jorge A. Mena Riezco <span style="color: var(--accent);">✦</span></span>
+      </div>
+    </div>
+
+    <!-- 2. FICHA TÉCNICA (Specs) -->
+    <section id="specs" class="py-24 md:py-40 px-6 md:px-12">
+      <div class="max-w-[1800px] mx-auto">
+        <div class="flex justify-between items-baseline mb-16 md:mb-24 reveal">
+          <div class="flex items-baseline gap-6"><span class="section-num text-2xl">02 / 04</span><span class="text-xs uppercase tracking-widest" style="color: var(--muted);">Ficha Técnica</span></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 mb-20">
+          <h2 class="md:col-span-7 font-display font-light leading-[1.05] tracking-tight reveal" style="font-size: clamp(2rem, 5vw, 4rem);">Optimizado para<br><span class="italic" style="color: var(--accent);">web y motores</span><br>sin perder detalle.</h2>
+          <p class="md:col-span-4 md:col-start-9 text-lg leading-relaxed self-end reveal reveal-delay-1" style="color: var(--muted);">Camarocho ha sido retopologizado a mano, con UVs limpios y texturas PBR comprimidas para garantizar una carga rápida en cualquier dispositivo.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 pt-12 border-t" style="border-color: var(--border);">
+          <div class="reveal"><div class="font-display font-light text-5xl md:text-7xl">32K</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Polígonos</div></div>
+          <div class="reveal reveal-delay-1"><div class="font-display font-light text-5xl md:text-7xl">4K</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Texturas PBR</div></div>
+          <div class="reveal reveal-delay-2"><div class="font-display font-light text-5xl md:text-7xl">12</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Huesos (Rig)</div></div>
+          <div class="reveal reveal-delay-3"><div class="font-display font-light text-5xl md:text-7xl" style="color: var(--accent);">4</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Animaciones</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. GALERÍA -->
+    <section id="gallery" class="py-24 md:py-40 px-6 md:px-12" style="background: var(--bg-alt);">
+      <div class="max-w-[1800px] mx-auto">
+        <div class="flex justify-between items-baseline mb-16 md:mb-24 reveal">
+          <div class="flex items-baseline gap-6"><span class="section-num text-2xl">03 / 04</span><span class="text-xs uppercase tracking-widest" style="color: var(--muted);">Galería de Renders</span></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+          <div class="md:col-span-8 reveal">
+            <div class="overflow-hidden" style="border-radius: 4px;"><img src="https://picsum.photos/seed/camarocho1/1200/750.jpg" alt="Render 1" class="w-full h-full object-cover" style="filter: grayscale(20%);"></div>
+          </div>
+          <div class="md:col-span-4 reveal reveal-delay-1">
+            <div class="overflow-hidden" style="border-radius: 4px;"><img src="https://picsum.photos/seed/camarocho2/600/800.jpg" alt="Render 2" class="w-full h-full object-cover" style="filter: grayscale(20%);"></div>
+          </div>
+          <div class="md:col-span-4 reveal">
+            <div class="overflow-hidden" style="border-radius: 4px;"><img src="https://picsum.photos/seed/camarocho3/600/800.jpg" alt="Render 3" class="w-full h-full object-cover" style="filter: grayscale(20%);"></div>
+          </div>
+          <div class="md:col-span-8 reveal reveal-delay-1">
+            <div class="overflow-hidden" style="border-radius: 4px;"><img src="https://picsum.photos/seed/camarocho4/1200/750.jpg" alt="Render 4" class="w-full h-full object-cover" style="filter: grayscale(20%);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CONTACTO -->
+    <section id="contacto" class="py-24 md:py-40 px-6 md:px-12" style="background: var(--fg); color: var(--bg);">
+      <div class="max-w-[1800px] mx-auto">
+        <div class="flex justify-between items-baseline mb-16 md:mb-24 reveal">
+          <div class="flex items-baseline gap-6"><span class="section-num text-2xl">04 / 04</span><span class="text-xs uppercase tracking-widest" style="color: var(--muted);">Contacto</span></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center">
+          <div class="md:col-span-7">
+            <h2 class="font-display font-light leading-[0.95] tracking-tight reveal" style="font-size: clamp(2.5rem, 8vw, 7rem);">¿Listo para<br><span class="italic" style="color: var(--accent);">dar vida</span><br>a tu idea?</h2>
+          </div>
+          <div class="md:col-span-5">
+            <form id="contactForm" class="space-y-2 reveal reveal-delay-2">
+              <div class="form-field"><input type="text" id="nombre" placeholder=" " required><label for="nombre">Tu nombre</label></div>
+              <div class="form-field"><input type="email" id="email" placeholder=" " required><label for="email">Email</label></div>
+              <div class="form-field"><textarea id="mensaje" rows="3" placeholder=" " required></textarea><label for="mensaje">Cuéntanos tu proyecto 3D</label></div>
+              <div class="pt-8"><button type="submit" class="btn-primary interactive"><span>Enviar mensaje</span><span class="arrow">→</span></button></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="px-6 md:px-12 py-16 md:py-24" style="background: var(--fg); color: var(--bg);">
+    <div class="max-w-[1800px] mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16 md:mb-24">
+        <div><div class="text-xs uppercase tracking-widest mb-3" style="color: var(--muted);">Showroom</div><ul class="space-y-2"><li><a href="#pet" class="interactive hover:opacity-70 transition-opacity">Mascota</a></li><li><a href="#specs" class="interactive hover:opacity-70 transition-opacity">Specs</a></li><li><a href="#gallery" class="interactive hover:opacity-70 transition-opacity">Galería</a></li></ul></div>
+        <div><div class="text-xs uppercase tracking-widest mb-3" style="color: var(--muted);">Social</div><ul class="space-y-2"><li><a href="#" class="interactive hover:opacity-70 transition-opacity">ArtStation</a></li><li><a href="#" class="interactive hover:opacity-70 transition-opacity">Behance</a></li><li><a href="#" class="interactive hover:opacity-70 transition-opacity">Instagram</a></li></ul></div>
+        <div><div class="text-xs uppercase tracking-widest mb-3" style="color: var(--muted);">Contacto</div><ul class="space-y-2"><li>camarocho@studio.com</li></ul></div>
+        <div><div class="text-xs uppercase tracking-widest mb-3" style="color: var(--muted);">Hora local</div><div class="font-display text-2xl" id="liveClock">--:--:--</div><div class="text-xs mt-1" style="color: var(--muted);">Ciudad de México, MX</div></div>
+      </div>
+      
+      <div class="overflow-hidden flex justify-center mb-12">
+        <img src="https://z-cdn-media.chatglm.cn/files/76e7429d-be6c-451a-9b8c-8f4d878dc4b4.png?auth_key=1886556685-890ed228347a4a999441d1e7c3582086-0-d96a15dcc464c4bad66aa49244a6a084" alt="Camarocho Logo" class="w-auto h-auto max-h-32 object-contain opacity-80">
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center pt-8 mt-8 border-t gap-4 text-xs uppercase tracking-widest" style="border-color: var(--border); color: var(--muted);">
+        <div>© 2025 Jorge A. Mena Riezco · Todos los derechos reservados</div>
+        <div class="flex gap-6"><a href="#pet" class="interactive hover:opacity-70 transition-opacity">Volver arriba ↑</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Mensaje enviado.</div>
+
+  <script>
+    // 1. Lógica Cursor
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    if (window.matchMedia('(min-width: 769px)').matches) {
+      document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; });
+      function animateRing() { ringX += (mouseX - ringX) * 0.18; ringY += (mouseY - ringY) * 0.18; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animateRing); }
+      animateRing();
+      document.querySelectorAll('.interactive, a, button, input, textarea').forEach(el => { el.addEventListener('mouseenter', () => ring.classList.add('hover')); el.addEventListener('mouseleave', () => ring.classList.remove('hover')); });
+    }
+
+    // 2. Lógica Model Viewer Hero
+    const modelViewerHero = document.getElementById('modelViewer3D');
+    const modelErrorMsg = document.getElementById('modelErrorMsg');
+
+    if (modelViewerHero) {
+      modelViewerHero.addEventListener('mouseenter', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+      modelViewerHero.addEventListener('mouseleave', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
+      
+      modelViewerHero.addEventListener('load', () => {
+        if (modelErrorMsg) modelErrorMsg.classList.add('hide');
+        setAnimation(ANIMS.idle, "IDLE");
+      });
+      modelViewerHero.addEventListener('error', () => {
+        if (modelErrorMsg) {
+          modelErrorMsg.innerHTML = '<div class="font-display text-2xl italic font-light" style="color: var(--accent);">Error al cargar</div><p class="text-sm" style="color: var(--fg);">No se encontró "modelo.glb".</p>';
+          modelErrorMsg.classList.remove('hide');
+        }
+      });
+    }
+
+    // =========================================
+    // 3. SISTEMA DE MASCOTA VIRTUAL (BASE DE DATOS LOCAL)
+    // =========================================
+    const ANIMS = {
+      idle: "ARMATURE.001.|MIXAMO.COM|LAYER0",
+      run: "ARMATURE.002|MIXAMO.COM|LAYER0",
+      jump: "ARMATURE.004|MIXAMO.COM|LAYER0",
+      climb: "ARMATURE|MIXAMO.COM|LAYER0.001"
+    };
+
+    // Cargar progreso guardado o crear uno nuevo (con nuevas variables)
+    let petData = JSON.parse(localStorage.getItem('camarochoPetData')) || {
+      level: 1,
+      xp: 0,
+      hunger: 80,
+      happy: 80,
+      health: 100, // Nueva variable
+      sleep: 100   // Nueva variable
+    };
+
+    const xpToLevelUp = 100; 
+
+    // Elementos del HUD
+    const petLevelEl = document.getElementById('petLevel');
+    const xpBar = document.getElementById('xpBar');
+    const hungerBar = document.getElementById('hungerBar');
+    const happyBar = document.getElementById('happyBar');
+    const healthBar = document.getElementById('healthBar');
+    const sleepBar = document.getElementById('sleepBar');
+
+    function updateHUD() {
+      petLevelEl.textContent = petData.level;
+      xpBar.style.width = (petData.xp / xpToLevelUp * 100) + '%';
+      hungerBar.style.width = petData.hunger + '%';
+      happyBar.style.width = petData.happy + '%';
+      healthBar.style.width = petData.health + '%';
+      sleepBar.style.width = petData.sleep + '%';
+    }
+
+    function savePetData() {
+      localStorage.setItem('camarochoPetData', JSON.stringify(petData));
+    }
+
+    function setAnimation(animName, statusText) {
+      if (modelViewerHero && modelViewerHero.animationName !== animName) {
+        modelViewerHero.animationName = animName;
+      }
+    }
+
+    // Lógica de Subir de Nivel
+    function checkLevelUp() {
+      if (petData.xp >= xpToLevelUp) {
+        petData.xp = petData.xp - xpToLevelUp;
+        petData.level += 1;
+        petData.happy = Math.min(100, petData.happy + 20);
+        petData.health = Math.min(100, petData.health + 20); // Subir de nivel restaura algo de salud
+        
+        petLevelEl.classList.remove('level-up');
+        void petLevelEl.offsetWidth; 
+        petLevelEl.classList.add('level-up');
+        
+        showToast(`¡Camarocho subió al Nivel ${petData.level}!`);
+        savePetData();
+      }
+    }
+
+    // Botón Alimentar
+    document.getElementById('btnFeed').addEventListener('click', () => {
+      if (petData.hunger >= 100) {
+        showToast("Camarocho está lleno.");
+        setAnimation(ANIMS.idle, "IDLE");
+        return;
+      }
+      petData.hunger = Math.min(100, petData.hunger + 15);
+      petData.health = Math.min(100, petData.health + 5); // Comer sana un poco
+      petData.sleep = Math.max(0, petData.sleep - 5); // Comer da un poco de sueño
+      petData.xp += 10;
+      setAnimation(ANIMS.jump, "JUMPING"); 
+      
+      checkLevelUp();
+      updateHUD();
+      savePetData();
+      showToast("¡Camarocho ha comido!");
+
+      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 2000);
+    });
+
+    // Botón Jugar
+    document.getElementById('btnPlay').addEventListener('click', () => {
+      if (petData.happy >= 100) {
+        showToast("Camarocho está muy feliz y cansado.");
+        setAnimation(ANIMS.idle, "IDLE");
+        return;
+      }
+      petData.happy = Math.min(100, petData.happy + 15);
+      petData.hunger = Math.max(0, petData.hunger - 10); 
+      petData.sleep = Math.max(0, petData.sleep - 15); // Jugar cansa
+      petData.xp += 15;
+      
+      // Si juega muy cansado (sueño bajo), pierde salud
+      if (petData.sleep < 20) {
+        petData.health = Math.max(0, petData.health - 5);
+        showToast("Camarocho está muy cansado, necesita dormir.");
+      }
+      
+      setAnimation(ANIMS.run, "RUNNING"); 
+      
+      checkLevelUp();
+      updateHUD();
+      savePetData();
+      showToast("¡Estás jugando con Camarocho!");
+
+      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 3000);
+    });
+
+    // Botón Dormir (Nuevo)
+    document.getElementById('btnSleep').addEventListener('click', () => {
+      if (petData.sleep >= 100) {
+        showToast("Camarocho no tiene sueño ahora.");
+        setAnimation(ANIMS.idle, "IDLE");
+        return;
+      }
+      petData.sleep = Math.min(100, petData.sleep + 40);
+      petData.health = Math.min(100, petData.health + 15); // Dormir cura salud
+      petData.hunger = Math.max(0, petData.hunger - 5); // Al dormir da hambre
+      petData.xp += 5;
+      
+      setAnimation(ANIMS.idle, "SLEEPING"); // Usamos idle para simular que está quieto durmiendo
+      
+      checkLevelUp();
+      updateHUD();
+      savePetData();
+      showToast("Camarocho está descansando...");
+
+      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 4000);
+    });
+
+    // Inicializar HUD al cargar la página
+    updateHUD();
+
+    // 4. Scroll Reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // 5. Menú Móvil
+    document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+    document.getElementById('menuClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+    document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
+
+    // 6. Reloj CDMX
+    function updateClock() {
+      const opts = { timeZone: 'America/Mexico_City', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('es-MX', opts);
+    }
+    updateClock(); setInterval(updateClock, 1000);
+
+    // 7. Formulario y Toast
+    const toast = document.getElementById('toast');
+    function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3500); }
+    
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mensaje = document.getElementById('mensaje').value.trim();
+      if (!nombre || !email || !mensaje) { showToast('Por favor, completa los campos.'); return; }
+      showToast('Mensaje enviado. Te responderemos en 48h.');
+      e.target.reset();
+    });
+
+  </script>
+</body>
+</html>
