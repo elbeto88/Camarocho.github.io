@@ -8,8 +8,15 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Web Component de Google para modelos 3D -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+  <!-- Three.js (Importmap para usar módulos) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,24 +90,21 @@
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
 
-    /* VISOR 3D */
-    model-viewer {
+    /* VISOR 3D (CANVAS) */
+    #petCanvas {
       display: block;
       width: 100%;
       height: 100%;
-      --poster-color: transparent;
       cursor: grab;
     }
-    model-viewer::part(default-progress-bar) { display: none; }
+    #petCanvas:active { cursor: grabbing; }
     
     .model-error-msg {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; background: var(--bg); color: var(--fg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease;
     }
     .model-error-msg.hide { opacity: 0; pointer-events: none; }
 
-    /* =========================================
-       INTERFAZ DE MASCOTA VIRTUAL (HUD)
-       ========================================= */
+    /* INTERFAZ DE MASCOTA VIRTUAL (HUD) */
     .pet-hud {
       background: rgba(26, 24, 20, 0.9);
       backdrop-filter: blur(10px);
@@ -111,45 +115,20 @@
       width: 100%;
       max-width: 350px;
     }
-
-    .stat-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 0.75rem; /* Reducido para que quepan las nuevas barras */
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      width: 70px;
-    }
-
-    .stat-bar-bg {
-      flex-grow: 1;
-      height: 8px;
-      background: rgba(241, 235, 225, 0.15);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .stat-bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.5s cubic-bezier(0.7, 0, 0.2, 1);
-    }
+    .stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+    .stat-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); width: 70px; }
+    .stat-bar-bg { flex-grow: 1; height: 8px; background: rgba(241, 235, 225, 0.15); border-radius: 999px; overflow: hidden; }
+    .stat-bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
     .fill-xp { background: var(--accent); }
     .fill-hunger { background: #ffcc00; }
     .fill-happy { background: var(--accent-2); }
-    .fill-health { background: #ff4d4d; } /* Rojo para salud */
-    .fill-sleep { background: #8a4dff; } /* Morado para sueño */
+    .fill-health { background: #ff4d4d; } 
+    .fill-sleep { background: #8a4dff; } 
 
     .pet-action-btn {
       background: var(--fg);
       color: var(--bg);
-      padding: 0.7rem 1.2rem; /* Ligeramente más pequeño para quepan 3 botones */
+      padding: 0.7rem 1.2rem; 
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
@@ -161,20 +140,15 @@
       width: 100%;
       justify-content: center;
     }
-    .pet-action-btn:hover {
-      background: var(--accent);
-      transform: translateY(-2px);
-    }
+    .pet-action-btn:hover { background: var(--accent); transform: translateY(-2px); }
+    .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Animación de subida de nivel */
     @keyframes levelUpAnim {
       0% { transform: scale(1); color: var(--bg); }
       50% { transform: scale(1.5); color: var(--accent); }
       100% { transform: scale(1); color: var(--bg); }
     }
-    .level-up {
-      animation: levelUpAnim 1s ease;
-    }
+    .level-up { animation: levelUpAnim 1s ease; }
 
     /* Formulario */
     .form-field { position: relative; border-bottom: 1px solid var(--border); transition: border-color 0.4s ease; }
@@ -210,11 +184,10 @@
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- NAVEGACIÓN (Con el logo de Camarocho) -->
+  <!-- NAVEGACIÓN -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4" style="backdrop-filter: blur(8px); background: rgba(241, 235, 225, 0.8);">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto">
       <a href="#pet" class="interactive" aria-label="Camarocho inicio">
-        <!-- Logo escala natural (x1) -->
         <img src="https://z-cdn-media.chatglm.cn/files/76e7429d-be6c-451a-9b8c-8f4d878dc4b4.png?auth_key=1886556685-890ed228347a4a999441d1e7c3582086-0-d96a15dcc464c4bad66aa49244a6a084" alt="Camarocho Logo" class="w-auto h-auto max-h-16 object-contain">
       </a>
       <ul class="hidden md:flex items-center gap-10 text-sm">
@@ -258,7 +231,7 @@
       <!-- Contenedor Principal (Personaje al Centro) -->
       <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-12">
         
-        <!-- Columna Izquierda: Título -->
+        <!-- Columna Izquierda -->
         <div class="md:col-span-3 text-center md:text-right">
           <h1 class="font-display font-light tracking-tight leading-[0.92]" style="font-size: clamp(2.5rem, 6vw, 5rem);">
             <span class="block reveal">Tu</span>
@@ -267,33 +240,18 @@
           </h1>
         </div>
 
-        <!-- Columna Centro: Modelo 3D Gigante -->
+        <!-- Columna Centro: Canvas Three.js -->
         <div class="md:col-span-6 relative reveal reveal-delay-2">
           <div class="aspect-[4/5] md:aspect-square relative max-w-[600px] mx-auto">
-            
             <div class="model-error-msg" id="modelErrorMsg">
               <div class="font-display text-2xl italic font-light">Cargando mascota...</div>
               <p class="text-sm" style="color: var(--muted);">Abre este HTML con Live Server y asegúrate de que "modelo.glb" exista.</p>
             </div>
-
-            <model-viewer 
-              src="modelo.glb" 
-              alt="Camarocho 3D interactivo" 
-              auto-rotate 
-              camera-controls 
-              ar
-              autoplay
-              shadow-intensity="0.8"
-              camera-orbit="0deg 80deg 105deg"
-              min-camera-orbit="auto auto 50%"
-              max-camera-orbit="auto auto 200%"
-              style="background-color: transparent; width: 100%; height: 100%;"
-              id="modelViewer3D">
-            </model-viewer>
+            <canvas id="petCanvas"></canvas>
           </div>
         </div>
 
-        <!-- Columna Derecha: HUD de Estado (Base de datos local) -->
+        <!-- Columna Derecha: HUD -->
         <div class="md:col-span-3 reveal reveal-delay-3">
           <div class="pet-hud mx-auto">
             <div class="flex justify-between items-baseline mb-4">
@@ -306,7 +264,6 @@
               <div class="font-display text-3xl" id="petLevel">1</div>
             </div>
 
-            <!-- Barras de Estado -->
             <div class="stat-row">
               <div class="stat-label">Salud</div>
               <div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div>
@@ -328,7 +285,6 @@
               <div class="stat-bar-bg"><div class="stat-bar-fill fill-xp" id="xpBar" style="width: 0%;"></div></div>
             </div>
 
-            <!-- Botones de Acción -->
             <div class="mt-6 grid grid-cols-1 gap-3">
               <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar</button>
               <button class="pet-action-btn interactive" id="btnPlay">🎮 Jugar</button>
@@ -353,7 +309,7 @@
       </div>
     </div>
 
-    <!-- 2. FICHA TÉCNICA (Specs) -->
+    <!-- 2. FICHA TÉCNICA -->
     <section id="specs" class="py-24 md:py-40 px-6 md:px-12">
       <div class="max-w-[1800px] mx-auto">
         <div class="flex justify-between items-baseline mb-16 md:mb-24 reveal">
@@ -444,62 +400,177 @@
 
   <div class="toast" id="toast">Mensaje enviado.</div>
 
-  <script>
-    // 1. Lógica Cursor
-    const dot = document.getElementById('cursorDot');
-    const ring = document.getElementById('cursorRing');
-    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  <!-- LÓGICA PRINCIPAL (THREE.JS Y JUEGO) -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    if (window.matchMedia('(min-width: 769px)').matches) {
-      document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; });
-      function animateRing() { ringX += (mouseX - ringX) * 0.18; ringY += (mouseY - ringY) * 0.18; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animateRing); }
-      animateRing();
-      document.querySelectorAll('.interactive, a, button, input, textarea').forEach(el => { el.addEventListener('mouseenter', () => ring.classList.add('hover')); el.addEventListener('mouseleave', () => ring.classList.remove('hover')); });
-    }
-
-    // 2. Lógica Model Viewer Hero
-    const modelViewerHero = document.getElementById('modelViewer3D');
+    // =========================================
+    // 1. CONFIGURACIÓN THREE.JS
+    // =========================================
+    const canvas = document.getElementById('petCanvas');
     const modelErrorMsg = document.getElementById('modelErrorMsg');
 
-    if (modelViewerHero) {
-      modelViewerHero.addEventListener('mouseenter', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
-      modelViewerHero.addEventListener('mouseleave', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
-      
-      modelViewerHero.addEventListener('load', () => {
-        if (modelErrorMsg) modelErrorMsg.classList.add('hide');
-        setAnimation(ANIMS.idle, "IDLE");
-      });
-      modelViewerHero.addEventListener('error', () => {
-        if (modelErrorMsg) {
-          modelErrorMsg.innerHTML = '<div class="font-display text-2xl italic font-light" style="color: var(--accent);">Error al cargar</div><p class="text-sm" style="color: var(--fg);">No se encontró "modelo.glb".</p>';
-          modelErrorMsg.classList.remove('hide');
+    const scene = new THREE.Scene();
+    
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.set(0, 1.5, 3.5);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+
+    // Iluminación
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(2, 4, 3);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    scene.add(dirLight);
+
+    // Controles de cámara (OrbitControls)
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 6;
+    controls.minPolarAngle = Math.PI / 4;
+    controls.maxPolarAngle = Math.PI / 1.8;
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.0;
+
+    // =========================================
+    // 2. CARGA DEL MODELO Y RECORTES DE ANIMACIÓN
+    // =========================================
+    let mixer, idleAction, sleepAction, eatAction, playAction;
+    let isBusy = false;
+
+    const loader = new GLTFLoader();
+    loader.load(
+      'modelo.glb',
+      (gltf) => {
+        const model = gltf.scene;
+        
+        // Centrar y escalar el modelo
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.x -= center.x;
+        model.position.y -= center.y - size.y / 2;
+        model.position.z -= center.z;
+        
+        model.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+          }
+        });
+
+        scene.add(model);
+
+        // Configurar animaciones
+        mixer = new THREE.AnimationMixer(model);
+        const clips = gltf.animations;
+
+        if (clips.length > 0) {
+          // Asumimos que la animación principal es la primera
+          const mainClip = clips[0];
+          const fps = 30; // Mixamo suele usar 30 fps
+
+          // RECORTES DE FOTOGRAMAS
+          // Idle: 1 al 244 (Loop)
+          idleAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Idle', 1, 244, fps));
+          idleAction.setLoop(THREE.LoopRepeat, Infinity);
+          
+          // Sleep: 754 al 955 (Una vez)
+          sleepAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Sleep', 754, 955, fps));
+          sleepAction.setLoop(THREE.LoopOnce, 1);
+          sleepAction.clampWhenFinished = true;
+          
+          // Eat: 489 al 690 (Una vez)
+          eatAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Eat', 489, 690, fps));
+          eatAction.setLoop(THREE.LoopOnce, 1);
+          eatAction.clampWhenFinished = true;
+
+          // Play: No se especificaron frames, usamos Eat temporalmente
+          playAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Eat', 489, 690, fps));
+          playAction.setLoop(THREE.LoopOnce, 1);
+          playAction.clampWhenFinished = true;
+
+          // Escuchar cuando terminan las animaciones de un solo uso
+          mixer.addEventListener('finished', (e) => {
+            if (e.action === sleepAction || e.action === eatAction || e.action === playAction) {
+              isBusy = false;
+              fadeToAction(idleAction, 0.3);
+            }
+          });
+
+          // Iniciar en Idle
+          fadeToAction(idleAction, 0);
         }
-      });
+
+        modelErrorMsg.classList.add('hide');
+      },
+      undefined,
+      (error) => {
+        console.error(error);
+        modelErrorMsg.innerHTML = '<div class="font-display text-2xl italic font-light" style="color: var(--accent);">Error al cargar</div><p class="text-sm" style="color: var(--fg);">No se encontró "modelo.glb". Verifica el archivo.</p>';
+      }
+    );
+
+    function fadeToAction(targetAction, duration) {
+      if (!targetAction) return;
+      targetAction.reset();
+      targetAction.setEffectiveWeight(1);
+      targetAction.play();
+      
+      // Apagar las otras acciones suavemente
+      if (mixer) {
+        mixer.actions = mixer.actions || [];
+        if (idleAction && targetAction !== idleAction) idleAction.fadeOut(duration);
+        if (sleepAction && targetAction !== sleepAction) sleepAction.fadeOut(duration);
+        if (eatAction && targetAction !== eatAction) eatAction.fadeOut(duration);
+        if (playAction && targetAction !== playAction) playAction.fadeOut(duration);
+      }
     }
 
     // =========================================
-    // 3. SISTEMA DE MASCOTA VIRTUAL (BASE DE DATOS LOCAL)
+    // 3. BUCLE DE RENDERIZADO Y RESIZE
     // =========================================
-    const ANIMS = {
-      idle: "ARMATURE.001.|MIXAMO.COM|LAYER0",
-      run: "ARMATURE.002|MIXAMO.COM|LAYER0",
-      jump: "ARMATURE.004|MIXAMO.COM|LAYER0",
-      climb: "ARMATURE|MIXAMO.COM|LAYER0.001"
-    };
+    const clock = new THREE.Clock();
 
-    // Cargar progreso guardado o crear uno nuevo (con nuevas variables)
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      if (mixer) mixer.update(delta);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // =========================================
+    // 4. SISTEMA DE MASCOTA VIRTUAL (BASE DE DATOS)
+    // =========================================
     let petData = JSON.parse(localStorage.getItem('camarochoPetData')) || {
-      level: 1,
-      xp: 0,
-      hunger: 80,
-      happy: 80,
-      health: 100, // Nueva variable
-      sleep: 100   // Nueva variable
+      level: 1, xp: 0, hunger: 80, happy: 80, health: 100, sleep: 100
     };
 
     const xpToLevelUp = 100; 
-
-    // Elementos del HUD
     const petLevelEl = document.getElementById('petLevel');
     const xpBar = document.getElementById('xpBar');
     const hungerBar = document.getElementById('hungerBar');
@@ -520,19 +591,12 @@
       localStorage.setItem('camarochoPetData', JSON.stringify(petData));
     }
 
-    function setAnimation(animName, statusText) {
-      if (modelViewerHero && modelViewerHero.animationName !== animName) {
-        modelViewerHero.animationName = animName;
-      }
-    }
-
-    // Lógica de Subir de Nivel
     function checkLevelUp() {
       if (petData.xp >= xpToLevelUp) {
         petData.xp = petData.xp - xpToLevelUp;
         petData.level += 1;
         petData.happy = Math.min(100, petData.happy + 20);
-        petData.health = Math.min(100, petData.health + 20); // Subir de nivel restaura algo de salud
+        petData.health = Math.min(100, petData.health + 20); 
         
         petLevelEl.classList.remove('level-up');
         void petLevelEl.offsetWidth; 
@@ -543,99 +607,114 @@
       }
     }
 
-    // Botón Alimentar
-    document.getElementById('btnFeed').addEventListener('click', () => {
-      if (petData.hunger >= 100) {
-        showToast("Camarocho está lleno.");
-        setAnimation(ANIMS.idle, "IDLE");
-        return;
-      }
-      petData.hunger = Math.min(100, petData.hunger + 15);
-      petData.health = Math.min(100, petData.health + 5); // Comer sana un poco
-      petData.sleep = Math.max(0, petData.sleep - 5); // Comer da un poco de sueño
-      petData.xp += 10;
-      setAnimation(ANIMS.jump, "JUMPING"); 
+    // =========================================
+    // 5. BOTONES E INTERACCIONES
+    // =========================================
+    const btnFeed = document.getElementById('btnFeed');
+    const btnPlay = document.getElementById('btnPlay');
+    const btnSleep = document.getElementById('btnSleep');
+
+    btnFeed.addEventListener('click', () => {
+      if (isBusy || !eatAction) return;
+      isBusy = true;
       
+      petData.hunger = Math.min(100, petData.hunger + 15);
+      petData.health = Math.min(100, petData.health + 5); 
+      petData.sleep = Math.max(0, petData.sleep - 5); 
+      petData.xp += 10;
+      
+      fadeToAction(eatAction, 0.3);
       checkLevelUp();
       updateHUD();
       savePetData();
-      showToast("¡Camarocho ha comido!");
-
-      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 2000);
+      showToast("¡Camarocho está comiendo!");
     });
 
-    // Botón Jugar
-    document.getElementById('btnPlay').addEventListener('click', () => {
-      if (petData.happy >= 100) {
-        showToast("Camarocho está muy feliz y cansado.");
-        setAnimation(ANIMS.idle, "IDLE");
-        return;
-      }
+    btnPlay.addEventListener('click', () => {
+      if (isBusy || !playAction) return;
+      isBusy = true;
+      
       petData.happy = Math.min(100, petData.happy + 15);
       petData.hunger = Math.max(0, petData.hunger - 10); 
-      petData.sleep = Math.max(0, petData.sleep - 15); // Jugar cansa
+      petData.sleep = Math.max(0, petData.sleep - 15); 
       petData.xp += 15;
       
-      // Si juega muy cansado (sueño bajo), pierde salud
       if (petData.sleep < 20) {
         petData.health = Math.max(0, petData.health - 5);
         showToast("Camarocho está muy cansado, necesita dormir.");
       }
       
-      setAnimation(ANIMS.run, "RUNNING"); 
-      
+      fadeToAction(playAction, 0.3);
       checkLevelUp();
       updateHUD();
       savePetData();
       showToast("¡Estás jugando con Camarocho!");
-
-      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 3000);
     });
 
-    // Botón Dormir (Nuevo)
-    document.getElementById('btnSleep').addEventListener('click', () => {
-      if (petData.sleep >= 100) {
-        showToast("Camarocho no tiene sueño ahora.");
-        setAnimation(ANIMS.idle, "IDLE");
-        return;
-      }
+    btnSleep.addEventListener('click', () => {
+      if (isBusy || !sleepAction) return;
+      isBusy = true;
+      
       petData.sleep = Math.min(100, petData.sleep + 40);
-      petData.health = Math.min(100, petData.health + 15); // Dormir cura salud
-      petData.hunger = Math.max(0, petData.hunger - 5); // Al dormir da hambre
+      petData.health = Math.min(100, petData.health + 15); 
+      petData.hunger = Math.max(0, petData.hunger - 5); 
       petData.xp += 5;
       
-      setAnimation(ANIMS.idle, "SLEEPING"); // Usamos idle para simular que está quieto durmiendo
-      
+      fadeToAction(sleepAction, 0.3);
       checkLevelUp();
       updateHUD();
       savePetData();
       showToast("Camarocho está descansando...");
-
-      setTimeout(() => { setAnimation(ANIMS.idle, "IDLE"); }, 4000);
     });
 
-    // Inicializar HUD al cargar la página
-    updateHUD();
+    // =========================================
+    // 6. FUNCIONES GLOBALES (UI)
+    // =========================================
+    // Cursor
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
-    // 4. Scroll Reveal
+    if (window.matchMedia('(min-width: 769px)').matches) {
+      document.addEventListener('mousemove', (e) => { 
+        mouseX = e.clientX; mouseY = e.clientY; 
+        dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; 
+      });
+      function animateRing() { 
+        ringX += (mouseX - ringX) * 0.18; ringY += (mouseY - ringY) * 0.18; 
+        ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; 
+        requestAnimationFrame(animateRing); 
+      }
+      animateRing();
+      document.querySelectorAll('.interactive, a, button, input, textarea').forEach(el => { 
+        el.addEventListener('mouseenter', () => ring.classList.add('hover')); 
+        el.addEventListener('mouseleave', () => ring.classList.remove('hover')); 
+      });
+
+      // Ocultar cursor al arrastrar el modelo 3D
+      canvas.addEventListener('mouseenter', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+      canvas.addEventListener('mouseleave', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
+    }
+
+    // Scroll Reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
     }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // 5. Menú Móvil
+    // Menú Móvil
     document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
     document.getElementById('menuClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
     document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
 
-    // 6. Reloj CDMX
+    // Reloj CDMX
     function updateClock() {
       const opts = { timeZone: 'America/Mexico_City', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
       document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('es-MX', opts);
     }
     updateClock(); setInterval(updateClock, 1000);
 
-    // 7. Formulario y Toast
+    // Formulario y Toast
     const toast = document.getElementById('toast');
     function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3500); }
     
@@ -649,6 +728,8 @@
       e.target.reset();
     });
 
+    // Inicializar HUD
+    updateHUD();
   </script>
 </body>
 </html>
