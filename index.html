@@ -8,15 +8,8 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Three.js (Importmap para usar módulos) -->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
+  <!-- Web Component de Google para modelos 3D -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,12 +18,12 @@
 
   <style>
     :root {
-      --bg: #f1ebe1;       /* Fondo claro cálido */
-      --bg-alt: #e8dfd0;   /* Fondo alternativo */
-      --fg: #1a1814;       /* Texto oscuro */
-      --muted: #8a7e6e;    /* Texto atenuado */
-      --accent: #ff4d1f;   /* Acento naranja terracota (similar al logo) */
-      --accent-2: #2a8c4a; /* Verde del logo */
+      --bg: #f1ebe1;
+      --bg-alt: #e8dfd0;
+      --fg: #1a1814;
+      --muted: #8a7e6e;
+      --accent: #ff4d1f;
+      --accent-2: #2a8c4a;
       --border: rgba(26, 24, 20, 0.14);
       --card: #ebe3d6;
     }
@@ -90,14 +83,15 @@
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
 
-    /* VISOR 3D (CANVAS) */
-    #petCanvas {
+    /* VISOR 3D */
+    model-viewer {
       display: block;
       width: 100%;
       height: 100%;
+      --poster-color: transparent;
       cursor: grab;
     }
-    #petCanvas:active { cursor: grabbing; }
+    model-viewer::part(default-progress-bar) { display: none; }
     
     .model-error-msg {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; background: var(--bg); color: var(--fg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease;
@@ -141,7 +135,7 @@
       justify-content: center;
     }
     .pet-action-btn:hover { background: var(--accent); transform: translateY(-2px); }
-    .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: var(--fg); }
 
     @keyframes levelUpAnim {
       0% { transform: scale(1); color: var(--bg); }
@@ -228,7 +222,7 @@
         <div class="text-right hidden md:block"><div>Real-time WebGL</div><div class="mt-1">Guardado Local</div></div>
       </div>
 
-      <!-- Contenedor Principal (Personaje al Centro) -->
+      <!-- Contenedor Principal -->
       <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center py-12">
         
         <!-- Columna Izquierda -->
@@ -240,14 +234,29 @@
           </h1>
         </div>
 
-        <!-- Columna Centro: Canvas Three.js -->
+        <!-- Columna Centro: model-viewer -->
         <div class="md:col-span-6 relative reveal reveal-delay-2">
           <div class="aspect-[4/5] md:aspect-square relative max-w-[600px] mx-auto">
+            
             <div class="model-error-msg" id="modelErrorMsg">
               <div class="font-display text-2xl italic font-light">Cargando mascota...</div>
               <p class="text-sm" style="color: var(--muted);">Abre este HTML con Live Server y asegúrate de que "modelo.glb" exista.</p>
             </div>
-            <canvas id="petCanvas"></canvas>
+
+            <model-viewer 
+              src="modelo.glb" 
+              alt="Camarocho 3D interactivo" 
+              auto-rotate 
+              camera-controls 
+              ar
+              autoplay
+              shadow-intensity="0.8"
+              camera-orbit="0deg 80deg 105deg"
+              min-camera-orbit="auto auto 50%"
+              max-camera-orbit="auto auto 200%"
+              style="background-color: transparent; width: 100%; height: 100%;"
+              id="modelViewer3D">
+            </model-viewer>
           </div>
         </div>
 
@@ -324,7 +333,7 @@
           <div class="reveal"><div class="font-display font-light text-5xl md:text-7xl">32K</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Polígonos</div></div>
           <div class="reveal reveal-delay-1"><div class="font-display font-light text-5xl md:text-7xl">4K</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Texturas PBR</div></div>
           <div class="reveal reveal-delay-2"><div class="font-display font-light text-5xl md:text-7xl">12</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Huesos (Rig)</div></div>
-          <div class="reveal reveal-delay-3"><div class="font-display font-light text-5xl md:text-7xl" style="color: var(--accent);">4</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Animaciones</div></div>
+          <div class="reveal reveal-delay-3"><div class="font-display font-light text-5xl md:text-7xl" style="color: var(--accent);">8</div><div class="text-xs uppercase tracking-widest mt-2" style="color: var(--muted);">Animaciones</div></div>
         </div>
       </div>
     </section>
@@ -400,171 +409,78 @@
 
   <div class="toast" id="toast">Mensaje enviado.</div>
 
-  <!-- LÓGICA PRINCIPAL (THREE.JS Y JUEGO) -->
-  <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  <script>
+    // 1. Lógica Cursor
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+    if (window.matchMedia('(min-width: 769px)').matches) {
+      document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; });
+      function animateRing() { ringX += (mouseX - ringX) * 0.18; ringY += (mouseY - ringY) * 0.18; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animateRing); }
+      animateRing();
+      document.querySelectorAll('.interactive, a, button, input, textarea').forEach(el => { el.addEventListener('mouseenter', () => ring.classList.add('hover')); el.addEventListener('mouseleave', () => ring.classList.remove('hover')); });
+    }
 
     // =========================================
-    // 1. CONFIGURACIÓN THREE.JS
+    // 2. LÓGICA DE ANIMACIONES (NOMBRES EXACTOS)
     // =========================================
-    const canvas = document.getElementById('petCanvas');
+    const modelViewer = document.getElementById('modelViewer3D');
     const modelErrorMsg = document.getElementById('modelErrorMsg');
-
-    const scene = new THREE.Scene();
     
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    camera.position.set(0, 1.5, 3.5);
-
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true;
-
-    // Iluminación
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(2, 4, 3);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
-    scene.add(dirLight);
-
-    // Controles de cámara (OrbitControls)
-    const controls = new OrbitControls(camera, canvas);
-    controls.enableDamping = true;
-    controls.minDistance = 1.5;
-    controls.maxDistance = 6;
-    controls.minPolarAngle = Math.PI / 4;
-    controls.maxPolarAngle = Math.PI / 1.8;
-    controls.enablePan = false;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.0;
-
-    // =========================================
-    // 2. CARGA DEL MODELO Y RECORTES DE ANIMACIÓN
-    // =========================================
-    let mixer, idleAction, sleepAction, eatAction, playAction;
+    // Nombres exactos encontrados en la consola
+    let idleAnimName = "idle";
+    let eatAnimName = "eat";
+    let playAnimName = "run"; // Asumimos que "run" es jugar/correr
+    let sleepAnimName = "sleep";
     let isBusy = false;
 
-    const loader = new GLTFLoader();
-    loader.load(
-      'modelo.glb',
-      (gltf) => {
-        const model = gltf.scene;
-        
-        // Centrar y escalar el modelo
-        const box = new THREE.Box3().setFromObject(model);
-        const size = box.getSize(new THREE.Vector3());
-        const center = box.getCenter(new THREE.Vector3());
-        model.position.x -= center.x;
-        model.position.y -= center.y - size.y / 2;
-        model.position.z -= center.z;
-        
-        model.traverse((node) => {
-          if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-          }
-        });
-
-        scene.add(model);
-
-        // Configurar animaciones
-        mixer = new THREE.AnimationMixer(model);
-        const clips = gltf.animations;
-
-        if (clips.length > 0) {
-          // Asumimos que la animación principal es la primera
-          const mainClip = clips[0];
-          const fps = 30; // Mixamo suele usar 30 fps
-
-          // RECORTES DE FOTOGRAMAS
-          // Idle: 1 al 244 (Loop)
-          idleAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Idle', 1, 244, fps));
-          idleAction.setLoop(THREE.LoopRepeat, Infinity);
-          
-          // Sleep: 754 al 955 (Una vez)
-          sleepAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Sleep', 754, 955, fps));
-          sleepAction.setLoop(THREE.LoopOnce, 1);
-          sleepAction.clampWhenFinished = true;
-          
-          // Eat: 489 al 690 (Una vez)
-          eatAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Eat', 489, 690, fps));
-          eatAction.setLoop(THREE.LoopOnce, 1);
-          eatAction.clampWhenFinished = true;
-
-          // Play: No se especificaron frames, usamos Eat temporalmente
-          playAction = mixer.clipAction(THREE.AnimationUtils.subclip(mainClip, 'Eat', 489, 690, fps));
-          playAction.setLoop(THREE.LoopOnce, 1);
-          playAction.clampWhenFinished = true;
-
-          // Escuchar cuando terminan las animaciones de un solo uso
-          mixer.addEventListener('finished', (e) => {
-            if (e.action === sleepAction || e.action === eatAction || e.action === playAction) {
-              isBusy = false;
-              fadeToAction(idleAction, 0.3);
-            }
-          });
-
-          // Iniciar en Idle
-          fadeToAction(idleAction, 0);
-        }
-
-        modelErrorMsg.classList.add('hide');
-      },
-      undefined,
-      (error) => {
-        console.error(error);
-        modelErrorMsg.innerHTML = '<div class="font-display text-2xl italic font-light" style="color: var(--accent);">Error al cargar</div><p class="text-sm" style="color: var(--fg);">No se encontró "modelo.glb". Verifica el archivo.</p>';
-      }
-    );
-
-    function fadeToAction(targetAction, duration) {
-      if (!targetAction) return;
-      targetAction.reset();
-      targetAction.setEffectiveWeight(1);
-      targetAction.play();
+    if (modelViewer) {
+      modelViewer.addEventListener('mouseenter', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
+      modelViewer.addEventListener('mouseleave', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
       
-      // Apagar las otras acciones suavemente
-      if (mixer) {
-        mixer.actions = mixer.actions || [];
-        if (idleAction && targetAction !== idleAction) idleAction.fadeOut(duration);
-        if (sleepAction && targetAction !== sleepAction) sleepAction.fadeOut(duration);
-        if (eatAction && targetAction !== eatAction) eatAction.fadeOut(duration);
-        if (playAction && targetAction !== playAction) playAction.fadeOut(duration);
-      }
+      modelViewer.addEventListener('load', () => {
+        if (modelErrorMsg) modelErrorMsg.classList.add('hide');
+        
+        const animations = modelViewer.availableAnimations;
+        
+        // MENSAJE EN CONSOLA PARA REVISAR
+        console.log("%cAnimaciones encontradas en el GLB:", "color: #ff4d1f; font-weight: bold; font-size: 14px;");
+        console.log(animations);
+        
+        if (animations.includes(idleAnimName)) {
+          modelViewer.animationName = idleAnimName;
+        } else if (animations.length > 0) {
+          modelViewer.animationName = animations[0]; // Si no hay idle, usar la primera
+        }
+      });
+
+      modelViewer.addEventListener('error', () => {
+        if (modelErrorMsg) {
+          modelErrorMsg.innerHTML = '<div class="font-display text-2xl italic font-light" style="color: var(--accent);">Error al cargar</div><p class="text-sm" style="color: var(--fg);">No se encontró "modelo.glb".</p>';
+          modelErrorMsg.classList.remove('hide');
+        }
+      });
+    }
+
+    // Función para reproducir animación y volver a Idle
+    function playAction(animName, duration) {
+      if (isBusy || !animName) return;
+      isBusy = true;
+      
+      console.log("Reproduciendo animación:", animName); // Ver en consola qué botón presionaste
+      modelViewer.animationName = animName;
+      
+      setTimeout(() => {
+        isBusy = false;
+        if (idleAnimName) {
+          modelViewer.animationName = idleAnimName;
+        }
+      }, duration);
     }
 
     // =========================================
-    // 3. BUCLE DE RENDERIZADO Y RESIZE
-    // =========================================
-    const clock = new THREE.Clock();
-
-    function animate() {
-      requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-      if (mixer) mixer.update(delta);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    function resizeCanvas() {
-      const container = canvas.parentElement;
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height, false);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    // =========================================
-    // 4. SISTEMA DE MASCOTA VIRTUAL (BASE DE DATOS)
+    // 3. SISTEMA DE MASCOTA VIRTUAL (BASE DE DATOS LOCAL)
     // =========================================
     let petData = JSON.parse(localStorage.getItem('camarochoPetData')) || {
       level: 1, xp: 0, hunger: 80, happy: 80, health: 100, sleep: 100
@@ -608,32 +524,25 @@
     }
 
     // =========================================
-    // 5. BOTONES E INTERACCIONES
+    // 4. BOTONES E INTERACCIONES
     // =========================================
-    const btnFeed = document.getElementById('btnFeed');
-    const btnPlay = document.getElementById('btnPlay');
-    const btnSleep = document.getElementById('btnSleep');
-
-    btnFeed.addEventListener('click', () => {
-      if (isBusy || !eatAction) return;
-      isBusy = true;
-      
+    document.getElementById('btnFeed').addEventListener('click', () => {
+      if (isBusy) return;
       petData.hunger = Math.min(100, petData.hunger + 15);
       petData.health = Math.min(100, petData.health + 5); 
       petData.sleep = Math.max(0, petData.sleep - 5); 
       petData.xp += 10;
       
-      fadeToAction(eatAction, 0.3);
+      playAction(eatAnimName, 3000); // Come por 3 segundos
+      
       checkLevelUp();
       updateHUD();
       savePetData();
       showToast("¡Camarocho está comiendo!");
     });
 
-    btnPlay.addEventListener('click', () => {
-      if (isBusy || !playAction) return;
-      isBusy = true;
-      
+    document.getElementById('btnPlay').addEventListener('click', () => {
+      if (isBusy) return;
       petData.happy = Math.min(100, petData.happy + 15);
       petData.hunger = Math.max(0, petData.hunger - 10); 
       petData.sleep = Math.max(0, petData.sleep - 15); 
@@ -644,23 +553,23 @@
         showToast("Camarocho está muy cansado, necesita dormir.");
       }
       
-      fadeToAction(playAction, 0.3);
+      playAction(playAnimName, 3000); // Juega por 3 segundos
+      
       checkLevelUp();
       updateHUD();
       savePetData();
       showToast("¡Estás jugando con Camarocho!");
     });
 
-    btnSleep.addEventListener('click', () => {
-      if (isBusy || !sleepAction) return;
-      isBusy = true;
-      
+    document.getElementById('btnSleep').addEventListener('click', () => {
+      if (isBusy) return;
       petData.sleep = Math.min(100, petData.sleep + 40);
       petData.health = Math.min(100, petData.health + 15); 
       petData.hunger = Math.max(0, petData.hunger - 5); 
       petData.xp += 5;
       
-      fadeToAction(sleepAction, 0.3);
+      playAction(sleepAnimName, 4000); // Duerme por 4 segundos
+      
       checkLevelUp();
       updateHUD();
       savePetData();
@@ -668,53 +577,23 @@
     });
 
     // =========================================
-    // 6. FUNCIONES GLOBALES (UI)
+    // 5. FUNCIONES GLOBALES (UI)
     // =========================================
-    // Cursor
-    const dot = document.getElementById('cursorDot');
-    const ring = document.getElementById('cursorRing');
-    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-
-    if (window.matchMedia('(min-width: 769px)').matches) {
-      document.addEventListener('mousemove', (e) => { 
-        mouseX = e.clientX; mouseY = e.clientY; 
-        dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px'; 
-      });
-      function animateRing() { 
-        ringX += (mouseX - ringX) * 0.18; ringY += (mouseY - ringY) * 0.18; 
-        ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; 
-        requestAnimationFrame(animateRing); 
-      }
-      animateRing();
-      document.querySelectorAll('.interactive, a, button, input, textarea').forEach(el => { 
-        el.addEventListener('mouseenter', () => ring.classList.add('hover')); 
-        el.addEventListener('mouseleave', () => ring.classList.remove('hover')); 
-      });
-
-      // Ocultar cursor al arrastrar el modelo 3D
-      canvas.addEventListener('mouseenter', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; });
-      canvas.addEventListener('mouseleave', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; });
-    }
-
-    // Scroll Reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
     }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Menú Móvil
     document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
     document.getElementById('menuClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
     document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
 
-    // Reloj CDMX
     function updateClock() {
       const opts = { timeZone: 'America/Mexico_City', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
       document.getElementById('liveClock').textContent = new Date().toLocaleTimeString('es-MX', opts);
     }
     updateClock(); setInterval(updateClock, 1000);
 
-    // Formulario y Toast
     const toast = document.getElementById('toast');
     function showToast(message) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3500); }
     
@@ -728,7 +607,6 @@
       e.target.reset();
     });
 
-    // Inicializar HUD
     updateHUD();
   </script>
 </body>
