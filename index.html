@@ -62,6 +62,12 @@
     .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
 
+    /* Navegación */
+    .nav-link { position: relative; overflow: hidden; display: inline-block; }
+    .nav-link span { display: inline-block; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
+    .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
+    .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
+
     /* VISOR 3D */
     model-viewer {
       display: block;
@@ -178,6 +184,70 @@
       color: var(--bg);
     }
 
+    /* ZONA APRENDER (Gráficos de Sumas) */
+    .learn-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: transform 0.3s ease;
+    }
+    .learn-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .visual-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+    .math-blocks {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+    }
+    .unit-dot {
+      width: 20px;
+      height: 20px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      display: block;
+    }
+    .ten-bar {
+      width: 120px;
+      height: 20px;
+      background-color: var(--accent-2);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .hundred-block {
+      width: 60px;
+      height: 60px;
+      background-color: #8a4dff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .math-symbol {
+      font-size: 2rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--fg); color: var(--bg); padding: 1rem 1.75rem; border-radius: 999px; font-size: 1rem; z-index: 10000; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); display: flex; align-items: center; gap: 0.6rem; }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast::before { content: ''; width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%; }
@@ -192,6 +262,11 @@
       <a href="#pet" class="font-display text-2xl font-bold tracking-tight interactive">
         MateMascota<span style="color: var(--accent);">.</span>
       </a>
+      <ul class="hidden md:flex items-center gap-10 text-sm">
+        <li><a href="#pet" class="nav-link interactive"><span>Mascota</span><span>Mascota</span></a></li>
+        <li><a href="#aprender" class="nav-link interactive"><span>Aprender</span><span>Aprender</span></a></li>
+        <li><a href="#math" class="nav-link interactive"><span>Reto</span><span>Reto</span></a></li>
+      </ul>
       <div class="hidden md:flex items-center gap-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
         <span class="px-3 py-1 rounded-full" style="border: 1px solid var(--border);">Aprende y Juega</span>
       </div>
@@ -276,7 +351,99 @@
       </div>
     </section>
 
-    <!-- 2. ZONA MATEMÁTICA -->
+    <!-- 2. ZONA APRENDER (Gráficos de Sumas) -->
+    <section id="aprender" class="py-24 px-6 md:px-12">
+      <div class="max-w-[1200px] mx-auto">
+        <div class="flex flex-col items-center mb-16 reveal">
+          <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Aprender</span>
+          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo sumamos?</h2>
+          <p class="mt-4 text-center text-lg" style="color: var(--muted);">Observa cómo se agrupan las cosas para sumar</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          <!-- Unidades -->
+          <div class="learn-card reveal">
+            <div class="text-center mb-4">
+              <span class="font-display text-3xl font-light" style="color: var(--accent);">Unidades</span>
+              <p class="text-sm mt-2" style="color: var(--muted);">Números del 1 al 9</p>
+            </div>
+            <div class="visual-group">
+              <div class="math-blocks">
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+              </div>
+              <span class="math-symbol">+</span>
+              <div class="math-blocks">
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+              </div>
+              <span class="math-symbol">=</span>
+              <div class="math-blocks">
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+                <span class="unit-dot"></span>
+              </div>
+            </div>
+            <p class="text-center font-bold text-xl">3 + 2 = 5</p>
+          </div>
+
+          <!-- Decenas -->
+          <div class="learn-card reveal reveal-delay-1">
+            <div class="text-center mb-4">
+              <span class="font-display text-3xl font-light" style="color: var(--accent-2);">Decenas</span>
+              <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 10</p>
+            </div>
+            <div class="visual-group">
+              <div class="math-blocks">
+                <span class="ten-bar">10</span>
+                <span class="ten-bar">10</span>
+              </div>
+              <span class="math-symbol">+</span>
+              <div class="math-blocks">
+                <span class="ten-bar">10</span>
+              </div>
+              <span class="math-symbol">=</span>
+              <div class="math-blocks">
+                <span class="ten-bar">10</span>
+                <span class="ten-bar">10</span>
+                <span class="ten-bar">10</span>
+              </div>
+            </div>
+            <p class="text-center font-bold text-xl">20 + 10 = 30</p>
+          </div>
+
+          <!-- Centenas -->
+          <div class="learn-card reveal reveal-delay-2">
+            <div class="text-center mb-4">
+              <span class="font-display text-3xl font-light" style="color: #8a4dff;">Centenas</span>
+              <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 100</p>
+            </div>
+            <div class="visual-group">
+              <div class="math-blocks">
+                <span class="hundred-block">100</span>
+              </div>
+              <span class="math-symbol">+</span>
+              <div class="math-blocks">
+                <span class="hundred-block">100</span>
+              </div>
+              <span class="math-symbol">=</span>
+              <div class="math-blocks">
+                <span class="hundred-block">100</span>
+                <span class="hundred-block">100</span>
+              </div>
+            </div>
+            <p class="text-center font-bold text-xl">100 + 100 = 200</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ZONA MATEMÁTICA (Reto) -->
     <section id="math" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[1000px] mx-auto">
         <div class="flex flex-col items-center mb-12 reveal">
@@ -286,7 +453,7 @@
 
         <div class="math-zone reveal reveal-delay-1">
           <!-- Selector de Dificultad -->
-          <div class="flex justify-center gap-4 mb-8">
+          <div class="flex justify-center gap-4 mb-8 flex-wrap">
             <button class="difficulty-btn interactive active" data-diff="1">Unidades</button>
             <button class="difficulty-btn interactive" data-diff="2">Decenas</button>
             <button class="difficulty-btn interactive" data-diff="3">Centenas</button>
@@ -296,7 +463,7 @@
           <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
 
           <!-- Opciones -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer">
             <button class="math-option interactive">8</button>
             <button class="math-option interactive">7</button>
             <button class="math-option interactive">9</button>
@@ -324,10 +491,8 @@
     const healthBar = document.getElementById('healthBar');
     const sleepBar = document.getElementById('sleepBar');
 
-    // Si ya había un nombre guardado, ponerlo en el input
     if (petData.name) petNameInput.value = petData.name;
 
-    // Guardar nombre cuando el usuario escribe
     petNameInput.addEventListener('input', (e) => {
       petData.name = e.target.value;
       savePetData();
@@ -357,7 +522,6 @@
       modelViewer.addEventListener('load', () => {
         if (modelErrorMsg) modelErrorMsg.classList.add('hide');
         const animations = modelViewer.availableAnimations;
-        console.log("Animaciones disponibles:", animations);
         
         if (animations.length > 0) {
           idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
@@ -446,12 +610,12 @@
     // =========================================
     // 4. RETO MATEMÁTICO
     // =========================================
-    let currentDifficulty = 1; // 1: Unidades, 2: Decenas, 3: Centenas
+    let currentDifficulty = 1; 
     let currentAnswer = 0;
 
     const difficultyBtns = document.querySelectorAll('.difficulty-btn');
     const mathQuestionEl = document.getElementById('mathQuestion');
-    const mathOptionsContainer = document.querySelector('.grid.grid-cols-2');
+    const mathOptionsContainer = document.getElementById('mathOptionsContainer');
 
     difficultyBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -476,26 +640,22 @@
         currentAnswer = num1 + num2;
         mathQuestionEl.textContent = `${num1} + ${num2} = ?`;
       } else {
-        // Para resta, asegurarse que el resultado no sea negativo
         const big = Math.max(num1, num2);
         const small = Math.min(num1, num2);
         currentAnswer = big - small;
         mathQuestionEl.textContent = `${big} - ${small} = ?`;
       }
 
-      // Generar opciones falsas
       const options = [currentAnswer];
       while (options.length < 4) {
-        let wrong = currentAnswer + (Math.floor(Math.random() * 7) - 3); // +/- 3
+        let wrong = currentAnswer + (Math.floor(Math.random() * 7) - 3); 
         if (wrong !== currentAnswer && wrong >= 0 && !options.includes(wrong)) {
           options.push(wrong);
         }
       }
 
-      // Mezclar opciones
       options.sort(() => Math.random() - 0.5);
 
-      // Renderizar botones
       mathOptionsContainer.innerHTML = '';
       options.forEach(opt => {
         const btn = document.createElement('button');
@@ -512,16 +672,15 @@
         petData.points += 10;
         petData.happy = Math.min(100, petData.happy + 5);
         showToast("¡Correcto! +10 puntos");
-        if (jumpAnimName) playAction(jumpAnimName, 2000); // Salto de felicidad
+        if (jumpAnimName) playAction(jumpAnimName, 2000); 
         updateHUD();
         savePetData();
         
-        // Generar nueva pregunta después de 1.5s
         setTimeout(generateQuestion, 1500);
       } else {
         btn.classList.add('wrong');
         showToast("¡Casi! Inténtalo de nuevo.");
-        if (hitAnimName) playAction(hitAnimName, 1500); // Animación triste
+        if (hitAnimName) playAction(hitAnimName, 1500); 
       }
     }
 
@@ -540,9 +699,8 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Inicializar
     updateHUD();
-    generateQuestion(); // Crear la primera pregunta al cargar
+    generateQuestion(); 
   </script>
 </body>
 </html>
