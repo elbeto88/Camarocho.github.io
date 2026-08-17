@@ -11,6 +11,9 @@
   <!-- Web Component de Google para modelos 3D -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
   
+  <!-- Puter.js para el Chat de IA Gratuito -->
+  <script src="https://js.puter.com/v2/"></script>
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,11 +73,8 @@
 
     /* VISOR 3D */
     model-viewer {
-      display: block;
-      width: 100%;
-      height: 100%;
-      --poster-color: transparent;
-      cursor: grab;
+      display: block; width: 100%; height: 100%;
+      --poster-color: transparent; cursor: grab;
     }
     model-viewer::part(default-progress-bar) { display: none; }
     
@@ -85,189 +85,55 @@
 
     /* INTERFAZ DE MASCOTA VIRTUAL (HUD) */
     .pet-hud {
-      background: rgba(26, 24, 20, 0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      color: var(--bg);
-      width: 100%;
-      max-width: 350px;
+      background: rgba(26, 24, 20, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; color: var(--bg); width: 100%; max-width: 350px;
     }
     .stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
     .stat-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); width: 70px; }
     .stat-bar-bg { flex-grow: 1; height: 8px; background: rgba(241, 235, 225, 0.15); border-radius: 999px; overflow: hidden; }
     .stat-bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
-    .fill-hunger { background: #ffcc00; }
-    .fill-happy { background: var(--accent-2); }
-    .fill-health { background: #ff4d4d; } 
-    .fill-sleep { background: #8a4dff; } 
+    .fill-hunger { background: #ffcc00; } .fill-happy { background: var(--accent-2); } .fill-health { background: #ff4d4d; } .fill-sleep { background: #8a4dff; } 
 
     .pet-name-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid var(--muted);
-      color: var(--bg);
-      font-family: 'Fraunces', serif;
-      font-size: 1.25rem;
-      width: 100%;
-      outline: none;
+      background: transparent; border: none; border-bottom: 1px solid var(--muted); color: var(--bg); font-family: 'Fraunces', serif; font-size: 1.25rem; width: 100%; outline: none;
     }
 
     .pet-action-btn {
-      background: var(--fg);
-      color: var(--bg);
-      padding: 0.7rem 1.2rem; 
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
-      font-size: 0.8rem;
-      transition: transform 0.2s, background 0.2s;
-      border: 1px solid transparent;
-      width: 100%;
-      justify-content: center;
+      background: var(--fg); color: var(--bg); padding: 0.7rem 1.2rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.8rem; transition: transform 0.2s, background 0.2s; border: 1px solid transparent; width: 100%; justify-content: center;
     }
     .pet-action-btn:hover { background: var(--accent); transform: translateY(-2px); }
     .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: var(--fg); }
 
     /* ZONA MATEMÁTICA */
-    .math-zone {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-    }
-    .math-question {
-      font-size: clamp(2rem, 5vw, 4rem);
-      text-align: center;
-      margin-bottom: 2rem;
-      color: var(--fg);
-    }
+    .math-zone { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+    .math-question { font-size: clamp(2rem, 5vw, 4rem); text-align: center; margin-bottom: 2rem; color: var(--fg); }
     .math-option {
-      background: var(--bg);
-      border: 2px solid var(--border);
-      padding: 1.5rem;
-      border-radius: 12px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      transition: all 0.2s;
-      width: 100%;
+      background: var(--bg); border: 2px solid var(--border); padding: 1.5rem; border-radius: 12px; font-size: 1.5rem; font-weight: bold; transition: all 0.2s; width: 100%;
     }
-    .math-option:hover {
-      border-color: var(--accent);
-      background: #fff;
-      transform: scale(1.05);
-    }
-    .math-option.correct {
-      background: var(--accent-2);
-      color: white;
-      border-color: var(--accent-2);
-    }
-    .math-option.wrong {
-      background: #ff4d4d;
-      color: white;
-      border-color: #ff4d4d;
-    }
+    .math-option:hover { border-color: var(--accent); background: #fff; transform: scale(1.05); }
+    .math-option.correct { background: var(--accent-2); color: white; border-color: var(--accent-2); }
+    .math-option.wrong { background: #ff4d4d; color: white; border-color: #ff4d4d; }
 
-    .difficulty-btn {
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: transparent;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-    }
-    .difficulty-btn.active {
-      background: var(--fg);
-      color: var(--bg);
-    }
+    .difficulty-btn { padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--border); background: transparent; font-size: 0.75rem; text-transform: uppercase; }
+    .difficulty-btn.active { background: var(--fg); color: var(--bg); }
 
-    /* ZONA APRENDER (Gráficos de Sumas) */
-    .learn-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: transform 0.3s ease;
-    }
+    /* ZONA APRENDER */
+    .learn-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform 0.3s ease; }
     .learn-card:hover { transform: translateY(-5px); }
-    
-    .visual-group {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      margin: 2rem 0;
-    }
-    .math-blocks {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: center;
-    }
-    .unit-dot {
-      width: 20px;
-      height: 20px;
-      background-color: var(--accent);
-      border-radius: 50%;
-      display: block;
-    }
-    .ten-bar {
-      width: 120px;
-      height: 20px;
-      background-color: var(--accent-2);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 0.75rem;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-    .hundred-block {
-      width: 60px;
-      height: 60px;
-      background-color: #8a4dff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    .math-symbol {
-      font-size: 2rem;
-      color: var(--muted);
-      font-weight: 300;
-    }
+    .visual-group { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin: 2rem 0; }
+    .math-blocks { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+    .unit-dot { width: 20px; height: 20px; background-color: var(--accent); border-radius: 50%; display: block; }
+    .ten-bar { width: 120px; height: 20px; background-color: var(--accent-2); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; }
+    .hundred-block { width: 60px; height: 60px; background-color: #8a4dff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold; }
+    .math-symbol { font-size: 2rem; color: var(--muted); font-weight: 300; }
 
     /* FORMULARIO DE CONTACTO */
     .contact-field { position: relative; border-bottom: 1px solid var(--border); transition: border-color 0.4s ease; }
     .contact-field:focus-within { border-color: var(--accent); }
-    .contact-field input, .contact-field textarea { 
-      background: transparent; border: none; outline: none; width: 100%; 
-      padding: 1.5rem 0 1rem; font-family: 'Space Grotesk', sans-serif; 
-      font-size: 1.125rem; color: var(--fg); resize: none; 
-    }
-    .contact-field label { 
-      position: absolute; top: 1.5rem; left: 0; color: var(--muted); 
-      transition: all 0.4s cubic-bezier(0.7, 0, 0.2, 1); pointer-events: none; font-size: 1.125rem; 
-    }
-    .contact-field input:focus + label, .contact-field input:not(:placeholder-shown) + label, 
-    .contact-field textarea:focus + label, .contact-field textarea:not(:placeholder-shown) + label { 
-      top: 0; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; 
-    }
+    .contact-field input, .contact-field textarea { background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 1.125rem; color: var(--fg); resize: none; }
+    .contact-field label { position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s cubic-bezier(0.7, 0, 0.2, 1); pointer-events: none; font-size: 1.125rem; }
+    .contact-field input:focus + label, .contact-field input:not(:placeholder-shown) + label, .contact-field textarea:focus + label, .contact-field textarea:not(:placeholder-shown) + label { top: 0; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
 
-    .btn-primary { 
-      position: relative; overflow: hidden; background: var(--fg); color: var(--bg); 
-      padding: 1.25rem 2.5rem; border-radius: 999px; display: inline-flex; align-items: center; 
-      gap: 0.75rem; font-weight: 500; transition: color 0.4s ease; isolation: isolate; border: none; 
-    }
+    .btn-primary { position: relative; overflow: hidden; background: var(--fg); color: var(--bg); padding: 1.25rem 2.5rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 500; transition: color 0.4s ease; isolation: isolate; border: none; }
     .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateY(101%); transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); z-index: -1; }
     .btn-primary:hover::before { transform: translateY(0); }
     .btn-primary .arrow { transition: transform 0.4s ease; }
@@ -276,6 +142,120 @@
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--fg); color: var(--bg); padding: 1rem 1.75rem; border-radius: 999px; font-size: 1rem; z-index: 10000; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); display: flex; align-items: center; gap: 0.6rem; }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast::before { content: ''; width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%; }
+
+    /* =========================================
+       ASISTENTE DE IA (CHAT)
+       ========================================= */
+    .ai-bubble {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      cursor: pointer;
+      z-index: 9998;
+      box-shadow: 0 4px 15px rgba(255, 77, 31, 0.4);
+      transition: transform 0.3s ease;
+    }
+    .ai-bubble:hover { transform: scale(1.1) rotate(10deg); }
+
+    .ai-chat-window {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      max-width: 400px;
+      background: var(--bg);
+      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+      z-index: 9999;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+    }
+    .ai-chat-window.open { transform: translateX(0); }
+
+    .ai-header {
+      padding: 1.5rem;
+      background: var(--fg);
+      color: var(--bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-messages {
+      flex-grow: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .ai-msg {
+      max-width: 80%;
+      padding: 1rem;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .ai-msg.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .ai-msg.bot {
+      align-self: flex-start;
+      background: var(--card);
+      color: var(--fg);
+      border-bottom-left-radius: 4px;
+    }
+
+    .ai-input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+    }
+    .ai-input {
+      flex-grow: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      outline: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      background: white;
+    }
+    .ai-send-btn {
+      background: var(--fg);
+      color: var(--bg);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: background 0.2s;
+    }
+    .ai-send-btn:hover { background: var(--accent); }
+    .ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .typing-indicator {
+      font-size: 0.8rem; color: var(--muted); font-style: italic;
+    }
   </style>
 </head>
 
@@ -302,10 +282,8 @@
   <main class="pt-24">
     <!-- 1. HERO (Mascota y HUD) -->
     <section id="pet" class="relative min-h-screen flex flex-col justify-between px-6 md:px-12 py-12 overflow-hidden">
-      
       <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
         
-        <!-- Columna Izquierda: Título -->
         <div class="md:col-span-3 text-center md:text-right">
           <h1 class="font-display font-light tracking-tight leading-[0.92] reveal" style="font-size: clamp(2.5rem, 6vw, 5rem);">
             <span class="block">Cuída de</span>
@@ -315,29 +293,16 @@
           <p class="mt-4 text-sm reveal reveal-delay-1" style="color: var(--muted);">Resuelve retos matemáticos para ganar puntos y poder alimentarla o jugar con ella.</p>
         </div>
 
-        <!-- Columna Centro: model-viewer -->
         <div class="md:col-span-6 relative reveal reveal-delay-2">
           <div class="aspect-[4/5] md:aspect-square relative max-w-[500px] mx-auto">
             <div class="model-error-msg" id="modelErrorMsg">
               <div class="font-display text-2xl italic font-light">Cargando mascota...</div>
               <p class="text-sm" style="color: var(--muted);">Asegúrate de que el archivo "modelo.glb" exista.</p>
             </div>
-            <model-viewer 
-              src="modelo.glb" 
-              alt="Mascota 3D interactiva" 
-              auto-rotate 
-              camera-controls 
-              ar
-              autoplay
-              shadow-intensity="0.8"
-              camera-orbit="0deg 80deg 105deg"
-              style="background-color: transparent; width: 100%; height: 100%;"
-              id="modelViewer3D">
-            </model-viewer>
+            <model-viewer src="modelo.glb" alt="Mascota 3D interactiva" auto-rotate camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
           </div>
         </div>
 
-        <!-- Columna Derecha: HUD -->
         <div class="md:col-span-3 reveal reveal-delay-3">
           <div class="pet-hud mx-auto">
             <div class="mb-4">
@@ -350,22 +315,10 @@
               <div class="font-display text-4xl" style="color: var(--accent);" id="petPoints">10</div>
             </div>
 
-            <div class="stat-row">
-              <div class="stat-label">Salud</div>
-              <div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div>
-            </div>
-            <div class="stat-row">
-              <div class="stat-label">Sueño</div>
-              <div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div>
-            </div>
-            <div class="stat-row">
-              <div class="stat-label">Hambre</div>
-              <div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div>
-            </div>
-            <div class="stat-row">
-              <div class="stat-label">Felicidad</div>
-              <div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div>
-            </div>
+            <div class="stat-row"><div class="stat-label">Salud</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div></div>
+            <div class="stat-row"><div class="stat-label">Sueño</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div></div>
+            <div class="stat-row"><div class="stat-label">Hambre</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div></div>
+            <div class="stat-row"><div class="stat-label">Felicidad</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div></div>
 
             <div class="mt-6 grid grid-cols-1 gap-3">
               <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar (-2 pts)</button>
@@ -377,7 +330,7 @@
       </div>
     </section>
 
-    <!-- 2. ZONA APRENDER (Gráficos de Sumas) -->
+    <!-- 2. ZONA APRENDER -->
     <section id="aprender" class="py-24 px-6 md:px-12">
       <div class="max-w-[1200px] mx-auto">
         <div class="flex flex-col items-center mb-16 reveal">
@@ -385,110 +338,67 @@
           <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo sumamos?</h2>
           <p class="mt-4 text-center text-lg" style="color: var(--muted);">Observa cómo se agrupan las cosas para sumar</p>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <!-- Unidades -->
           <div class="learn-card reveal">
             <div class="text-center mb-4">
               <span class="font-display text-3xl font-light" style="color: var(--accent);">Unidades</span>
               <p class="text-sm mt-2" style="color: var(--muted);">Números del 1 al 9</p>
             </div>
             <div class="visual-group">
-              <div class="math-blocks">
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-              </div>
+              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
               <span class="math-symbol">+</span>
-              <div class="math-blocks">
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-              </div>
+              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span></div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks">
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-                <span class="unit-dot"></span>
-              </div>
+              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
             </div>
             <p class="text-center font-bold text-xl">3 + 2 = 5</p>
           </div>
-
-          <!-- Decenas -->
           <div class="learn-card reveal reveal-delay-1">
             <div class="text-center mb-4">
               <span class="font-display text-3xl font-light" style="color: var(--accent-2);">Decenas</span>
               <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 10</p>
             </div>
             <div class="visual-group">
-              <div class="math-blocks">
-                <span class="ten-bar">10</span>
-                <span class="ten-bar">10</span>
-              </div>
+              <div class="math-blocks"><span class="ten-bar">10</span><span class="ten-bar">10</span></div>
               <span class="math-symbol">+</span>
-              <div class="math-blocks">
-                <span class="ten-bar">10</span>
-              </div>
+              <div class="math-blocks"><span class="ten-bar">10</span></div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks">
-                <span class="ten-bar">10</span>
-                <span class="ten-bar">10</span>
-                <span class="ten-bar">10</span>
-              </div>
+              <div class="math-blocks"><span class="ten-bar">10</span><span class="ten-bar">10</span><span class="ten-bar">10</span></div>
             </div>
             <p class="text-center font-bold text-xl">20 + 10 = 30</p>
           </div>
-
-          <!-- Centenas -->
           <div class="learn-card reveal reveal-delay-2">
             <div class="text-center mb-4">
               <span class="font-display text-3xl font-light" style="color: #8a4dff;">Centenas</span>
               <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 100</p>
             </div>
             <div class="visual-group">
-              <div class="math-blocks">
-                <span class="hundred-block">100</span>
-              </div>
+              <div class="math-blocks"><span class="hundred-block">100</span></div>
               <span class="math-symbol">+</span>
-              <div class="math-blocks">
-                <span class="hundred-block">100</span>
-              </div>
+              <div class="math-blocks"><span class="hundred-block">100</span></div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks">
-                <span class="hundred-block">100</span>
-                <span class="hundred-block">100</span>
-              </div>
+              <div class="math-blocks"><span class="hundred-block">100</span><span class="hundred-block">100</span></div>
             </div>
             <p class="text-center font-bold text-xl">100 + 100 = 200</p>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- 3. ZONA MATEMÁTICA (Reto) -->
+    <!-- 3. ZONA MATEMÁTICA -->
     <section id="math" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[1000px] mx-auto">
         <div class="flex flex-col items-center mb-12 reveal">
           <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Reto Matemático</span>
           <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">Resuelve para ganar puntos</h2>
         </div>
-
         <div class="math-zone reveal reveal-delay-1">
-          <!-- Selector de Dificultad -->
           <div class="flex justify-center gap-4 mb-8 flex-wrap">
             <button class="difficulty-btn interactive active" data-diff="1">Unidades</button>
             <button class="difficulty-btn interactive" data-diff="2">Decenas</button>
             <button class="difficulty-btn interactive" data-diff="3">Centenas</button>
           </div>
-
-          <!-- Pregunta -->
           <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
-
-          <!-- Opciones -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer">
             <button class="math-option interactive">8</button>
             <button class="math-option interactive">7</button>
@@ -499,7 +409,7 @@
       </div>
     </section>
 
-    <!-- 4. CONTACTO (Formulario Web3Forms) -->
+    <!-- 4. CONTACTO -->
     <section id="contacto" class="py-24 px-6 md:px-12">
       <div class="max-w-[800px] mx-auto">
         <div class="text-center mb-12 reveal">
@@ -507,14 +417,9 @@
           <h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2>
           <p class="mt-4" style="color: var(--muted);">Déjanos tus comentarios o solicita más información.</p>
         </div>
-
-        <!-- Formulario configurado con la Action y Method de Web3Forms -->
         <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-6 reveal reveal-delay-1">
-          <!-- Clave de acceso proporcionada -->
           <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc">
-          <!-- Honeypot anti-spam -->
           <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="contact-field">
               <input type="text" id="name" name="name" placeholder=" " required>
@@ -549,6 +454,30 @@
   </footer>
 
   <div class="toast" id="toast">¡Mensaje!</div>
+
+  <!-- =========================================
+       ASISTENTE DE IA (Profe IA)
+       ========================================= -->
+  <div class="ai-bubble interactive" id="aiBubble" title="Pregúntale a la Profe IA">
+    🤖
+  </div>
+
+  <div class="ai-chat-window" id="aiChatWindow">
+    <div class="ai-header">
+      <div>
+        <h3 class="font-display text-xl">Profe IA</h3>
+        <p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas y restas</p>
+      </div>
+      <button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio de sumas o restas, ¡pregúntame! Estoy aquí para ayudarte.</div>
+    </div>
+    <div class="ai-input-area">
+      <input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí...">
+      <button id="aiSendBtn" class="ai-send-btn interactive">➤</button>
+    </div>
+  </div>
 
   <script>
     // =========================================
@@ -596,7 +525,6 @@
       modelViewer.addEventListener('load', () => {
         if (modelErrorMsg) modelErrorMsg.classList.add('hide');
         const animations = modelViewer.availableAnimations;
-        
         if (animations.length > 0) {
           idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
           eatAnimName = animations.find(a => a.toLowerCase().includes('eat'));
@@ -604,7 +532,6 @@
           playAnimName = animations.find(a => a.toLowerCase().includes('run'));
           jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
           hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
-          
           if (idleAnimName) modelViewer.animationName = idleAnimName;
         }
       });
@@ -614,7 +541,6 @@
       if (isBusy || !animName) return;
       isBusy = true;
       modelViewer.animationName = animName;
-      
       setTimeout(() => {
         isBusy = false;
         if (idleAnimName) modelViewer.animationName = idleAnimName;
@@ -631,15 +557,12 @@
         if (hitAnimName) playAction(hitAnimName, 2000);
         return;
       }
-      
       petData.points -= 2;
       petData.hunger = Math.min(100, petData.hunger + 15);
       petData.health = Math.min(100, petData.health + 5); 
       petData.sleep = Math.max(0, petData.sleep - 5); 
-      
       if (eatAnimName) playAction(eatAnimName, 3000);
-      updateHUD();
-      savePetData();
+      updateHUD(); savePetData();
       showToast("¡" + (petData.name || "Tu mascota") + " está comiendo!");
     });
 
@@ -650,15 +573,12 @@
         if (hitAnimName) playAction(hitAnimName, 2000);
         return;
       }
-      
       petData.points -= 2;
       petData.happy = Math.min(100, petData.happy + 15);
       petData.hunger = Math.max(0, petData.hunger - 10); 
       petData.sleep = Math.max(0, petData.sleep - 15); 
-      
       if (playAnimName) playAction(playAnimName, 3000);
-      updateHUD();
-      savePetData();
+      updateHUD(); savePetData();
       showToast("¡Jugando con " + (petData.name || "tu mascota") + "!");
     });
 
@@ -669,24 +589,19 @@
         if (hitAnimName) playAction(hitAnimName, 2000);
         return;
       }
-      
       petData.points -= 2;
       petData.sleep = Math.min(100, petData.sleep + 40);
       petData.health = Math.min(100, petData.health + 15); 
       petData.hunger = Math.max(0, petData.hunger - 5); 
-      
       if (sleepAnimName) playAction(sleepAnimName, 4000);
-      updateHUD();
-      savePetData();
+      updateHUD(); savePetData();
       showToast((petData.name || "Tu mascota") + " está descansando...");
     });
 
     // =========================================
     // 4. RETO MATEMÁTICO
     // =========================================
-    let currentDifficulty = 1; 
-    let currentAnswer = 0;
-
+    let currentDifficulty = 1; let currentAnswer = 0;
     const difficultyBtns = document.querySelectorAll('.difficulty-btn');
     const mathQuestionEl = document.getElementById('mathQuestion');
     const mathOptionsContainer = document.getElementById('mathOptionsContainer');
@@ -714,8 +629,7 @@
         currentAnswer = num1 + num2;
         mathQuestionEl.textContent = `${num1} + ${num2} = ?`;
       } else {
-        const big = Math.max(num1, num2);
-        const small = Math.min(num1, num2);
+        const big = Math.max(num1, num2); const small = Math.min(num1, num2);
         currentAnswer = big - small;
         mathQuestionEl.textContent = `${big} - ${small} = ?`;
       }
@@ -723,13 +637,10 @@
       const options = [currentAnswer];
       while (options.length < 4) {
         let wrong = currentAnswer + (Math.floor(Math.random() * 7) - 3); 
-        if (wrong !== currentAnswer && wrong >= 0 && !options.includes(wrong)) {
-          options.push(wrong);
-        }
+        if (wrong !== currentAnswer && wrong >= 0 && !options.includes(wrong)) options.push(wrong);
       }
 
       options.sort(() => Math.random() - 0.5);
-
       mathOptionsContainer.innerHTML = '';
       options.forEach(opt => {
         const btn = document.createElement('button');
@@ -747,9 +658,7 @@
         petData.happy = Math.min(100, petData.happy + 5);
         showToast("¡Correcto! +10 puntos");
         if (jumpAnimName) playAction(jumpAnimName, 2000); 
-        updateHUD();
-        savePetData();
-        
+        updateHUD(); savePetData();
         setTimeout(generateQuestion, 1500);
       } else {
         btn.classList.add('wrong');
@@ -766,30 +675,19 @@
     const submitBtnText = document.getElementById('submitBtnText');
 
     contactForm.addEventListener('submit', async (e) => {
-      // Prevenimos la recarga de la página para mostrar el Toast
       e.preventDefault();
-      
       submitBtnText.textContent = "Enviando...";
       submitBtn.disabled = true;
 
-      // Obtenemos los datos directamente del formulario (que ya tiene el action correcto)
       const formData = new FormData(contactForm);
       const object = Object.fromEntries(formData);
       const json = JSON.stringify(object);
 
       try {
-        // Enviamos por AJAX (fetch) al action del formulario
         const response = await fetch(contactForm.action, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: json
+          method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json
         });
-        
         const result = await response.json();
-        
         if (result.success) {
           showToast("¡Mensaje enviado con éxito! Te contactaremos pronto.");
           contactForm.reset(); 
@@ -797,16 +695,78 @@
           showToast("Hubo un error al enviar. Intenta de nuevo.");
         }
       } catch (error) {
-        // Si algo falla, forzamos el envío normal del formulario
         contactForm.submit();
       }
-
       submitBtnText.textContent = "Enviar mensaje";
       submitBtn.disabled = false;
     });
 
     // =========================================
-    // 6. FUNCIONES GLOBALES (UI)
+    // 6. ASISTENTE DE IA (PUTER.JS)
+    // =========================================
+    const aiBubble = document.getElementById('aiBubble');
+    const aiChatWindow = document.getElementById('aiChatWindow');
+    const closeAiChat = document.getElementById('closeAiChat');
+    const aiMessages = document.getElementById('aiMessages');
+    const aiInput = document.getElementById('aiInput');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+
+    aiBubble.addEventListener('click', () => aiChatWindow.classList.add('open'));
+    closeAiChat.addEventListener('click', () => aiChatWindow.classList.remove('open'));
+
+    async function sendAiMessage() {
+      const userText = aiInput.value.trim();
+      if (!userText) return;
+
+      // Mostrar mensaje del usuario
+      const userMsgEl = document.createElement('div');
+      userMsgEl.className = 'ai-msg user';
+      userMsgEl.textContent = userText;
+      aiMessages.appendChild(userMsgEl);
+
+      aiInput.value = '';
+      aiMessages.scrollTop = aiMessages.scrollHeight;
+
+      // Mostrar indicador de "escribiendo..."
+      const typingEl = document.createElement('div');
+      typingEl.className = 'ai-msg bot typing-indicator';
+      typingEl.textContent = "Escribiendo...";
+      aiMessages.appendChild(typingEl);
+      aiMessages.scrollTop = aiMessages.scrollHeight;
+
+      try {
+        // Instrucciones del sistema para la IA (Prompt Pedagógico)
+        const systemPrompt = "Eres un profesor de matemáticas amigable para niños de 5 a 7 años. Explicas sumas, restas, unidades, decenas y centenas de forma muy sencilla, usando ejemplos visuales y muchos emojis. Tus respuestas deben ser cortas, motivadoras y fáciles de entender para un niño. No uses lenguaje complejo.";
+        
+        // Llamada a la API de IA de Puter.js
+        const response = await puter.ai.chat(userText, { systemPrompt: systemPrompt });
+        
+        // Eliminar indicador de "escribiendo..."
+        typingEl.remove();
+
+        // Mostrar respuesta de la IA
+        const botMsgEl = document.createElement('div');
+        botMsgEl.className = 'ai-msg bot';
+        botMsgEl.textContent = response.message.content || response;
+        aiMessages.appendChild(botMsgEl);
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+
+      } catch (error) {
+        typingEl.remove();
+        const errorMsgEl = document.createElement('div');
+        errorMsgEl.className = 'ai-msg bot';
+        errorMsgEl.textContent = "¡Ups! Se me desconectó el cerebro por un segundo. Intenta preguntarme de nuevo. 🤖";
+        aiMessages.appendChild(errorMsgEl);
+      }
+    }
+
+    aiSendBtn.addEventListener('click', sendAiMessage);
+    aiInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendAiMessage();
+    });
+
+    // =========================================
+    // 7. FUNCIONES GLOBALES (UI)
     // =========================================
     const toast = document.getElementById('toast');
     function showToast(message) { 
