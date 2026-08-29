@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mascota Virtual Matemática</title>
+  
+  <!-- ETIQUETAS PWA PARA EL APK -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f1ebe1">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <title>MateMascota - Aprende Matemáticas</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,241 +27,87 @@
 
   <style>
     :root {
-      --bg: #f1ebe1;
-      --bg-alt: #e8dfd0;
-      --fg: #1a1814;
-      --muted: #8a7e6e;
-      --accent: #ff4d1f;
-      --accent-2: #2a8c4a;
-      --border: rgba(26, 24, 20, 0.14);
-      --card: #ebe3d6;
+      --bg: #f1ebe1; --bg-alt: #e8dfd0; --fg: #1a1814; --muted: #8a7e6e;
+      --accent: #ff4d1f; --accent-2: #2a8c4a; --border: rgba(26, 24, 20, 0.14); --card: #ebe3d6;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'Space Grotesk', sans-serif;
-      overflow-x: hidden;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    @media (min-width: 769px) {
-      body { cursor: none; }
-      a, button, input, textarea, .interactive { cursor: none; }
-    }
-
-    .font-display {
-      font-family: 'Fraunces', serif;
-      font-optical-sizing: auto;
-      font-variation-settings: "opsz" 144;
-    }
-
-    /* Fondo con grano sutil */
-    .grain::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.3;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    /* Scroll Reveal */
+    body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; line-height: 1.5; -webkit-font-smoothing: antialiased; position: relative; z-index: 0; }
+    @media (min-width: 769px) { body { cursor: none; } a, button, input, textarea, .interactive { cursor: none; } }
+    .font-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; font-variation-settings: "opsz" 144; }
+    .grain::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.3; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); z-index: -1; }
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; } .reveal-delay-3 { transition-delay: 0.3s; }
-
-    /* Navegación */
     .nav-link { position: relative; overflow: hidden; display: inline-block; }
     .nav-link span { display: inline-block; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
-
-    /* VISOR 3D */
-    model-viewer {
-      display: block; width: 100%; height: 100%;
-      --poster-color: transparent; cursor: grab;
-    }
+    model-viewer { display: block; width: 100%; height: 100%; --poster-color: transparent; cursor: grab; }
     model-viewer::part(default-progress-bar) { display: none; }
-    
-    .model-error-msg {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; background: var(--bg); color: var(--fg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease;
-    }
+    .model-error-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; padding: 2rem; background: var(--bg); color: var(--fg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease; }
     .model-error-msg.hide { opacity: 0; pointer-events: none; }
-
-    /* INTERFAZ DE MASCOTA VIRTUAL (HUD) */
-    .pet-hud {
-      background: rgba(26, 24, 20, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; color: var(--bg); width: 100%; max-width: 350px;
-    }
+    .pet-hud { background: rgba(26, 24, 20, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; color: var(--bg); width: 100%; max-width: 350px; }
     .stat-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
     .stat-label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); width: 70px; }
     .stat-bar-bg { flex-grow: 1; height: 8px; background: rgba(241, 235, 225, 0.15); border-radius: 999px; overflow: hidden; }
     .stat-bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.7, 0, 0.2, 1); }
     .fill-hunger { background: #ffcc00; } .fill-happy { background: var(--accent-2); } .fill-health { background: #ff4d4d; } .fill-sleep { background: #8a4dff; } 
-
-    .pet-name-input {
-      background: transparent; border: none; border-bottom: 1px solid var(--muted); color: var(--bg); font-family: 'Fraunces', serif; font-size: 1.25rem; width: 100%; outline: none;
-    }
-
-    .pet-action-btn {
-      background: var(--fg); color: var(--bg); padding: 0.7rem 1.2rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.8rem; transition: transform 0.2s, background 0.2s; border: 1px solid transparent; width: 100%; justify-content: center;
-    }
+    .pet-name-input { background: transparent; border: none; border-bottom: 1px solid var(--muted); color: var(--bg); font-family: 'Fraunces', serif; font-size: 1.25rem; width: 100%; outline: none; }
+    .pet-action-btn { background: var(--fg); color: var(--bg); padding: 0.7rem 1.2rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 500; font-size: 0.8rem; transition: transform 0.2s, background 0.2s; border: 1px solid transparent; width: 100%; justify-content: center; }
     .pet-action-btn:hover { background: var(--accent); transform: translateY(-2px); }
     .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: var(--fg); }
-
-    /* ZONA MATEMÁTICA */
     .math-zone { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
     .math-question { font-size: clamp(2rem, 5vw, 4rem); text-align: center; margin-bottom: 2rem; color: var(--fg); }
-    .math-option {
-      background: var(--bg); border: 2px solid var(--border); padding: 1.5rem; border-radius: 12px; font-size: 1.5rem; font-weight: bold; transition: all 0.2s; width: 100%;
-    }
+    .math-option { background: var(--bg); border: 2px solid var(--border); padding: 1.5rem; border-radius: 12px; font-size: 1.5rem; font-weight: bold; transition: all 0.2s; width: 100%; }
     .math-option:hover { border-color: var(--accent); background: #fff; transform: scale(1.05); }
     .math-option.correct { background: var(--accent-2); color: white; border-color: var(--accent-2); }
     .math-option.wrong { background: #ff4d4d; color: white; border-color: #ff4d4d; }
-
     .difficulty-btn { padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--border); background: transparent; font-size: 0.75rem; text-transform: uppercase; }
     .difficulty-btn.active { background: var(--fg); color: var(--bg); }
-
-    /* ZONA APRENDER */
-    .learn-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform 0.3s ease; }
+    .learn-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform 0.3s ease; display: flex; flex-direction: column; }
     .learn-card:hover { transform: translateY(-5px); }
-    .visual-group { display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin: 2rem 0; }
+    .visual-group { display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0 1.5rem 0; }
     .math-blocks { display: flex; flex-direction: column; gap: 4px; align-items: center; }
-    .unit-dot { width: 20px; height: 20px; background-color: var(--accent); border-radius: 50%; display: block; }
-    .ten-bar { width: 120px; height: 20px; background-color: var(--accent-2); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; }
-    .hundred-block { width: 60px; height: 60px; background-color: #8a4dff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold; }
-    .math-symbol { font-size: 2rem; color: var(--muted); font-weight: 300; }
-
-    /* FORMULARIO DE CONTACTO */
+    .unit-dot { width: 16px; height: 16px; background-color: var(--accent); border-radius: 50%; display: block; }
+    .group-box { border: 2px dashed var(--muted); padding: 0.5rem; border-radius: 12px; display: flex; gap: 4px; align-items: center; justify-content: center; min-height: 40px; }
+    .math-symbol { font-size: 1.5rem; color: var(--muted); font-weight: 300; }
     .contact-field { position: relative; border-bottom: 1px solid var(--border); transition: border-color 0.4s ease; }
     .contact-field:focus-within { border-color: var(--accent); }
     .contact-field input, .contact-field textarea { background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 1.125rem; color: var(--fg); resize: none; }
     .contact-field label { position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s cubic-bezier(0.7, 0, 0.2, 1); pointer-events: none; font-size: 1.125rem; }
     .contact-field input:focus + label, .contact-field input:not(:placeholder-shown) + label, .contact-field textarea:focus + label, .contact-field textarea:not(:placeholder-shown) + label { top: 0; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
-
     .btn-primary { position: relative; overflow: hidden; background: var(--fg); color: var(--bg); padding: 1.25rem 2.5rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 500; transition: color 0.4s ease; isolation: isolate; border: none; }
     .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateY(101%); transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); z-index: -1; }
     .btn-primary:hover::before { transform: translateY(0); }
     .btn-primary .arrow { transition: transform 0.4s ease; }
     .btn-primary:hover .arrow { transform: translateX(4px); }
-
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--fg); color: var(--bg); padding: 1rem 1.75rem; border-radius: 999px; font-size: 1rem; z-index: 10000; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); display: flex; align-items: center; gap: 0.6rem; }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast::before { content: ''; width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%; }
-
-    /* =========================================
-       ASISTENTE DE IA (CHAT)
-       ========================================= */
-    .ai-bubble {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 60px;
-      height: 60px;
-      background: var(--accent);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      cursor: pointer;
-      z-index: 9998;
-      box-shadow: 0 4px 15px rgba(255, 77, 31, 0.4);
-      transition: transform 0.3s ease;
-    }
+    .ai-bubble { position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; z-index: 9998; box-shadow: 0 4px 15px rgba(255, 77, 31, 0.4); transition: transform 0.3s ease; }
     .ai-bubble:hover { transform: scale(1.1) rotate(10deg); }
-
-    .ai-chat-window {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      height: 100%;
-      max-width: 400px;
-      background: var(--bg);
-      box-shadow: -5px 0 20px rgba(0,0,0,0.1);
-      z-index: 9999;
-      transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      border-left: 1px solid var(--border);
-    }
+    .ai-chat-window { position: fixed; bottom: 0; right: 0; width: 100%; height: 100%; max-width: 400px; background: var(--bg); box-shadow: -5px 0 20px rgba(0,0,0,0.1); z-index: 9999; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1); display: flex; flex-direction: column; border-left: 1px solid var(--border); }
     .ai-chat-window.open { transform: translateX(0); }
-
-    .ai-header {
-      padding: 1.5rem;
-      background: var(--fg);
-      color: var(--bg);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .ai-messages {
-      flex-grow: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .ai-msg {
-      max-width: 80%;
-      padding: 1rem;
-      border-radius: 16px;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-    .ai-msg.user {
-      align-self: flex-end;
-      background: var(--accent);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-    .ai-msg.bot {
-      align-self: flex-start;
-      background: var(--card);
-      color: var(--fg);
-      border-bottom-left-radius: 4px;
-    }
-
-    .ai-input-area {
-      padding: 1rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 0.5rem;
-    }
-    .ai-input {
-      flex-grow: 1;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      outline: none;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      background: white;
-    }
-    .ai-send-btn {
-      background: var(--fg);
-      color: var(--bg);
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      transition: background 0.2s;
-    }
+    .ai-header { padding: 1.5rem; background: var(--fg); color: var(--bg); display: flex; justify-content: space-between; align-items: center; }
+    .ai-messages { flex-grow: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .ai-msg { max-width: 80%; padding: 1rem; border-radius: 16px; font-size: 0.95rem; line-height: 1.4; }
+    .ai-msg.user { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+    .ai-msg.bot { align-self: flex-start; background: var(--card); color: var(--fg); border-bottom-left-radius: 4px; }
+    .ai-input-area { padding: 1rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
+    .ai-input { flex-grow: 1; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 999px; outline: none; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; background: white; }
+    .ai-send-btn { background: var(--fg); color: var(--bg); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
     .ai-send-btn:hover { background: var(--accent); }
-    .ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .typing-indicator {
-      font-size: 0.8rem; color: var(--muted); font-style: italic;
-    }
+    .typing-indicator { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+    
+    /* MINIJUEGO CSS */
+    .game-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; }
+    #gameCanvas { display: block; width: 100%; height: auto; background: #87CEEB; border-radius: 16px; border: 4px solid var(--fg); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+    .mobile-controls { display: flex; justify-content: space-between; padding: 1rem 0; }
+    .game-btn { background: var(--fg); color: var(--bg); border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; user-select: none; touch-action: manipulation; }
+    .game-btn:active { background: var(--accent); transform: scale(0.95); }
+    .jump-btn { width: 80px; height: 80px; font-size: 1rem; font-weight: bold; }
+    .game-instructions { color: var(--muted); text-align: center; margin-top: 1rem; font-size: 0.9rem; }
   </style>
 </head>
 
@@ -271,11 +123,9 @@
         <li><a href="#pet" class="nav-link interactive"><span>Mascota</span><span>Mascota</span></a></li>
         <li><a href="#aprender" class="nav-link interactive"><span>Aprender</span><span>Aprender</span></a></li>
         <li><a href="#math" class="nav-link interactive"><span>Reto</span><span>Reto</span></a></li>
+        <li><a href="#minijuego" class="nav-link interactive"><span>Minijuego</span><span>Minijuego</span></a></li>
         <li><a href="#contacto" class="nav-link interactive"><span>Contacto</span><span>Contacto</span></a></li>
       </ul>
-      <div class="hidden md:flex items-center gap-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
-        <span class="px-3 py-1 rounded-full" style="border: 1px solid var(--border);">Aprende y Juega</span>
-      </div>
     </nav>
   </header>
 
@@ -283,7 +133,6 @@
     <!-- 1. HERO (Mascota y HUD) -->
     <section id="pet" class="relative min-h-screen flex flex-col justify-between px-6 md:px-12 py-12 overflow-hidden">
       <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-        
         <div class="md:col-span-3 text-center md:text-right">
           <h1 class="font-display font-light tracking-tight leading-[0.92] reveal" style="font-size: clamp(2.5rem, 6vw, 5rem);">
             <span class="block">Cuída de</span>
@@ -309,17 +158,14 @@
               <div class="text-xs uppercase tracking-widest mb-1" style="color: var(--muted);">Nombre de tu mascota</div>
               <input type="text" id="petNameInput" class="pet-name-input" placeholder="Escribe un nombre..." maxlength="12">
             </div>
-            
             <div class="flex justify-between items-baseline mb-4 mt-6">
               <div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Puntos</div>
               <div class="font-display text-4xl" style="color: var(--accent);" id="petPoints">10</div>
             </div>
-
             <div class="stat-row"><div class="stat-label">Salud</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div></div>
             <div class="stat-row"><div class="stat-label">Sueño</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div></div>
             <div class="stat-row"><div class="stat-label">Hambre</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div></div>
             <div class="stat-row"><div class="stat-label">Felicidad</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div></div>
-
             <div class="mt-6 grid grid-cols-1 gap-3">
               <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar (-2 pts)</button>
               <button class="pet-action-btn interactive" id="btnPlay">🎮 Jugar (-2 pts)</button>
@@ -332,54 +178,64 @@
 
     <!-- 2. ZONA APRENDER -->
     <section id="aprender" class="py-24 px-6 md:px-12">
-      <div class="max-w-[1200px] mx-auto">
+      <div class="max-w-[1400px] mx-auto">
         <div class="flex flex-col items-center mb-16 reveal">
           <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Aprender</span>
-          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo sumamos?</h2>
-          <p class="mt-4 text-center text-lg" style="color: var(--muted);">Observa cómo se agrupan las cosas para sumar</p>
+          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div class="learn-card reveal">
-            <div class="text-center mb-4">
-              <span class="font-display text-3xl font-light" style="color: var(--accent);">Unidades</span>
-              <p class="text-sm mt-2" style="color: var(--muted);">Números del 1 al 9</p>
-            </div>
-            <div class="visual-group">
-              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+            <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent);">Sumar</span></div>
+            <div class="visual-group" style="flex-direction: row; align-items: center;">
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
               <span class="math-symbol">+</span>
-              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span></div>
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
             </div>
-            <p class="text-center font-bold text-xl">3 + 2 = 5</p>
+            <p class="text-center font-bold text-xl mt-auto">3 + 2 = 5</p>
           </div>
           <div class="learn-card reveal reveal-delay-1">
-            <div class="text-center mb-4">
-              <span class="font-display text-3xl font-light" style="color: var(--accent-2);">Decenas</span>
-              <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 10</p>
-            </div>
-            <div class="visual-group">
-              <div class="math-blocks"><span class="ten-bar">10</span><span class="ten-bar">10</span></div>
-              <span class="math-symbol">+</span>
-              <div class="math-blocks"><span class="ten-bar">10</span></div>
+            <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent-2);">Restar</span></div>
+            <div class="visual-group" style="flex-direction: row; align-items: center;">
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+              <span class="math-symbol">-</span>
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks"><span class="ten-bar">10</span><span class="ten-bar">10</span><span class="ten-bar">10</span></div>
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
             </div>
-            <p class="text-center font-bold text-xl">20 + 10 = 30</p>
+            <p class="text-center font-bold text-xl mt-auto">4 - 2 = 2</p>
           </div>
           <div class="learn-card reveal reveal-delay-2">
-            <div class="text-center mb-4">
-              <span class="font-display text-3xl font-light" style="color: #8a4dff;">Centenas</span>
-              <p class="text-sm mt-2" style="color: var(--muted);">Grupos de 100</p>
-            </div>
-            <div class="visual-group">
-              <div class="math-blocks"><span class="hundred-block">100</span></div>
-              <span class="math-symbol">+</span>
-              <div class="math-blocks"><span class="hundred-block">100</span></div>
+            <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #0066cc;">Multiplicar</span></div>
+            <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div class="group-box"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div>
+                <span class="math-symbol">×</span>
+                <span class="font-display text-3xl font-light">2</span>
+              </div>
               <span class="math-symbol">=</span>
-              <div class="math-blocks"><span class="hundred-block">100</span><span class="hundred-block">100</span></div>
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;">
+                <span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span>
+              </div>
             </div>
-            <p class="text-center font-bold text-xl">100 + 100 = 200</p>
+            <p class="text-center font-bold text-xl mt-4">3 × 2 = 6</p>
+          </div>
+          <div class="learn-card reveal reveal-delay-3">
+            <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #cc0066;">Dividir</span></div>
+            <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
+              <div class="math-blocks" style="flex-direction: row; gap: 4px;">
+                <span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span>
+              </div>
+              <span class="math-symbol">÷</span>
+              <span class="font-display text-3xl font-light">2</span>
+              <span class="math-symbol">=</span>
+              <div style="display: flex; gap: 1rem;">
+                <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
+                <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
+              </div>
+            </div>
+            <p class="text-center font-bold text-xl mt-4">6 ÷ 2 = 3</p>
           </div>
         </div>
       </div>
@@ -394,28 +250,48 @@
         </div>
         <div class="math-zone reveal reveal-delay-1">
           <div class="flex justify-center gap-4 mb-8 flex-wrap">
-            <button class="difficulty-btn interactive active" data-diff="1">Unidades</button>
-            <button class="difficulty-btn interactive" data-diff="2">Decenas</button>
-            <button class="difficulty-btn interactive" data-diff="3">Centenas</button>
+            <button class="difficulty-btn interactive active" data-diff="1">Sumas y Restas</button>
+            <button class="difficulty-btn interactive" data-diff="2">Multiplicar</button>
+            <button class="difficulty-btn interactive" data-diff="3">Dividir</button>
           </div>
           <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer">
-            <button class="math-option interactive">8</button>
-            <button class="math-option interactive">7</button>
-            <button class="math-option interactive">9</button>
-            <button class="math-option interactive">6</button>
-          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer"></div>
         </div>
       </div>
     </section>
 
-    <!-- 4. CONTACTO -->
-    <section id="contacto" class="py-24 px-6 md:px-12">
+    <!-- 4. MINIJUEGO -->
+    <section id="minijuego" class="py-24 px-6 md:px-12">
+      <div class="max-w-[1000px] mx-auto">
+        <div class="flex flex-col items-center mb-12 reveal">
+          <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Minijuego</span>
+          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">Salta y Suma</h2>
+          <p class="mt-4 text-center" style="color: var(--muted);">Mueve a tu personaje y recolecta monedas. ¡Cada moneda te da +5 puntos para tu mascota!</p>
+        </div>
+        
+        <div class="game-container reveal reveal-delay-1">
+          <canvas id="gameCanvas" width="800" height="400"></canvas>
+          
+          <!-- Controles Móviles -->
+          <div class="mobile-controls">
+            <div class="flex gap-4">
+              <button class="game-btn interactive" id="btnLeft">◀</button>
+              <button class="game-btn interactive" id="btnRight">▶</button>
+            </div>
+            <button class="game-btn jump-btn interactive" id="btnJump">🆙 Saltar</button>
+          </div>
+          
+          <p class="game-instructions">En PC usa: ← → para moverte y Espacio para saltar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CONTACTO -->
+    <section id="contacto" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[800px] mx-auto">
         <div class="text-center mb-12 reveal">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span>
           <h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2>
-          <p class="mt-4" style="color: var(--muted);">Déjanos tus comentarios o solicita más información.</p>
         </div>
         <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-6 reveal reveal-delay-1">
           <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc">
@@ -445,7 +321,6 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);">
     <div class="max-w-[1800px] mx-auto text-center">
       <p class="font-display text-xl italic font-light">MateMascota</p>
@@ -455,23 +330,18 @@
 
   <div class="toast" id="toast">¡Mensaje!</div>
 
-  <!-- =========================================
-       ASISTENTE DE IA (Profe IA)
-       ========================================= -->
-  <div class="ai-bubble interactive" id="aiBubble" title="Pregúntale a la Profe IA">
-    🤖
-  </div>
-
+  <!-- ASISTENTE DE IA -->
+  <div class="ai-bubble interactive" id="aiBubble" title="Pregúntale a la Profe IA">🤖</div>
   <div class="ai-chat-window" id="aiChatWindow">
     <div class="ai-header">
       <div>
         <h3 class="font-display text-xl">Profe IA</h3>
-        <p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas y restas</p>
+        <p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas, restas, multiplicar o dividir</p>
       </div>
       <button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button>
     </div>
     <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio de sumas o restas, ¡pregúntame! Estoy aquí para ayudarte.</div>
+      <div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio, ¡pregúntame! Estoy aquí para ayudarte.</div>
     </div>
     <div class="ai-input-area">
       <input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí...">
@@ -480,308 +350,404 @@
   </div>
 
   <script>
-    // =========================================
-    // 1. SISTEMA DE MASCOTA Y BASE DE DATOS
-    // =========================================
-    let petData = JSON.parse(localStorage.getItem('matePetData')) || {
-      name: '', points: 10, hunger: 80, happy: 80, health: 100, sleep: 100
-    };
+    try {
+      // 0. REVELAR ELEMENTOS
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+      }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      setTimeout(() => { document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')); }, 2000);
 
-    const petNameInput = document.getElementById('petNameInput');
-    const petPointsEl = document.getElementById('petPoints');
-    const hungerBar = document.getElementById('hungerBar');
-    const happyBar = document.getElementById('happyBar');
-    const healthBar = document.getElementById('healthBar');
-    const sleepBar = document.getElementById('sleepBar');
+      // 1. SISTEMA DE MASCOTA Y BASE DE DATOS
+      let petData = { name: '', points: 10, hunger: 80, happy: 80, health: 100, sleep: 100 };
+      try { const savedData = localStorage.getItem('matePetData'); if (savedData) petData = JSON.parse(savedData); } catch (e) {}
+      function savePetData() { try { localStorage.setItem('matePetData', JSON.stringify(petData)); } catch (e) {} }
 
-    if (petData.name) petNameInput.value = petData.name;
+      const petNameInput = document.getElementById('petNameInput');
+      const petPointsEl = document.getElementById('petPoints');
+      const hungerBar = document.getElementById('hungerBar');
+      const happyBar = document.getElementById('happyBar');
+      const healthBar = document.getElementById('healthBar');
+      const sleepBar = document.getElementById('sleepBar');
 
-    petNameInput.addEventListener('input', (e) => {
-      petData.name = e.target.value;
-      savePetData();
-    });
-
-    function updateHUD() {
-      petPointsEl.textContent = petData.points;
-      hungerBar.style.width = petData.hunger + '%';
-      happyBar.style.width = petData.happy + '%';
-      healthBar.style.width = petData.health + '%';
-      sleepBar.style.width = petData.sleep + '%';
-    }
-
-    function savePetData() {
-      localStorage.setItem('matePetData', JSON.stringify(petData));
-    }
-
-    // =========================================
-    // 2. LÓGICA DE ANIMACIONES (MODEL-VIEWER)
-    // =========================================
-    const modelViewer = document.getElementById('modelViewer3D');
-    const modelErrorMsg = document.getElementById('modelErrorMsg');
-    let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName;
-    let isBusy = false;
-
-    if (modelViewer) {
-      modelViewer.addEventListener('load', () => {
-        if (modelErrorMsg) modelErrorMsg.classList.add('hide');
-        const animations = modelViewer.availableAnimations;
-        if (animations.length > 0) {
-          idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
-          eatAnimName = animations.find(a => a.toLowerCase().includes('eat'));
-          sleepAnimName = animations.find(a => a.toLowerCase().includes('sleep'));
-          playAnimName = animations.find(a => a.toLowerCase().includes('run'));
-          jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
-          hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
-          if (idleAnimName) modelViewer.animationName = idleAnimName;
-        }
-      });
-    }
-
-    function playAction(animName, duration) {
-      if (isBusy || !animName) return;
-      isBusy = true;
-      modelViewer.animationName = animName;
-      setTimeout(() => {
-        isBusy = false;
-        if (idleAnimName) modelViewer.animationName = idleAnimName;
-      }, duration);
-    }
-
-    // =========================================
-    // 3. ACCIONES DE LA MASCOTA (CUESTAN PUNTOS)
-    // =========================================
-    document.getElementById('btnFeed').addEventListener('click', () => {
-      if (isBusy) return;
-      if (petData.points < 2) {
-        showToast("¡Necesitas más puntos! Resuelve un reto.");
-        if (hitAnimName) playAction(hitAnimName, 2000);
-        return;
-      }
-      petData.points -= 2;
-      petData.hunger = Math.min(100, petData.hunger + 15);
-      petData.health = Math.min(100, petData.health + 5); 
-      petData.sleep = Math.max(0, petData.sleep - 5); 
-      if (eatAnimName) playAction(eatAnimName, 3000);
-      updateHUD(); savePetData();
-      showToast("¡" + (petData.name || "Tu mascota") + " está comiendo!");
-    });
-
-    document.getElementById('btnPlay').addEventListener('click', () => {
-      if (isBusy) return;
-      if (petData.points < 2) {
-        showToast("¡Necesitas más puntos! Resuelve un reto.");
-        if (hitAnimName) playAction(hitAnimName, 2000);
-        return;
-      }
-      petData.points -= 2;
-      petData.happy = Math.min(100, petData.happy + 15);
-      petData.hunger = Math.max(0, petData.hunger - 10); 
-      petData.sleep = Math.max(0, petData.sleep - 15); 
-      if (playAnimName) playAction(playAnimName, 3000);
-      updateHUD(); savePetData();
-      showToast("¡Jugando con " + (petData.name || "tu mascota") + "!");
-    });
-
-    document.getElementById('btnSleep').addEventListener('click', () => {
-      if (isBusy) return;
-      if (petData.points < 2) {
-        showToast("¡Necesitas más puntos! Resuelve un reto.");
-        if (hitAnimName) playAction(hitAnimName, 2000);
-        return;
-      }
-      petData.points -= 2;
-      petData.sleep = Math.min(100, petData.sleep + 40);
-      petData.health = Math.min(100, petData.health + 15); 
-      petData.hunger = Math.max(0, petData.hunger - 5); 
-      if (sleepAnimName) playAction(sleepAnimName, 4000);
-      updateHUD(); savePetData();
-      showToast((petData.name || "Tu mascota") + " está descansando...");
-    });
-
-    // =========================================
-    // 4. RETO MATEMÁTICO
-    // =========================================
-    let currentDifficulty = 1; let currentAnswer = 0;
-    const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-    const mathQuestionEl = document.getElementById('mathQuestion');
-    const mathOptionsContainer = document.getElementById('mathOptionsContainer');
-
-    difficultyBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        difficultyBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentDifficulty = parseInt(btn.dataset.diff);
-        generateQuestion();
-      });
-    });
-
-    function generateQuestion() {
-      let max, min;
-      if (currentDifficulty === 1) { max = 9; min = 1; }
-      else if (currentDifficulty === 2) { max = 99; min = 10; }
-      else { max = 999; min = 100; }
-
-      const num1 = Math.floor(Math.random() * (max - min + 1)) + min;
-      const num2 = Math.floor(Math.random() * (max - min + 1)) + min;
-      const isSum = Math.random() > 0.5;
-
-      if (isSum) {
-        currentAnswer = num1 + num2;
-        mathQuestionEl.textContent = `${num1} + ${num2} = ?`;
-      } else {
-        const big = Math.max(num1, num2); const small = Math.min(num1, num2);
-        currentAnswer = big - small;
-        mathQuestionEl.textContent = `${big} - ${small} = ?`;
+      if (petNameInput) {
+        if (petData.name) petNameInput.value = petData.name;
+        petNameInput.addEventListener('input', (e) => { petData.name = e.target.value; savePetData(); });
       }
 
-      const options = [currentAnswer];
-      while (options.length < 4) {
-        let wrong = currentAnswer + (Math.floor(Math.random() * 7) - 3); 
-        if (wrong !== currentAnswer && wrong >= 0 && !options.includes(wrong)) options.push(wrong);
+      function updateHUD() {
+        if (petPointsEl) petPointsEl.textContent = petData.points;
+        if (hungerBar) hungerBar.style.width = petData.hunger + '%';
+        if (happyBar) happyBar.style.width = petData.happy + '%';
+        if (healthBar) healthBar.style.width = petData.health + '%';
+        if (sleepBar) sleepBar.style.width = petData.sleep + '%';
       }
 
-      options.sort(() => Math.random() - 0.5);
-      mathOptionsContainer.innerHTML = '';
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'math-option interactive';
-        btn.textContent = opt;
-        btn.addEventListener('click', () => checkAnswer(opt, btn));
-        mathOptionsContainer.appendChild(btn);
-      });
-    }
+      // 2. LÓGICA DE ANIMACIONES (MODEL-VIEWER)
+      const modelViewer = document.getElementById('modelViewer3D');
+      const modelErrorMsg = document.getElementById('modelErrorMsg');
+      let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName;
+      let isBusy = false;
 
-    function checkAnswer(selected, btn) {
-      if (selected === currentAnswer) {
-        btn.classList.add('correct');
-        petData.points += 10;
-        petData.happy = Math.min(100, petData.happy + 5);
-        showToast("¡Correcto! +10 puntos");
-        if (jumpAnimName) playAction(jumpAnimName, 2000); 
-        updateHUD(); savePetData();
-        setTimeout(generateQuestion, 1500);
-      } else {
-        btn.classList.add('wrong');
-        showToast("¡Casi! Inténtalo de nuevo.");
-        if (hitAnimName) playAction(hitAnimName, 1500); 
-      }
-    }
-
-    // =========================================
-    // 5. FORMULARIO DE CONTACTO (WEB3FORMS)
-    // =========================================
-    const contactForm = document.getElementById('contactForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const submitBtnText = document.getElementById('submitBtnText');
-
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtnText.textContent = "Enviando...";
-      submitBtn.disabled = true;
-
-      const formData = new FormData(contactForm);
-      const object = Object.fromEntries(formData);
-      const json = JSON.stringify(object);
-
-      try {
-        const response = await fetch(contactForm.action, {
-          method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json
+      if (modelViewer) {
+        modelViewer.addEventListener('load', () => {
+          if (modelErrorMsg) modelErrorMsg.classList.add('hide');
+          const animations = modelViewer.availableAnimations;
+          if (animations && animations.length > 0) {
+            idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
+            eatAnimName = animations.find(a => a.toLowerCase().includes('eat'));
+            sleepAnimName = animations.find(a => a.toLowerCase().includes('sleep'));
+            playAnimName = animations.find(a => a.toLowerCase().includes('run'));
+            jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
+            hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
+            if (idleAnimName) modelViewer.animationName = idleAnimName;
+          }
         });
-        const result = await response.json();
-        if (result.success) {
-          showToast("¡Mensaje enviado con éxito! Te contactaremos pronto.");
-          contactForm.reset(); 
-        } else {
-          showToast("Hubo un error al enviar. Intenta de nuevo.");
+      }
+
+      function playAction(animName, duration) {
+        if (isBusy || !animName || !modelViewer) return;
+        isBusy = true;
+        modelViewer.animationName = animName;
+        setTimeout(() => { isBusy = false; if (idleAnimName && modelViewer) modelViewer.animationName = idleAnimName; }, duration);
+      }
+
+      // 3. ACCIONES DE LA MASCOTA
+      const btnFeed = document.getElementById('btnFeed');
+      const btnPlay = document.getElementById('btnPlay');
+      const btnSleep = document.getElementById('btnSleep');
+
+      if (btnFeed) btnFeed.addEventListener('click', () => {
+        if (isBusy) return;
+        if (petData.points < 2) { showToast("¡Necesitas más puntos! Resuelve un reto."); if (hitAnimName) playAction(hitAnimName, 2000); return; }
+        petData.points -= 2; petData.hunger = Math.min(100, petData.hunger + 15); petData.health = Math.min(100, petData.health + 5); petData.sleep = Math.max(0, petData.sleep - 5); 
+        if (eatAnimName) playAction(eatAnimName, 3000);
+        updateHUD(); savePetData(); showToast("¡" + (petData.name || "Tu mascota") + " está comiendo!");
+      });
+
+      if (btnPlay) btnPlay.addEventListener('click', () => {
+        if (isBusy) return;
+        if (petData.points < 2) { showToast("¡Necesitas más puntos! Resuelve un reto."); if (hitAnimName) playAction(hitAnimName, 2000); return; }
+        petData.points -= 2; petData.happy = Math.min(100, petData.happy + 15); petData.hunger = Math.max(0, petData.hunger - 10); petData.sleep = Math.max(0, petData.sleep - 15); 
+        if (playAnimName) playAction(playAnimName, 3000);
+        updateHUD(); savePetData(); showToast("¡Jugando con " + (petData.name || "tu mascota") + "!");
+      });
+
+      if (btnSleep) btnSleep.addEventListener('click', () => {
+        if (isBusy) return;
+        if (petData.points < 2) { showToast("¡Necesitas más puntos! Resuelve un reto."); if (hitAnimName) playAction(hitAnimName, 2000); return; }
+        petData.points -= 2; petData.sleep = Math.min(100, petData.sleep + 40); petData.health = Math.min(100, petData.health + 15); petData.hunger = Math.max(0, petData.hunger - 5); 
+        if (sleepAnimName) playAction(sleepAnimName, 4000);
+        updateHUD(); savePetData(); showToast((petData.name || "Tu mascota") + " está descansando...");
+      });
+
+      // 4. RETO MATEMÁTICO
+      let currentDifficulty = 1; let currentAnswer = 0;
+      const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+      const mathQuestionEl = document.getElementById('mathQuestion');
+      const mathOptionsContainer = document.getElementById('mathOptionsContainer');
+
+      difficultyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          difficultyBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentDifficulty = parseInt(btn.dataset.diff);
+          generateQuestion();
+        });
+      });
+
+      function generateQuestion() {
+        if (!mathQuestionEl || !mathOptionsContainer) return;
+        let num1, num2, big, small;
+        if (currentDifficulty === 1) { 
+          num1 = Math.floor(Math.random() * 10) + 1; num2 = Math.floor(Math.random() * 10) + 1;
+          if (Math.random() > 0.5) { currentAnswer = num1 + num2; mathQuestionEl.textContent = `${num1} + ${num2} = ?`; } 
+          else { big = Math.max(num1, num2); small = Math.min(num1, num2); currentAnswer = big - small; mathQuestionEl.textContent = `${big} - ${small} = ?`; }
+        } else if (currentDifficulty === 2) { 
+          num1 = Math.floor(Math.random() * 5) + 2; num2 = Math.floor(Math.random() * 5) + 2; 
+          currentAnswer = num1 * num2; mathQuestionEl.textContent = `${num1} × ${num2} = ?`;
+        } else { 
+          num2 = Math.floor(Math.random() * 4) + 2; const result = Math.floor(Math.random() * 5) + 2; num1 = num2 * result; 
+          currentAnswer = result; mathQuestionEl.textContent = `${num1} ÷ ${num2} = ?`;
         }
-      } catch (error) {
-        contactForm.submit();
+        const options = [currentAnswer];
+        while (options.length < 4) {
+          let wrong = currentAnswer + (Math.floor(Math.random() * 7) - 3); 
+          if (wrong !== currentAnswer && wrong >= 0 && !options.includes(wrong)) options.push(wrong);
+        }
+        options.sort(() => Math.random() - 0.5);
+        mathOptionsContainer.innerHTML = '';
+        options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'math-option interactive'; btn.textContent = opt;
+          btn.addEventListener('click', () => checkAnswer(opt, btn));
+          mathOptionsContainer.appendChild(btn);
+        });
       }
-      submitBtnText.textContent = "Enviar mensaje";
-      submitBtn.disabled = false;
-    });
 
-    // =========================================
-    // 6. ASISTENTE DE IA (PUTER.JS)
-    // =========================================
-    const aiBubble = document.getElementById('aiBubble');
-    const aiChatWindow = document.getElementById('aiChatWindow');
-    const closeAiChat = document.getElementById('closeAiChat');
-    const aiMessages = document.getElementById('aiMessages');
-    const aiInput = document.getElementById('aiInput');
-    const aiSendBtn = document.getElementById('aiSendBtn');
-
-    aiBubble.addEventListener('click', () => aiChatWindow.classList.add('open'));
-    closeAiChat.addEventListener('click', () => aiChatWindow.classList.remove('open'));
-
-    async function sendAiMessage() {
-      const userText = aiInput.value.trim();
-      if (!userText) return;
-
-      // Mostrar mensaje del usuario
-      const userMsgEl = document.createElement('div');
-      userMsgEl.className = 'ai-msg user';
-      userMsgEl.textContent = userText;
-      aiMessages.appendChild(userMsgEl);
-
-      aiInput.value = '';
-      aiMessages.scrollTop = aiMessages.scrollHeight;
-
-      // Mostrar indicador de "escribiendo..."
-      const typingEl = document.createElement('div');
-      typingEl.className = 'ai-msg bot typing-indicator';
-      typingEl.textContent = "Escribiendo...";
-      aiMessages.appendChild(typingEl);
-      aiMessages.scrollTop = aiMessages.scrollHeight;
-
-      try {
-        // Instrucciones del sistema para la IA (Prompt Pedagógico)
-        const systemPrompt = "Eres un profesor de matemáticas amigable para niños de 5 a 7 años. Explicas sumas, restas, unidades, decenas y centenas de forma muy sencilla, usando ejemplos visuales y muchos emojis. Tus respuestas deben ser cortas, motivadoras y fáciles de entender para un niño. No uses lenguaje complejo.";
-        
-        // Llamada a la API de IA de Puter.js
-        const response = await puter.ai.chat(userText, { systemPrompt: systemPrompt });
-        
-        // Eliminar indicador de "escribiendo..."
-        typingEl.remove();
-
-        // Mostrar respuesta de la IA
-        const botMsgEl = document.createElement('div');
-        botMsgEl.className = 'ai-msg bot';
-        botMsgEl.textContent = response.message.content || response;
-        aiMessages.appendChild(botMsgEl);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-
-      } catch (error) {
-        typingEl.remove();
-        const errorMsgEl = document.createElement('div');
-        errorMsgEl.className = 'ai-msg bot';
-        errorMsgEl.textContent = "¡Ups! Se me desconectó el cerebro por un segundo. Intenta preguntarme de nuevo. 🤖";
-        aiMessages.appendChild(errorMsgEl);
+      function checkAnswer(selected, btn) {
+        if (selected === currentAnswer) {
+          btn.classList.add('correct');
+          petData.points += 10; petData.happy = Math.min(100, petData.happy + 5);
+          showToast("¡Correcto! +10 puntos");
+          if (jumpAnimName) playAction(jumpAnimName, 2000); 
+          updateHUD(); savePetData();
+          setTimeout(generateQuestion, 1500);
+        } else {
+          btn.classList.add('wrong');
+          showToast("¡Casi! Inténtalo de nuevo.");
+          if (hitAnimName) playAction(hitAnimName, 1500); 
+        }
       }
+
+      // 5. FORMULARIO DE CONTACTO
+      const contactForm = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (submitBtnText) submitBtnText.textContent = "Enviando...";
+          if (submitBtn) submitBtn.disabled = true;
+          const formData = new FormData(contactForm);
+          const object = Object.fromEntries(formData);
+          const json = JSON.stringify(object);
+          try {
+            const response = await fetch(contactForm.action, {
+              method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json
+            });
+            const result = await response.json();
+            if (result.success) { showToast("¡Mensaje enviado con éxito! Te contactaremos pronto."); contactForm.reset(); } 
+            else { showToast("Hubo un error al enviar. Intenta de nuevo."); }
+          } catch (error) { contactForm.submit(); }
+          if (submitBtnText) submitBtnText.textContent = "Enviar mensaje";
+          if (submitBtn) submitBtn.disabled = false;
+        });
+      }
+
+      // 6. ASISTENTE DE IA (PUTER.JS)
+      const aiBubble = document.getElementById('aiBubble');
+      const aiChatWindow = document.getElementById('aiChatWindow');
+      const closeAiChat = document.getElementById('closeAiChat');
+      const aiMessages = document.getElementById('aiMessages');
+      const aiInput = document.getElementById('aiInput');
+      const aiSendBtn = document.getElementById('aiSendBtn');
+      if (aiBubble) aiBubble.addEventListener('click', () => aiChatWindow.classList.add('open'));
+      if (closeAiChat) closeAiChat.addEventListener('click', () => aiChatWindow.classList.remove('open'));
+
+      async function sendAiMessage() {
+        if (!aiInput || !aiMessages) return;
+        const userText = aiInput.value.trim();
+        if (!userText) return;
+        const userMsgEl = document.createElement('div');
+        userMsgEl.className = 'ai-msg user'; userMsgEl.textContent = userText;
+        aiMessages.appendChild(userMsgEl);
+        aiInput.value = ''; aiMessages.scrollTop = aiMessages.scrollHeight;
+        const typingEl = document.createElement('div');
+        typingEl.className = 'ai-msg bot typing-indicator'; typingEl.textContent = "Escribiendo...";
+        aiMessages.appendChild(typingEl); aiMessages.scrollTop = aiMessages.scrollHeight;
+        try {
+          const systemPrompt = "Eres un profesor de matemáticas amigable para niños de 5 a 7 años. Explicas sumas, restas, multiplicaciones y divisiones de forma muy sencilla, usando ejemplos visuales y muchos emojis. Tus respuestas deben ser cortas y motivadoras.";
+          const response = await puter.ai.chat(userText, { systemPrompt: systemPrompt });
+          typingEl.remove();
+          const botMsgEl = document.createElement('div');
+          botMsgEl.className = 'ai-msg bot'; botMsgEl.textContent = response.message.content || response;
+          aiMessages.appendChild(botMsgEl); aiMessages.scrollTop = aiMessages.scrollHeight;
+        } catch (error) {
+          typingEl.remove();
+          const errorMsgEl = document.createElement('div');
+          errorMsgEl.className = 'ai-msg bot'; errorMsgEl.textContent = "¡Ups! Se me desconectó el cerebro por un segundo. Intenta preguntarme de nuevo. 🤖";
+          aiMessages.appendChild(errorMsgEl);
+        }
+      }
+      if (aiSendBtn) aiSendBtn.addEventListener('click', sendAiMessage);
+      if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAiMessage(); });
+
+      // 7. FUNCIONES GLOBALES (UI)
+      const toast = document.getElementById('toast');
+      function showToast(message) { 
+        if (!toast) return; toast.textContent = message; toast.classList.add('show'); 
+        setTimeout(() => toast.classList.remove('show'), 3000); 
+      }
+
+      updateHUD();
+      generateQuestion(); 
+
+      // 8. REGISTRO DEL SERVICE WORKER
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err));
+        });
+      }
+
+      // =========================================
+      // 9. LÓGICA DEL MINIJUEGO (SPRITES LOCALES)
+      // =========================================
+      function initMiniGame() {
+        const canvas = document.getElementById('gameCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const GRAVITY = 0.8;
+        const GROUND_Y = H - 60;
+
+        // Cargar sprites LOCALES desde la misma carpeta con los nombres personalizados
+        const runFrames = [];
+        ['run (1) .png', 'run (2) .png', 'run (3) .png', 'run (4) .png', 'run (5) .png'].forEach(src => {
+            const img = new Image(); img.src = src; runFrames.push(img);
+        });
+
+        const jumpFrames = [];
+        ['jump (1) .png', 'jump (2) .png', 'jump (3) .png', 'jump (4) .png'].forEach(src => {
+            const img = new Image(); img.src = src; jumpFrames.push(img);
+        });
+
+        const player = { x: 100, y: GROUND_Y, w: 60, h: 70, vx: 0, vy: 0, speed: 5, jumpPower: 13, grounded: true, frame: 0, frameCount: 0 };
+        let platforms = [];
+        let coins = [];
+        let obstacles = [];
+        let keys = { left: false, right: false, jump: false };
+
+        function initGame() {
+          player.x = 100; player.y = GROUND_Y; player.vy = 0; player.grounded = true;
+          platforms = [
+            { x: 200, y: 250, w: 150, h: 20 },
+            { x: 450, y: 180, w: 150, h: 20 },
+            { x: 650, y: 280, w: 100, h: 20 }
+          ];
+          coins = [
+            { x: 250, y: 210, r: 10, collected: false },
+            { x: 500, y: 140, r: 10, collected: false },
+            { x: 700, y: 240, r: 10, collected: false }
+          ];
+          obstacles = [
+            { x: 350, y: GROUND_Y, w: 30, h: 30 }
+          ];
+        }
+
+        function gameLoop() {
+          try {
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H); // Cielo
+            ctx.fillStyle = '#8B4513'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y); // Suelo
+
+            // Físicas
+            if (keys.left) player.vx = -player.speed;
+            else if (keys.right) player.vx = player.speed;
+            else player.vx = 0;
+
+            player.x += player.vx;
+            player.y += player.vy;
+            player.vy += GRAVITY;
+
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.w > W) player.x = W - player.w;
+
+            if (player.y >= GROUND_Y) {
+              player.y = GROUND_Y; player.vy = 0; player.grounded = true;
+            }
+
+            // Colisión plataformas
+            platforms.forEach(p => {
+              ctx.fillStyle = '#2a8c4a'; ctx.fillRect(p.x, p.y, p.w, p.h);
+              if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 10 && player.vy > 0) {
+                player.y = p.y - player.h; player.vy = 0; player.grounded = true;
+              }
+            });
+
+            if (keys.jump && player.grounded) {
+              player.vy = -player.jumpPower; player.grounded = false;
+            }
+
+            // Obstáculos
+            obstacles.forEach(o => {
+              ctx.fillStyle = '#ff4d4d'; ctx.fillRect(o.x, o.y, o.w, o.h);
+              if (player.x < o.x + o.w && player.x + player.w > o.x && player.y + player.h > o.y) {
+                showToast("¡Caíste! Reiniciando juego..."); initGame();
+              }
+            });
+
+            // Monedas
+            coins.forEach(c => {
+              if (!c.collected) {
+                ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.closePath();
+                if (player.x < c.x + c.r && player.x + player.w > c.x - c.r && player.y < c.y + c.r && player.y + player.h > c.y - c.r) {
+                  c.collected = true;
+                  petData.points += 5; petData.happy = Math.min(100, petData.happy + 2);
+                  updateHUD(); savePetData();
+                  showToast("¡+5 puntos para tu mascota!");
+                  if (jumpAnimName) playAction(jumpAnimName, 1500);
+                }
+              }
+            });
+
+            // Sprite del jugador (Priorizando animación de Correr o Saltar)
+            player.frameCount++;
+            let currentFrame = null;
+            
+            if (!player.grounded) {
+              // Si está en el aire, usar frames de salto
+              currentFrame = jumpFrames[Math.floor(player.frameCount / 8) % jumpFrames.length];
+            } else if (player.vx !== 0) {
+              // Si se está moviendo, usar frames de corrida
+              currentFrame = runFrames[Math.floor(player.frameCount / 5) % runFrames.length];
+            } else {
+              // Si está quieto, usar el primer frame de corrida
+              currentFrame = runFrames[0]; 
+            }
+
+            // Dibujar la imagen SOLO si ya cargó
+            if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) {
+              ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h);
+            }
+          } catch (e) {
+            console.error("Error en el game loop:", e);
+          }
+          requestAnimationFrame(gameLoop);
+        }
+
+        // Controles Teclado
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') keys.left = true;
+          if (e.key === 'ArrowRight') keys.right = true;
+          if (e.key === ' ' || e.key === 'ArrowUp') { keys.jump = true; e.preventDefault(); }
+        });
+        document.addEventListener('keyup', (e) => {
+          if (e.key === 'ArrowLeft') keys.left = false;
+          if (e.key === 'ArrowRight') keys.right = false;
+          if (e.key === ' ' || e.key === 'ArrowUp') keys.jump = false;
+        });
+
+        // Controles Táctiles
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnJump = document.getElementById('btnJump');
+
+        function setupTouch(btn, key) {
+          if(!btn) return;
+          btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; });
+          btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; });
+          btn.addEventListener('mousedown', () => keys[key] = true);
+          btn.addEventListener('mouseup', () => keys[key] = false);
+          btn.addEventListener('mouseleave', () => keys[key] = false);
+        }
+
+        setupTouch(btnLeft, 'left');
+        setupTouch(btnRight, 'right');
+        setupTouch(btnJump, 'jump');
+
+        initGame();
+        gameLoop();
+      }
+      
+      // Inicializar el juego de forma segura
+      initMiniGame();
+
+    } catch (globalError) {
+      console.error("Error global inicializando la app:", globalError);
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
     }
-
-    aiSendBtn.addEventListener('click', sendAiMessage);
-    aiInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendAiMessage();
-    });
-
-    // =========================================
-    // 7. FUNCIONES GLOBALES (UI)
-    // =========================================
-    const toast = document.getElementById('toast');
-    function showToast(message) { 
-      toast.textContent = message; 
-      toast.classList.add('show'); 
-      setTimeout(() => toast.classList.remove('show'), 3000); 
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    updateHUD();
-    generateQuestion(); 
   </script>
 </body>
 </html>
