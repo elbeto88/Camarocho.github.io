@@ -266,7 +266,7 @@
         <div class="flex flex-col items-center mb-12 reveal">
           <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Minijuego</span>
           <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">Salta y Suma</h2>
-          <p class="mt-4 text-center" style="color: var(--muted);">Mueve a tu personaje y recolecta monedas. ¡Cada moneda te da +5 puntos para tu mascota!</p>
+          <p class="mt-4 text-center" style="color: var(--muted);">Mueve a tu personaje y recolecta monedas. ¡Puedes saltar hasta 3 veces en el aire! Cada moneda da +5 pts.</p>
         </div>
         
         <div class="game-container reveal reveal-delay-1">
@@ -570,6 +570,32 @@
         setTimeout(() => toast.classList.remove('show'), 3000); 
       }
 
+      // SFX usando Web Audio API (No requiere archivos externos)
+      let audioCtx = null;
+      function playSound(type) {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          
+          if (type === 'jump') {
+            osc.type = 'square'; osc.frequency.value = 440;
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+          } else if (type === 'coin') {
+            osc.type = 'triangle'; osc.frequency.value = 880;
+            osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+          }
+        } catch(e) {}
+      }
+
       updateHUD();
       generateQuestion(); 
 
@@ -581,7 +607,7 @@
       }
 
       // =========================================
-      // 9. LÓGICA DEL MINIJUEGO (SPRITES LOCALES)
+      // 9. LÓGICA DEL MINIJUEGO (MOTOR AVANZADO)
       // =========================================
       function initMiniGame() {
         const canvas = document.getElementById('gameCanvas');
@@ -591,47 +617,58 @@
         const W = canvas.width, H = canvas.height;
         const GRAVITY = 0.8;
         const GROUND_Y = H - 60;
+        const MAX_JUMPS = 3; // Triple salto
 
-        // Cargar sprites LOCALES desde la misma carpeta con los nombres personalizados
+        // Cargar los 3 nuevos sprites de Run que proporcionaste
         const runFrames = [];
-        ['run (1) .png', 'run (2) .png', 'run (3) .png', 'run (4) .png', 'run (5) .png'].forEach(src => {
+        const spriteUrls = [
+          'https://z-cdn-media.chatglm.cn/files/f03acd4e-967d-4b45-b2b2-ee6766586107.png', // run.png
+          'https://z-cdn-media.chatglm.cn/files/cbaaf805-7b1a-491e-80b4-f9dc4c92657d.png', // run2.png
+          'https://z-cdn-media.chatglm.cn/files/7001d740-a2f1-4801-970e-4ec3f516d6ca.png'  // run3.png
+        ];
+        spriteUrls.forEach(src => {
             const img = new Image(); img.src = src; runFrames.push(img);
         });
 
-        const jumpFrames = [];
-        ['jump (1) .png', 'jump (2) .png', 'jump (3) .png', 'jump (4) .png'].forEach(src => {
-            const img = new Image(); img.src = src; jumpFrames.push(img);
-        });
-
-        const player = { x: 100, y: GROUND_Y, w: 60, h: 70, vx: 0, vy: 0, speed: 5, jumpPower: 13, grounded: true, frame: 0, frameCount: 0 };
+        const player = { 
+          x: 100, y: GROUND_Y, w: 60, h: 70, 
+          vx: 0, vy: 0, 
+          speed: 5, jumpPower: 13, 
+          grounded: true, jumpsLeft: MAX_JUMPS, 
+          frame: 0, frameCount: 0 
+        };
+        
         let platforms = [];
         let coins = [];
-        let obstacles = [];
+        let enemies = [];
         let keys = { left: false, right: false, jump: false };
 
         function initGame() {
-          player.x = 100; player.y = GROUND_Y; player.vy = 0; player.grounded = true;
+          player.x = 100; player.y = GROUND_Y; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS;
+          
           platforms = [
-            { x: 200, y: 250, w: 150, h: 20 },
-            { x: 450, y: 180, w: 150, h: 20 },
-            { x: 650, y: 280, w: 100, h: 20 }
+            { x: 0, y: GROUND_Y, w: W, h: H - GROUND_Y }, // Suelo
+            { x: 200, y: 280, w: 120, h: 20 },
+            { x: 400, y: 220, w: 120, h: 20 },
+            { x: 600, y: 280, w: 120, h: 20 }
           ];
+          
           coins = [
-            { x: 250, y: 210, r: 10, collected: false },
-            { x: 500, y: 140, r: 10, collected: false },
-            { x: 700, y: 240, r: 10, collected: false }
+            { x: 250, y: 240, r: 10, collected: false },
+            { x: 450, y: 180, r: 10, collected: false },
+            { x: 650, y: 240, r: 10, collected: false }
           ];
-          obstacles = [
-            { x: 350, y: GROUND_Y, w: 30, h: 30 }
+          
+          enemies = [
+            { x: 350, y: GROUND_Y - 30, w: 30, h: 30, vx: 1.5, rangeStart: 300, rangeEnd: 450 }
           ];
         }
 
         function gameLoop() {
           try {
             ctx.clearRect(0, 0, W, H);
-            ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H); // Cielo
-            ctx.fillStyle = '#8B4513'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y); // Suelo
-
+            ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H);
+            
             // Físicas
             if (keys.left) player.vx = -player.speed;
             else if (keys.right) player.vx = player.speed;
@@ -644,31 +681,34 @@
             if (player.x < 0) player.x = 0;
             if (player.x + player.w > W) player.x = W - player.w;
 
-            if (player.y >= GROUND_Y) {
-              player.y = GROUND_Y; player.vy = 0; player.grounded = true;
-            }
-
             // Colisión plataformas
             platforms.forEach(p => {
-              ctx.fillStyle = '#2a8c4a'; ctx.fillRect(p.x, p.y, p.w, p.h);
-              if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 10 && player.vy > 0) {
-                player.y = p.y - player.h; player.vy = 0; player.grounded = true;
+              ctx.fillStyle = p.y === GROUND_Y ? '#8B4513' : '#2a8c4a'; 
+              ctx.fillRect(p.x, p.y, p.w, p.h);
+              if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 15 && player.vy > 0) {
+                player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS;
               }
             });
 
-            if (keys.jump && player.grounded) {
-              player.vy = -player.jumpPower; player.grounded = false;
+            if (keys.jump && player.jumpsLeft > 0) {
+              player.vy = -player.jumpPower; 
+              player.grounded = false; 
+              player.jumpsLeft--;
+              keys.jump = false; 
+              playSound('jump');
             }
 
-            // Obstáculos
-            obstacles.forEach(o => {
-              ctx.fillStyle = '#ff4d4d'; ctx.fillRect(o.x, o.y, o.w, o.h);
-              if (player.x < o.x + o.w && player.x + player.w > o.x && player.y + player.h > o.y) {
-                showToast("¡Caíste! Reiniciando juego..."); initGame();
+            enemies.forEach(e => {
+              e.x += e.vx;
+              if (e.x < e.rangeStart || e.x + e.w > e.rangeEnd) e.vx *= -1;
+              ctx.fillStyle = '#ff4d4d'; ctx.fillRect(e.x, e.y, e.w, e.h);
+              if (player.x < e.x + e.w && player.x + player.w > e.x && player.y + player.h > e.y) {
+                showToast("¡Cuidado con el enemigo! Reiniciando..."); 
+                playSound('jump');
+                initGame();
               }
             });
 
-            // Monedas
             coins.forEach(c => {
               if (!c.collected) {
                 ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.closePath();
@@ -677,27 +717,22 @@
                   petData.points += 5; petData.happy = Math.min(100, petData.happy + 2);
                   updateHUD(); savePetData();
                   showToast("¡+5 puntos para tu mascota!");
-                  if (jumpAnimName) playAction(jumpAnimName, 1500);
+                  playSound('coin');
                 }
               }
             });
 
-            // Sprite del jugador (Priorizando animación de Correr o Saltar)
+            // Sprite del jugador
             player.frameCount++;
             let currentFrame = null;
             
-            if (!player.grounded) {
-              // Si está en el aire, usar frames de salto
-              currentFrame = jumpFrames[Math.floor(player.frameCount / 8) % jumpFrames.length];
-            } else if (player.vx !== 0) {
-              // Si se está moviendo, usar frames de corrida
+            // Se reproduce el loop si se mueve o si está en el aire
+            if (player.vx !== 0 || !player.grounded) {
               currentFrame = runFrames[Math.floor(player.frameCount / 5) % runFrames.length];
             } else {
-              // Si está quieto, usar el primer frame de corrida
-              currentFrame = runFrames[0]; 
+              currentFrame = runFrames[0]; // Frame quieto
             }
 
-            // Dibujar la imagen SOLO si ya cargó
             if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) {
               ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h);
             }
@@ -711,7 +746,10 @@
         document.addEventListener('keydown', (e) => {
           if (e.key === 'ArrowLeft') keys.left = true;
           if (e.key === 'ArrowRight') keys.right = true;
-          if (e.key === ' ' || e.key === 'ArrowUp') { keys.jump = true; e.preventDefault(); }
+          if (e.key === ' ' || e.key === 'ArrowUp') { 
+            if (!keys.jump) keys.jump = true;
+            e.preventDefault(); 
+          }
         });
         document.addEventListener('keyup', (e) => {
           if (e.key === 'ArrowLeft') keys.left = false;
@@ -735,13 +773,18 @@
 
         setupTouch(btnLeft, 'left');
         setupTouch(btnRight, 'right');
-        setupTouch(btnJump, 'jump');
+        
+        if(btnJump) {
+          btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); keys.jump = true; });
+          btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys.jump = false; });
+          btnJump.addEventListener('mousedown', () => keys.jump = true);
+          btnJump.addEventListener('mouseup', () => keys.jump = false);
+        }
 
         initGame();
         gameLoop();
       }
       
-      // Inicializar el juego de forma segura
       initMiniGame();
 
     } catch (globalError) {
