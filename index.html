@@ -607,7 +607,7 @@
       }
 
       // =========================================
-      // 9. LÓGICA DEL MINIJUEGO (UN SOLO SPRITE)
+      // 9. LÓGICA DEL MINIJUEGO (SECUENCIA DE 3 IMÁGENES)
       // =========================================
       function initMiniGame() {
         const canvas = document.getElementById('gameCanvas');
@@ -619,17 +619,21 @@
         const GROUND_Y = H - 60;
         const MAX_JUMPS = 3; // Triple salto
 
-        // Cargar un solo sprite local llamado run.png
-        const playerImg = new Image();
-        playerImg.src = 'run.png';
-        playerImg.onload = () => { console.log('run.png cargada correctamente.'); };
-        playerImg.onerror = () => { console.error('Error: No se encontró run.png. Revisa que el archivo esté en la misma carpeta y se llame exactamente así.'); };
+        // Cargar los 3 sprites de corrida (run.png, run2.png, run3.png)
+        const runFrames = [];
+        const spriteUrls = ['run.png', 'run2.png', 'run3.png'];
+        spriteUrls.forEach(src => {
+            const img = new Image();
+            img.src = src;
+            runFrames.push(img);
+        });
 
         const player = { 
           x: 100, y: GROUND_Y, w: 60, h: 70, 
           vx: 0, vy: 0, 
           speed: 5, jumpPower: 13, 
-          grounded: true, jumpsLeft: MAX_JUMPS 
+          grounded: true, jumpsLeft: MAX_JUMPS,
+          frameCount: 0 // Contador para la animación
         };
         
         let platforms = [];
@@ -716,11 +720,24 @@
               }
             });
 
-            // Dibujar al jugador (Usa la imagen si cargó, si no, dibuja un cuadro rojo de respaldo)
-            if (playerImg && playerImg.complete && playerImg.naturalWidth !== 0) {
-              ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
+            // Lógica de animación del jugador
+            player.frameCount++;
+            let currentFrame = null;
+            
+            // Si se está moviendo o está en el aire, animar la secuencia
+            if (player.vx !== 0 || !player.grounded) {
+              currentFrame = runFrames[Math.floor(player.frameCount / 5) % runFrames.length];
             } else {
-              ctx.fillStyle = '#ff4d1f'; // Fallback
+              // Si está quieto, usar la primera imagen
+              currentFrame = runFrames[0]; 
+            }
+
+            // Dibujar al jugador
+            if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) {
+              ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h);
+            } else {
+              // Fallback si las imágenes no han cargado todavía
+              ctx.fillStyle = '#ff4d1f'; 
               ctx.fillRect(player.x, player.y, player.w, player.h);
             }
           } catch (e) {
