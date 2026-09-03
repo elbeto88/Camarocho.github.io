@@ -108,6 +108,15 @@
     .game-btn:active { background: var(--accent); transform: scale(0.95); }
     .jump-btn { width: 80px; height: 80px; font-size: 1rem; font-weight: bold; }
     .game-instructions { color: var(--muted); text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+
+    /* MODO WEB AR (CÁMARA) */
+    .ar-overlay { position: fixed; inset: 0; z-index: 99999; background: #000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    .ar-overlay.active { display: flex; }
+    #arVideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .ar-model-container { position: relative; z-index: 2; width: 90vw; max-width: 500px; height: 70vh; }
+    .ar-controls { position: absolute; bottom: 2rem; z-index: 3; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
+    .ar-btn { background: rgba(255, 77, 31, 0.9); color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 999px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .ar-btn.exit { background: rgba(26, 24, 20, 0.9); }
   </style>
 </head>
 
@@ -170,6 +179,7 @@
               <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar (-2 pts)</button>
               <button class="pet-action-btn interactive" id="btnPlay">🎮 Jugar (-2 pts)</button>
               <button class="pet-action-btn interactive" id="btnSleep">💤 Dormir (-2 pts)</button>
+              <button class="pet-action-btn interactive" id="btnAR" style="background: var(--accent);">📱 Ver en AR (Cámara)</button>
             </div>
           </div>
         </div>
@@ -346,6 +356,22 @@
     <div class="ai-input-area">
       <input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí...">
       <button id="aiSendBtn" class="ai-send-btn interactive">➤</button>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE REALIDAD AUMENTADA (WEB AR) -->
+  <div class="ar-overlay" id="arOverlay">
+    <video id="arVideo" autoplay playsinline muted></video>
+    <div class="ar-model-container">
+      <model-viewer src="modelo.glb" alt="Mascota AR" shadow-intensity="0.8" camera-controls auto-rotate style="background-color: transparent; width: 100%; height: 100%;" id="arModelViewer"></model-viewer>
+    </div>
+    <div class="ar-controls">
+      <button class="ar-btn interactive" data-ar-anim="idle">Reposo</button>
+      <button class="ar-btn interactive" data-ar-anim="eat">Comer</button>
+      <button class="ar-btn interactive" data-ar-anim="run">Correr</button>
+      <button class="ar-btn interactive" data-ar-anim="jump">Saltar</button>
+      <button class="ar-btn interactive" data-ar-anim="sleep">Dormir</button>
+      <button class="ar-btn exit interactive" id="exitAR">Salir</button>
     </div>
   </div>
 
@@ -790,6 +816,80 @@
       }
       
       initMiniGame();
+
+      // =========================================
+      // 10. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
+      // =========================================
+      const btnAR = document.getElementById('btnAR');
+      const arOverlay = document.getElementById('arOverlay');
+      const arVideo = document.getElementById('arVideo');
+      const exitAR = document.getElementById('exitAR');
+      const arModelViewer = document.getElementById('arModelViewer');
+      let arStream = null;
+
+      // Mapeo de botones del AR a las animaciones del modelo 3D
+      const arAnimMap = {
+        idle: idleAnimName,
+        eat: eatAnimName,
+        run: playAnimName,
+        jump: jumpAnimName,
+        sleep: sleepAnimName
+      };
+
+      // Botones dentro del modo AR
+      document.querySelectorAll('.ar-btn[data-ar-anim]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const animKey = btn.dataset.arAnim;
+          const animName = arAnimMap[animKey];
+          if (animName && arModelViewer) {
+            arModelViewer.animationName = animName;
+            showToast("Reproduciendo: " + animKey);
+          } else {
+            showToast("Animación no encontrada.");
+          }
+        });
+      });
+
+      // Iniciar Web AR
+      if (btnAR) {
+        btnAR.addEventListener('click', async () => {
+          try {
+            // Pedir permiso para la cámara trasera
+            arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            arVideo.srcObject = arStream;
+            arOverlay.classList.add('active');
+            
+            // Cargar animaciones en el modelo AR si no se han cargado
+            if (arModelViewer && !arModelViewer.availableAnimations) {
+              arModelViewer.addEventListener('load', () => {
+                const animations = arModelViewer.availableAnimations;
+                if (animations && animations.length > 0) {
+                  arAnimMap.idle = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
+                  arAnimMap.eat = animations.find(a => a.toLowerCase().includes('eat'));
+                  arAnimMap.run = animations.find(a => a.toLowerCase().includes('run'));
+                  arAnimMap.jump = animations.find(a => a.toLowerCase().includes('jump'));
+                  arAnimMap.sleep = animations.find(a => a.toLowerCase().includes('sleep'));
+                  if (arAnimMap.idle) arModelViewer.animationName = arAnimMap.idle;
+                }
+              });
+            }
+          } catch (err) {
+            console.error("Error al acceder a la cámara:", err);
+            showToast("No se pudo acceder a la cámara. Revisa los permisos.");
+          }
+        });
+      }
+
+      // Salir del Web AR
+      if (exitAR) {
+        exitAR.addEventListener('click', () => {
+          arOverlay.classList.remove('active');
+          if (arStream) {
+            arStream.getTracks().forEach(track => track.stop());
+            arStream = null;
+          }
+        });
+      }
 
     } catch (globalError) {
       console.error("Error global inicializando la app:", globalError);
