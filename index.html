@@ -112,10 +112,10 @@
     /* MODO WEB AR (CÁMARA) */
     .ar-overlay { position: fixed; inset: 0; z-index: 99999; background: #000; display: none; flex-direction: column; align-items: center; justify-content: center; }
     .ar-overlay.active { display: flex; }
-    #arVideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    #arVideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; pointer-events: none; }
     .ar-model-container { position: relative; z-index: 2; width: 90vw; max-width: 500px; height: 70vh; }
     .ar-controls { position: absolute; bottom: 2rem; z-index: 3; display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; padding: 0 1rem; }
-    .ar-btn { background: rgba(255, 77, 31, 0.9); color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 999px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .ar-btn { background: rgba(255, 77, 31, 0.9); color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 999px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; }
     .ar-btn.exit { background: rgba(26, 24, 20, 0.9); }
   </style>
 </head>
@@ -363,15 +363,15 @@
   <div class="ar-overlay" id="arOverlay">
     <video id="arVideo" autoplay playsinline muted></video>
     <div class="ar-model-container">
-      <model-viewer src="modelo.glb" alt="Mascota AR" shadow-intensity="0.8" camera-controls auto-rotate style="background-color: transparent; width: 100%; height: 100%;" id="arModelViewer"></model-viewer>
+      <model-viewer src="modelo.glb" alt="Mascota AR" shadow-intensity="0.8" camera-controls auto-rotate autoplay style="background-color: transparent; width: 100%; height: 100%;" id="arModelViewer"></model-viewer>
     </div>
     <div class="ar-controls">
-      <button class="ar-btn interactive" data-ar-anim="idle">Reposo</button>
-      <button class="ar-btn interactive" data-ar-anim="eat">Comer</button>
-      <button class="ar-btn interactive" data-ar-anim="run">Correr</button>
-      <button class="ar-btn interactive" data-ar-anim="jump">Saltar</button>
-      <button class="ar-btn interactive" data-ar-anim="sleep">Dormir</button>
-      <button class="ar-btn exit interactive" id="exitAR">Salir</button>
+      <button class="ar-btn" data-ar-anim="idle">Reposo</button>
+      <button class="ar-btn" data-ar-anim="eat">Comer</button>
+      <button class="ar-btn" data-ar-anim="run">Correr</button>
+      <button class="ar-btn" data-ar-anim="jump">Saltar</button>
+      <button class="ar-btn" data-ar-anim="sleep">Dormir</button>
+      <button class="ar-btn exit" id="exitAR">Salir</button>
     </div>
   </div>
 
@@ -827,25 +827,33 @@
       const arModelViewer = document.getElementById('arModelViewer');
       let arStream = null;
 
-      // Mapeo de botones del AR a las animaciones del modelo 3D
-      const arAnimMap = {
-        idle: idleAnimName,
-        eat: eatAnimName,
-        run: playAnimName,
-        jump: jumpAnimName,
-        sleep: sleepAnimName
-      };
+      // Función segura para obtener el nombre exacto de la animación desde el modelo principal
+      function getAnimationName(key) {
+        if (modelViewer && modelViewer.availableAnimations && modelViewer.availableAnimations.length > 0) {
+          const animations = modelViewer.availableAnimations;
+          if (key === 'idle') return animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
+          if (key === 'eat') return animations.find(a => a.toLowerCase().includes('eat'));
+          if (key === 'run') return animations.find(a => a.toLowerCase().includes('run'));
+          if (key === 'jump') return animations.find(a => a.toLowerCase().includes('jump'));
+          if (key === 'sleep') return animations.find(a => a.toLowerCase().includes('sleep'));
+        }
+        return null;
+      }
 
-      // Botones dentro del modo AR
+      // Lógica para los botones dentro del modo AR
       document.querySelectorAll('.ar-btn[data-ar-anim]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!arModelViewer) return;
+
           const animKey = btn.dataset.arAnim;
-          const animName = arAnimMap[animKey];
-          if (animName && arModelViewer) {
-            arModelViewer.animationName = animName;
+          const animName = getAnimationName(animKey);
+          
+          if (animName) {
+            arModelViewer.animationName = animName; // Cambia la animación
             showToast("Reproduciendo: " + animKey);
           } else {
-            showToast("Animación no encontrada.");
+            showToast("El modelo 3D aún está cargando. Espera un momento.");
           }
         });
       });
@@ -858,24 +866,9 @@
             arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
             arVideo.srcObject = arStream;
             arOverlay.classList.add('active');
-            
-            // Cargar animaciones en el modelo AR si no se han cargado
-            if (arModelViewer && !arModelViewer.availableAnimations) {
-              arModelViewer.addEventListener('load', () => {
-                const animations = arModelViewer.availableAnimations;
-                if (animations && animations.length > 0) {
-                  arAnimMap.idle = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
-                  arAnimMap.eat = animations.find(a => a.toLowerCase().includes('eat'));
-                  arAnimMap.run = animations.find(a => a.toLowerCase().includes('run'));
-                  arAnimMap.jump = animations.find(a => a.toLowerCase().includes('jump'));
-                  arAnimMap.sleep = animations.find(a => a.toLowerCase().includes('sleep'));
-                  if (arAnimMap.idle) arModelViewer.animationName = arAnimMap.idle;
-                }
-              });
-            }
           } catch (err) {
             console.error("Error al acceder a la cámara:", err);
-            showToast("No se pudo acceder a la cámara. Revisa los permisos.");
+            showToast("No se pudo acceder a la cámara. Revisa los permisos del navegador.");
           }
         });
       }
