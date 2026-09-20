@@ -122,7 +122,7 @@
     /* SELECCIÓN DE MASCOTA (NUEVO) */
     .selection-overlay { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     .selection-overlay.active { display: flex; }
-    .selection-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 900px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
+    .selection-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 1000px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
     .pet-card { background: var(--card); border: 3px solid transparent; border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
     .pet-card:hover { border-color: var(--accent); transform: translateY(-5px); }
     .pet-card.selected { border-color: var(--accent-2); }
@@ -415,7 +415,7 @@
   <div class="selection-overlay" id="selectionOverlay">
     <div class="selection-container">
       <h2 class="font-display text-4xl mb-8">Elige a tu compañero</h2>
-      <div id="petGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8"></div>
+      <div id="petGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
       <button id="closeSelection" class="btn-primary interactive"><span>¡Listo!</span></button>
     </div>
   </div>
@@ -506,12 +506,16 @@
       }
 
       // 3. SELECCIÓN DE MASCOTA (NUEVO)
-      // AQUÍ ESTÁN LOS PERSONAJES CON LOS NOMBRES SIMPLIFICADOS
+      // AQUÍ ESTÁN LOS PERSONAJES CON LOS NOMBRES SIMPLIFICADOS (8 SLOTS)
       const availablePets = [
         { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' },
         { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
         { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' },
-        { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' }
+        { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
+        { id: 'modelo5', name: 'Mascota 5', src: 'modelo5.glb' },
+        { id: 'modelo6', name: 'Mascota 6', src: 'modelo6.glb' },
+        { id: 'modelo7', name: 'Mascota 7', src: 'modelo7.glb' },
+        { id: 'modelo8', name: 'Mascota 8', src: 'modelo8.glb' }
       ];
 
       const selectionOverlay = document.getElementById('selectionOverlay');
