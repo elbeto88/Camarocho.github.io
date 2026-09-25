@@ -100,7 +100,7 @@
     .ai-send-btn:hover { background: var(--accent); }
     .typing-indicator { font-size: 0.8rem; color: var(--muted); font-style: italic; }
     
-    /* MINIJUEGOS CSS (1, 2, 3) */
+    /* MINIJUEGOS CSS (1, 2, 3, 4) */
     .game-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; }
     #gameCanvas { display: block; width: 100%; height: auto; background: #87CEEB; border-radius: 16px; border: 4px solid var(--fg); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
     .mobile-controls { display: flex; justify-content: space-between; padding: 1rem 0; }
@@ -119,7 +119,16 @@
     .grp-item-pile:hover { transform: scale(1.1); }
     .grp-item-pile.distributed { opacity: 0; transform: scale(0); pointer-events: none; }
 
-    /* SELECCIÓN DE MASCOTA (NUEVO) */
+    /* MINIJUEGO 4: MÚLTIPLOS Y RITMO */
+    #multTapArea { background: var(--accent); color: white; border: none; border-radius: 16px; width: 100%; padding: 2rem; font-size: 2rem; font-weight: bold; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: transform 0.1s, box-shadow 0.1s; user-select: none; touch-action: manipulation; }
+    #multTapArea:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+    #multTapArea.disabled { background: var(--muted); pointer-events: none; }
+    .mult-bubble { width: 45px; height: 45px; background-color: var(--accent-2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; animation: popIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+    .mult-progress-dot { width: 12px; height: 12px; background-color: var(--bg-alt); border-radius: 50%; transition: background-color 0.2s; }
+    .mult-progress-dot.active { background-color: var(--accent); transform: scale(1.2); }
+
+    /* SELECCIÓN DE MASCOTA */
     .selection-overlay { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     .selection-overlay.active { display: flex; }
     .selection-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 1000px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
@@ -153,6 +162,7 @@
         <li><a href="#minijuego" class="nav-link interactive"><span>Salta</span><span>Salta</span></a></li>
         <li><a href="#juego-contar" class="nav-link interactive"><span>Contar</span><span>Contar</span></a></li>
         <li><a href="#juego-grupos" class="nav-link interactive"><span>Grupos</span><span>Grupos</span></a></li>
+        <li><a href="#juego-multiplos" class="nav-link interactive"><span>Múltiplos</span><span>Múltiplos</span></a></li>
         <li><a href="#contacto" class="nav-link interactive"><span>Contacto</span><span>Contacto</span></a></li>
       </ul>
     </nav>
@@ -348,8 +358,32 @@
       </div>
     </section>
 
-    <!-- 7. CONTACTO -->
-    <section id="contacto" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
+    <!-- 7. MINIJUEGO 4: Escala los Múltiplos (NUEVO) -->
+    <section id="juego-multiplos" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
+      <div class="max-w-[800px] mx-auto">
+        <div class="flex flex-col items-center mb-12 reveal">
+          <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Minijuego 4</span>
+          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">Escala los Múltiplos</h2>
+          <p class="mt-4 text-center" style="color: var(--muted);">Toca el número exacto de veces para que tu mascota escale y descubra los múltiplos. ¡No te demores más de 4 segundos ni te apresures mientras escala!</p>
+        </div>
+        <div class="math-zone reveal reveal-delay-1 text-center">
+          <div class="flex justify-between mb-6 text-sm uppercase tracking-widest" style="color: var(--muted);">
+            <span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">1</span>/10</span>
+            <span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">1</span>/10</span>
+            <span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span>
+          </div>
+          <div class="font-display text-4xl mb-2" id="multTargetText">Toca 3 veces</div>
+          <div id="multProgressDots" class="flex justify-center gap-2 mb-8"></div>
+          <div id="multBubblesContainer" class="flex flex-wrap justify-center gap-3 mb-8 min-h-[60px]"></div>
+          <button id="multTapArea" class="interactive">¡TOCAR!</button>
+          <div class="text-xl mt-6" id="multStatus" style="color: var(--accent-2);">¡Comienza a tocar!</div>
+          <button id="resetMultBtn" class="btn-primary interactive mt-8"><span>Reiniciar Juego</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. CONTACTO -->
+    <section id="contacto" class="py-24 px-6 md:px-12">
       <div class="max-w-[800px] mx-auto">
         <div class="text-center mb-12 reveal">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span>
@@ -411,7 +445,7 @@
     </div>
   </div>
 
-  <!-- SELECCIÓN DE MASCOTA (NUEVO) -->
+  <!-- SELECCIÓN DE MASCOTA -->
   <div class="selection-overlay" id="selectionOverlay">
     <div class="selection-container">
       <h2 class="font-display text-4xl mb-8">Elige a tu compañero</h2>
@@ -473,8 +507,9 @@
       // 2. LÓGICA DE ANIMACIONES (MODEL-VIEWER)
       const modelViewer = document.getElementById('modelViewer3D');
       const modelErrorMsg = document.getElementById('modelErrorMsg');
-      let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName;
+      let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName, climbAnimName, fallAnimName;
       let isBusy = false;
+      let actionTimeout = null;
 
       function loadPetModel(src) {
         if (modelViewer) modelViewer.src = src;
@@ -493,20 +528,28 @@
             playAnimName = animations.find(a => a.toLowerCase().includes('run'));
             jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
             hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
+            climbAnimName = animations.find(a => a.toLowerCase().includes('climb'));
+            fallAnimName = animations.find(a => a.toLowerCase().includes('fall') || a.toLowerCase().includes('drop'));
             if (idleAnimName) modelViewer.animationName = idleAnimName;
           }
         });
       }
 
-      function playAction(animName, duration) {
-        if (isBusy || !animName || !modelViewer) return;
+      function playAction(animName, duration, force = false) {
+        if (!animName || !modelViewer) return;
+        if (isBusy && !force) return;
+        
         isBusy = true;
         modelViewer.animationName = animName;
-        setTimeout(() => { isBusy = false; if (idleAnimName && modelViewer) modelViewer.animationName = idleAnimName; }, duration);
+        
+        clearTimeout(actionTimeout);
+        actionTimeout = setTimeout(() => { 
+          isBusy = false; 
+          if (idleAnimName && modelViewer) modelViewer.animationName = idleAnimName; 
+        }, duration);
       }
 
-      // 3. SELECCIÓN DE MASCOTA (NUEVO)
-      // AQUÍ ESTÁN LOS PERSONAJES CON LOS NOMBRES SIMPLIFICADOS (8 SLOTS)
+      // 3. SELECCIÓN DE MASCOTA
       const availablePets = [
         { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' },
         { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
@@ -543,16 +586,15 @@
         petData.model = pet.src;
         savePetData();
         loadPetModel(pet.src);
-        initPetSelection(); // Actualizar el estado visual de selección
+        initPetSelection(); 
         showToast("¡Has elegido a " + pet.name + "!");
       }
 
       if (btnSelectPet) btnSelectPet.addEventListener('click', () => { selectionOverlay.classList.add('active'); initPetSelection(); });
       if (closeSelection) closeSelection.addEventListener('click', () => selectionOverlay.classList.remove('active'));
 
-      // Cargar modelo al inicio
       if (!petData.model && availablePets.length > 0) {
-        petData.model = availablePets[0].src; // Default al primero
+        petData.model = availablePets[0].src;
         savePetData();
       }
       if (petData.model) loadPetModel(petData.model);
@@ -724,7 +766,7 @@
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           
-          if (type === 'jump') {
+          if (type === 'jump' || type === 'climb') {
             osc.type = 'square'; osc.frequency.value = 440;
             osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
@@ -742,6 +784,12 @@
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+          } else if (type === 'fail') {
+            osc.type = 'sawtooth'; osc.frequency.value = 200;
+            osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
           }
         } catch(e) {}
       }
@@ -1088,7 +1136,168 @@
       generateGrpGame();
 
       // =========================================
-      // 13. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
+      // 13. MINIJUEGO 4: LÓGICA (ESCALA MÚLTIPLOS)
+      // =========================================
+      let multLevel = 1, multExercise = 1, multErrors = 0;
+      let multBaseNum = 0, multCurrentTaps = 0, multCurrentMultiple = 0;
+      let multLastTapTime = 0, multTimerInterval = null, multIsGameOver = false;
+
+      const multTapArea = document.getElementById('multTapArea');
+      const multBubblesContainer = document.getElementById('multBubblesContainer');
+      const multLevelEl = document.getElementById('multLevel');
+      const multExerciseEl = document.getElementById('multExercise');
+      const multErrorsEl = document.getElementById('multErrors');
+      const multTargetText = document.getElementById('multTargetText');
+      const multStatus = document.getElementById('multStatus');
+      const resetMultBtn = document.getElementById('resetMultBtn');
+      const multProgressDots = document.getElementById('multProgressDots');
+
+      function startMultLevel() {
+        multBaseNum = Math.floor(Math.random() * 10) + 1;
+        multCurrentMultiple = 0;
+        multExercise = 1;
+        multCurrentTaps = 0;
+        multBubblesContainer.innerHTML = '';
+        multProgressDots.innerHTML = '';
+        
+        for(let i = 0; i < multBaseNum; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'mult-progress-dot';
+          multProgressDots.appendChild(dot);
+        }
+        
+        updateMultUI();
+        multStatus.textContent = "¡Toca " + multBaseNum + " veces seguidas!";
+        multStatus.style.color = "var(--accent-2)";
+        multTapArea.classList.remove('disabled');
+        startMultTimer();
+      }
+
+      function updateMultUI() {
+        multLevelEl.textContent = multLevel;
+        multExerciseEl.textContent = multExercise;
+        multErrorsEl.textContent = multErrors;
+        multTargetText.textContent = "Toca " + multBaseNum + " veces (" + multCurrentTaps + "/" + multBaseNum + ")";
+        
+        const dots = multProgressDots.children;
+        for(let i = 0; i < dots.length; i++) {
+          if(i < multCurrentTaps) dots[i].classList.add('active');
+          else dots[i].classList.remove('active');
+        }
+      }
+
+      function handleMultTap() {
+        if (multIsGameOver) return;
+        
+        // Prevenir toques dobles accidentales durante la animación de escalada
+        if (isBusy) {
+          triggerMultError("¡Te adelantaste! Espera a que termine de escalar.");
+          return;
+        }
+
+        multLastTapTime = Date.now();
+        multCurrentTaps++;
+        playSound('climb');
+        updateMultUI();
+
+        if (multCurrentTaps === multBaseNum) {
+          // Secuencia correcta completada
+          multCurrentMultiple += multBaseNum;
+          const bubble = document.createElement('div');
+          bubble.className = 'mult-bubble';
+          bubble.textContent = multCurrentMultiple;
+          multBubblesContainer.appendChild(bubble);
+          
+          petData.points += 10;
+          petData.happy = Math.min(100, petData.happy + 5);
+          updateHUD(); savePetData();
+          showToast("¡Correcto! +10 puntos. Múltiplo: " + multCurrentMultiple);
+
+          multCurrentTaps = 0;
+          multExercise++;
+
+          if (multExercise > 10) {
+            // Nivel completado
+            multLevel++;
+            if (multLevel > 10) {
+              multStatus.textContent = "¡Juego Completado! 🏆 Eres un campeón de los múltiplos.";
+              multStatus.style.color = "var(--accent)";
+              multIsGameOver = true;
+              clearInterval(multTimerInterval);
+              if (jumpAnimName) playAction(jumpAnimName, 3000);
+              showToast("¡Felicidades! Completaste todos los niveles.");
+              return;
+            }
+            showToast("¡Nivel " + (multLevel - 1) + " completado! Subiendo de dificultad...");
+            setTimeout(() => startMultLevel(), 1500);
+          } else {
+            multStatus.textContent = "¡Excelente! Sigue tocando " + multBaseNum + " veces.";
+            if (climbAnimName) playAction(climbAnimName, 800); // Animación de escalada rápida
+          }
+        }
+      }
+
+      function triggerMultError(reason) {
+        if (multIsGameOver) return;
+        
+        multErrors++;
+        multCurrentTaps = 0;
+        updateMultUI();
+        playSound('fail');
+        
+        if (multErrors >= 5) {
+          multIsGameOver = true;
+          clearInterval(multTimerInterval);
+          multStatus.textContent = "¡Caíste! Demasiados errores. Reiniciando al Nivel 1...";
+          multStatus.style.color = "#ff4d4d";
+          multTapArea.classList.add('disabled');
+          
+          if (fallAnimName) playAction(fallAnimName, 1500);
+          if (sleepAnimName) setTimeout(() => { playAction(sleepAnimName, 3000); }, 1500);
+          
+          showToast("¡Te quedaste dormido! Volviendo al Nivel 1...");
+          
+          setTimeout(() => {
+            multIsGameOver = false;
+            multErrors = 0;
+            multLevel = 1;
+            startMultLevel();
+          }, 5000);
+        } else {
+          multStatus.textContent = reason + " Llevas " + multErrors + "/5 errores.";
+          multStatus.style.color = "#ff4d4d";
+          showToast(reason);
+        }
+      }
+
+      function startMultTimer() {
+        clearInterval(multTimerInterval);
+        multLastTapTime = Date.now();
+        multTimerInterval = setInterval(() => {
+          if (multIsGameOver) return;
+          if (Date.now() - multLastTapTime > 4000) {
+            triggerMultError("¡Muy lento! Te demoraste más de 4 segundos.");
+            multLastTapTime = Date.now(); 
+          }
+        }, 500);
+      }
+
+      if (multTapArea) {
+        multTapArea.addEventListener('click', handleMultTap);
+        multTapArea.addEventListener('touchstart', (e) => { e.preventDefault(); handleMultTap(); }, { passive: false });
+      }
+      
+      if (resetMultBtn) {
+        resetMultBtn.addEventListener('click', () => {
+          multLevel = 1; multErrors = 0; multIsGameOver = false;
+          startMultLevel();
+        });
+      }
+      
+      startMultLevel();
+
+      // =========================================
+      // 14. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
       // =========================================
       const btnAR = document.getElementById('btnAR');
       const arOverlay = document.getElementById('arOverlay');
