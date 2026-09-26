@@ -120,13 +120,13 @@
     .grp-item-pile.distributed { opacity: 0; transform: scale(0); pointer-events: none; }
 
     /* MINIJUEGO 4: MÚLTIPLOS Y RITMO */
-    #multTapArea { background: var(--accent); color: white; border: none; border-radius: 16px; width: 100%; padding: 2rem; font-size: 2rem; font-weight: bold; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: transform 0.1s, box-shadow 0.1s; user-select: none; touch-action: manipulation; }
+    #multTapArea { background: var(--accent); color: white; border: none; border-radius: 16px; width: 100%; padding: 1.5rem; font-size: 1.5rem; font-weight: bold; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: transform 0.1s, box-shadow 0.1s; user-select: none; touch-action: manipulation; }
     #multTapArea:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-    #multTapArea.disabled { background: var(--muted); pointer-events: none; }
-    .mult-bubble { width: 45px; height: 45px; background-color: var(--accent-2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; animation: popIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+    #multTapArea.disabled { background: var(--muted); pointer-events: none; box-shadow: none; }
+    .mult-bubble { width: 40px; height: 40px; background-color: var(--accent-2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; animation: popIn 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
     @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
-    .mult-progress-dot { width: 12px; height: 12px; background-color: var(--bg-alt); border-radius: 50%; transition: background-color 0.2s; }
-    .mult-progress-dot.active { background-color: var(--accent); transform: scale(1.2); }
+    .mult-progress-dot { width: 10px; height: 10px; background-color: var(--bg-alt); border-radius: 50%; transition: background-color 0.2s, transform 0.2s; }
+    .mult-progress-dot.active { background-color: var(--accent); transform: scale(1.4); }
 
     /* SELECCIÓN DE MASCOTA */
     .selection-overlay { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
@@ -162,7 +162,6 @@
         <li><a href="#minijuego" class="nav-link interactive"><span>Salta</span><span>Salta</span></a></li>
         <li><a href="#juego-contar" class="nav-link interactive"><span>Contar</span><span>Contar</span></a></li>
         <li><a href="#juego-grupos" class="nav-link interactive"><span>Grupos</span><span>Grupos</span></a></li>
-        <li><a href="#juego-multiplos" class="nav-link interactive"><span>Múltiplos</span><span>Múltiplos</span></a></li>
         <li><a href="#contacto" class="nav-link interactive"><span>Contacto</span><span>Contacto</span></a></li>
       </ul>
     </nav>
@@ -172,6 +171,8 @@
     <!-- 1. HERO (Mascota y HUD) -->
     <section id="pet" class="relative min-h-screen flex flex-col justify-between px-6 md:px-12 py-12 overflow-hidden">
       <div class="relative z-10 max-w-[1800px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        
+        <!-- Columna Izquierda (Texto) -->
         <div class="md:col-span-3 text-center md:text-right">
           <h1 class="font-display font-light tracking-tight leading-[0.92] reveal" style="font-size: clamp(2.5rem, 6vw, 5rem);">
             <span class="block">Cuída de</span>
@@ -181,16 +182,46 @@
           <p class="mt-4 text-sm reveal reveal-delay-1" style="color: var(--muted);">Resuelve retos matemáticos para ganar puntos y poder alimentarla o jugar con ella.</p>
         </div>
 
-        <div class="md:col-span-6 relative reveal reveal-delay-2">
-          <div class="aspect-[4/5] md:aspect-square relative max-w-[500px] mx-auto">
+        <!-- Columna Centro (Modelo 3D + Minijuego 4 integrado debajo) -->
+        <div class="md:col-span-6 relative reveal reveal-delay-2 flex flex-col items-center gap-6">
+          
+          <!-- Modelo 3D -->
+          <div class="aspect-[4/5] md:aspect-square relative w-full max-w-[450px] mx-auto">
             <div class="model-error-msg" id="modelErrorMsg">
               <div class="font-display text-2xl italic font-light">Cargando mascota...</div>
               <p class="text-sm" style="color: var(--muted);">Si no carga, elige otra mascota.</p>
             </div>
             <model-viewer alt="Mascota 3D interactiva" auto-rotate camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
           </div>
+
+          <!-- Minijuego 4: Escala los Múltiplos (Integrado aquí debajo del personaje) -->
+          <div id="juego-multiplos" class="math-zone w-full max-w-[450px] text-center">
+            <div class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Minijuego: Ritmo y Múltiplos</div>
+            <div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
+              <span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
+              <span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
+              <span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span>
+            </div>
+            <div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div>
+            <div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div>
+            <div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div>
+            
+            <button id="multTapArea" class="interactive disabled">¡TOCAR!</button>
+            <div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div>
+            
+            <div class="mt-6 flex justify-center gap-4 flex-wrap">
+              <button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);">
+                <span>Comenzar Juego</span>
+              </button>
+              <button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);">
+                <span>Reiniciar</span>
+              </button>
+            </div>
+          </div>
+
         </div>
 
+        <!-- Columna Derecha (HUD de Mascota) -->
         <div class="md:col-span-3 reveal reveal-delay-3">
           <div class="pet-hud mx-auto">
             <div class="mb-4">
@@ -358,32 +389,8 @@
       </div>
     </section>
 
-    <!-- 7. MINIJUEGO 4: Escala los Múltiplos (NUEVO) -->
-    <section id="juego-multiplos" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
-      <div class="max-w-[800px] mx-auto">
-        <div class="flex flex-col items-center mb-12 reveal">
-          <span class="font-display italic font-light text-xl mb-2" style="color: var(--accent);">Minijuego 4</span>
-          <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">Escala los Múltiplos</h2>
-          <p class="mt-4 text-center" style="color: var(--muted);">Toca el número exacto de veces para que tu mascota escale y descubra los múltiplos. ¡No te demores más de 4 segundos ni te apresures mientras escala!</p>
-        </div>
-        <div class="math-zone reveal reveal-delay-1 text-center">
-          <div class="flex justify-between mb-6 text-sm uppercase tracking-widest" style="color: var(--muted);">
-            <span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">1</span>/10</span>
-            <span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">1</span>/10</span>
-            <span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span>
-          </div>
-          <div class="font-display text-4xl mb-2" id="multTargetText">Toca 3 veces</div>
-          <div id="multProgressDots" class="flex justify-center gap-2 mb-8"></div>
-          <div id="multBubblesContainer" class="flex flex-wrap justify-center gap-3 mb-8 min-h-[60px]"></div>
-          <button id="multTapArea" class="interactive">¡TOCAR!</button>
-          <div class="text-xl mt-6" id="multStatus" style="color: var(--accent-2);">¡Comienza a tocar!</div>
-          <button id="resetMultBtn" class="btn-primary interactive mt-8"><span>Reiniciar Juego</span></button>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8. CONTACTO -->
-    <section id="contacto" class="py-24 px-6 md:px-12">
+    <!-- 7. CONTACTO -->
+    <section id="contacto" class="py-24 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[800px] mx-auto">
         <div class="text-center mb-12 reveal">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span>
@@ -1140,7 +1147,7 @@
       // =========================================
       let multLevel = 1, multExercise = 1, multErrors = 0;
       let multBaseNum = 0, multCurrentTaps = 0, multCurrentMultiple = 0;
-      let multLastTapTime = 0, multTimerInterval = null, multIsGameOver = false;
+      let multLastTapTime = 0, multTimerInterval = null, multIsGameOver = false, multHasStarted = false;
 
       const multTapArea = document.getElementById('multTapArea');
       const multBubblesContainer = document.getElementById('multBubblesContainer');
@@ -1150,7 +1157,28 @@
       const multTargetText = document.getElementById('multTargetText');
       const multStatus = document.getElementById('multStatus');
       const resetMultBtn = document.getElementById('resetMultBtn');
+      const startMultBtn = document.getElementById('startMultBtn');
       const multProgressDots = document.getElementById('multProgressDots');
+
+      function resetMultGameState() {
+        multLevel = 1; 
+        multErrors = 0; 
+        multIsGameOver = false;
+        multHasStarted = false;
+        multCurrentTaps = 0;
+        multCurrentMultiple = 0;
+        multBubblesContainer.innerHTML = '';
+        multProgressDots.innerHTML = '';
+        multLevelEl.textContent = 0;
+        multExerciseEl.textContent = 0;
+        multErrorsEl.textContent = 0;
+        multTargetText.textContent = "Prepárate";
+        multStatus.textContent = "Pulsa 'Comenzar' cuando estés listo";
+        multStatus.style.color = "var(--accent-2)";
+        multTapArea.classList.add('disabled');
+        clearInterval(multTimerInterval);
+        if(startMultBtn) startMultBtn.style.display = 'inline-flex';
+      }
 
       function startMultLevel() {
         multBaseNum = Math.floor(Math.random() * 10) + 1;
@@ -1187,7 +1215,7 @@
       }
 
       function handleMultTap() {
-        if (multIsGameOver) return;
+        if (multIsGameOver || !multHasStarted) return;
         
         // Prevenir toques dobles accidentales durante la animación de escalada
         if (isBusy) {
@@ -1223,6 +1251,7 @@
               multStatus.textContent = "¡Juego Completado! 🏆 Eres un campeón de los múltiplos.";
               multStatus.style.color = "var(--accent)";
               multIsGameOver = true;
+              multHasStarted = false;
               clearInterval(multTimerInterval);
               if (jumpAnimName) playAction(jumpAnimName, 3000);
               showToast("¡Felicidades! Completaste todos los niveles.");
@@ -1238,7 +1267,7 @@
       }
 
       function triggerMultError(reason) {
-        if (multIsGameOver) return;
+        if (multIsGameOver || !multHasStarted) return;
         
         multErrors++;
         multCurrentTaps = 0;
@@ -1247,22 +1276,20 @@
         
         if (multErrors >= 5) {
           multIsGameOver = true;
+          multHasStarted = false;
           clearInterval(multTimerInterval);
-          multStatus.textContent = "¡Caíste! Demasiados errores. Reiniciando al Nivel 1...";
+          multStatus.textContent = "¡Caíste! Demasiados errores. Reiniciando...";
           multStatus.style.color = "#ff4d4d";
           multTapArea.classList.add('disabled');
           
           if (fallAnimName) playAction(fallAnimName, 1500);
           if (sleepAnimName) setTimeout(() => { playAction(sleepAnimName, 3000); }, 1500);
           
-          showToast("¡Te quedaste dormido! Volviendo al Nivel 1...");
+          showToast("¡Te quedaste dormido! Volviendo al inicio...");
           
           setTimeout(() => {
-            multIsGameOver = false;
-            multErrors = 0;
-            multLevel = 1;
-            startMultLevel();
-          }, 5000);
+            resetMultGameState();
+          }, 4000);
         } else {
           multStatus.textContent = reason + " Llevas " + multErrors + "/5 errores.";
           multStatus.style.color = "#ff4d4d";
@@ -1274,7 +1301,7 @@
         clearInterval(multTimerInterval);
         multLastTapTime = Date.now();
         multTimerInterval = setInterval(() => {
-          if (multIsGameOver) return;
+          if (multIsGameOver || !multHasStarted) return;
           if (Date.now() - multLastTapTime > 4000) {
             triggerMultError("¡Muy lento! Te demoraste más de 4 segundos.");
             multLastTapTime = Date.now(); 
@@ -1287,14 +1314,22 @@
         multTapArea.addEventListener('touchstart', (e) => { e.preventDefault(); handleMultTap(); }, { passive: false });
       }
       
-      if (resetMultBtn) {
-        resetMultBtn.addEventListener('click', () => {
-          multLevel = 1; multErrors = 0; multIsGameOver = false;
+      if (startMultBtn) {
+        startMultBtn.addEventListener('click', () => {
+          multHasStarted = true;
+          startMultBtn.style.display = 'none';
           startMultLevel();
         });
       }
+
+      if (resetMultBtn) {
+        resetMultBtn.addEventListener('click', () => {
+          resetMultGameState();
+        });
+      }
       
-      startMultLevel();
+      // Iniciar en estado de espera
+      resetMultGameState();
 
       // =========================================
       // 14. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
