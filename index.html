@@ -179,7 +179,7 @@
             <span class="block"><span class="font-display italic font-normal" style="color: var(--accent);">tu mascota</span></span>
             <span class="block">virtual</span>
           </h1>
-          <p class="mt-4 text-sm reveal reveal-delay-1" style="color: var(--muted);">Resuelve retos matemáticos para ganar puntos y poder alimentarla o jugar con ella.</p>
+          <p class="mt-4 text-sm reveal reveal-delay-1" style="color: var(--muted);">Resuelve retos matemáticos para ganar puntos, curarla y poder alimentarla o jugar con ella.</p>
         </div>
 
         <!-- Columna Centro (Modelo 3D + Minijuego 4 integrado debajo) -->
@@ -507,7 +507,10 @@
         if (petPointsEl) petPointsEl.textContent = petData.points;
         if (hungerBar) hungerBar.style.width = petData.hunger + '%';
         if (happyBar) happyBar.style.width = petData.happy + '%';
-        if (healthBar) healthBar.style.width = petData.health + '%';
+        if (healthBar) {
+          healthBar.style.width = petData.health + '%';
+          if (petData.health < 50) healthBar.style.opacity = '0.6'; else healthBar.style.opacity = '1';
+        }
         if (sleepBar) sleepBar.style.width = petData.sleep + '%';
       }
 
@@ -516,6 +519,7 @@
       const modelErrorMsg = document.getElementById('modelErrorMsg');
       let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName, climbAnimName, fallAnimName;
       let isBusy = false;
+      let isPetSick = false;
       let actionTimeout = null;
 
       function loadPetModel(src) {
@@ -552,11 +556,41 @@
         clearTimeout(actionTimeout);
         actionTimeout = setTimeout(() => { 
           isBusy = false; 
-          if (idleAnimName && modelViewer) modelViewer.animationName = idleAnimName; 
+          if (isPetSick && sleepAnimName) modelViewer.animationName = sleepAnimName;
+          else if (idleAnimName) modelViewer.animationName = idleAnimName; 
         }, duration);
       }
 
-      // 3. SELECCIÓN DE MASCOTA
+      // 3. SISTEMA DE DECAIMIENTO DE SALUD Y ENFERMEDAD
+      function checkPetStatus() {
+        const wasSick = isPetSick;
+        if (petData.health < 50) {
+          if (!isPetSick) {
+            isPetSick = true;
+            showToast("Tu mascota se siente débil... ¡Resuelve retos para curarla!");
+          }
+          if (!isBusy && sleepAnimName) modelViewer.animationName = sleepAnimName;
+          else if (!isBusy && idleAnimName) modelViewer.animationName = idleAnimName;
+        } else {
+          if (isPetSick) {
+            isPetSick = false;
+            showToast("¡Tu mascota se siente mucho mejor!");
+            if (!isBusy && idleAnimName) modelViewer.animationName = idleAnimName;
+          }
+        }
+      }
+
+      setInterval(() => {
+        petData.health = Math.max(0, petData.health - 3);
+        petData.hunger = Math.max(0, petData.hunger - 1);
+        petData.sleep = Math.max(0, petData.sleep - 1);
+        
+        checkPetStatus();
+        savePetData();
+        updateHUD();
+      }, 5000); // Se ejecuta cada 5 segundos
+
+      // 4. SELECCIÓN DE MASCOTA
       const availablePets = [
         { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' },
         { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
@@ -606,7 +640,7 @@
       }
       if (petData.model) loadPetModel(petData.model);
 
-      // 4. ACCIONES DE LA MASCOTA
+      // 5. ACCIONES DE LA MASCOTA
       const btnFeed = document.getElementById('btnFeed');
       const btnPlay = document.getElementById('btnPlay');
       const btnSleep = document.getElementById('btnSleep');
@@ -635,7 +669,7 @@
         updateHUD(); savePetData(); showToast((petData.name || "Tu mascota") + " está descansando...");
       });
 
-      // 5. RETO MATEMÁTICO
+      // 6. RETO MATEMÁTICO
       let currentDifficulty = 1; let currentAnswer = 0;
       const difficultyBtns = document.querySelectorAll('.difficulty-btn');
       const mathQuestionEl = document.getElementById('mathQuestion');
@@ -683,7 +717,8 @@
         if (selected === currentAnswer) {
           btn.classList.add('correct');
           petData.points += 10; petData.happy = Math.min(100, petData.happy + 5);
-          showToast("¡Correcto! +10 puntos");
+          petData.health = Math.min(100, petData.health + 5); // Sube la salud
+          showToast("¡Correcto! +10 puntos. ¡Salud recuperada!");
           if (jumpAnimName) playAction(jumpAnimName, 2000); 
           updateHUD(); savePetData();
           setTimeout(generateQuestion, 1500);
@@ -694,7 +729,7 @@
         }
       }
 
-      // 6. FORMULARIO DE CONTACTO
+      // 7. FORMULARIO DE CONTACTO
       const contactForm = document.getElementById('contactForm');
       const submitBtn = document.getElementById('submitBtn');
       const submitBtnText = document.getElementById('submitBtnText');
@@ -719,7 +754,7 @@
         });
       }
 
-      // 7. ASISTENTE DE IA (PUTER.JS)
+      // 8. ASISTENTE DE IA (PUTER.JS)
       const aiBubble = document.getElementById('aiBubble');
       const aiChatWindow = document.getElementById('aiChatWindow');
       const closeAiChat = document.getElementById('closeAiChat');
@@ -757,7 +792,7 @@
       if (aiSendBtn) aiSendBtn.addEventListener('click', sendAiMessage);
       if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAiMessage(); });
 
-      // 8. FUNCIONES GLOBALES (UI)
+      // 9. FUNCIONES GLOBALES (UI)
       const toast = document.getElementById('toast');
       function showToast(message) { 
         if (!toast) return; toast.textContent = message; toast.classList.add('show'); 
@@ -804,7 +839,7 @@
       updateHUD();
       generateQuestion(); 
 
-      // 9. REGISTRO DEL SERVICE WORKER
+      // 10. REGISTRO DEL SERVICE WORKER
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err));
@@ -812,7 +847,7 @@
       }
 
       // =========================================
-      // 10. MINIJUEGO 1: LÓGICA (GEOMETRÍA POR NIVELES)
+      // 11. MINIJUEGO 1: LÓGICA (GEOMETRÍA POR NIVELES)
       // =========================================
       const levelShapes = [
         { name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' },
@@ -918,6 +953,7 @@
                 if (player.x < c.x + c.r && player.x + player.w > c.x - c.r && player.y < c.y + c.r && player.y + player.h > c.y - c.r) {
                   c.collected = true; coinsCollected++;
                   petData.points += 5; petData.happy = Math.min(100, petData.happy + 2);
+                  petData.health = Math.min(100, petData.health + 1); // Recupera un poco de salud
                   updateHUD(); savePetData(); showToast("¡Moneda! (" + coinsCollected + "/" + totalCoins + ")"); playSound('coin');
                   if (coinsCollected === totalCoins) {
                     currentGameLevel++;
@@ -972,7 +1008,7 @@
       initMiniGame1();
 
       // =========================================
-      // 11. MINIJUEGO 2: LÓGICA (CUENTA Y TOCA)
+      // 12. MINIJUEGO 2: LÓGICA (CUENTA Y TOCA)
       // =========================================
       let countNum1, countNum2, countIsAddition, countTarget, countTapped;
       const objectsContainer = document.getElementById('objectsContainer');
@@ -1026,8 +1062,9 @@
         if (countTapped === countTarget) {
           petData.points += 10;
           petData.happy = Math.min(100, petData.happy + 5);
+          petData.health = Math.min(100, petData.health + 5); // Curar
           updateHUD(); savePetData();
-          showToast("¡Excelente! +10 puntos");
+          showToast("¡Excelente! +10 puntos. ¡Salud recuperada!");
           if (jumpAnimName) playAction(jumpAnimName, 2000);
           setTimeout(generateCountGame, 1500);
         } else if (countTapped > countTarget) {
@@ -1040,7 +1077,7 @@
       generateCountGame();
 
       // =========================================
-      // 12. MINIJUEGO 3: LÓGICA (AGRUPA Y REPARTE)
+      // 13. MINIJUEGO 3: LÓGICA (AGRUPA Y REPARTE)
       // =========================================
       let grpIsMult, grpNum1, grpNum2, grpBoxes = [], grpPileItems = [], grpDistIndex = 0;
       const grpPrompt = document.getElementById('grpPrompt');
@@ -1113,8 +1150,9 @@
         
         if (grpBoxes.every(b => b.full)) {
           petData.points += 10; petData.happy = Math.min(100, petData.happy + 5);
+          petData.health = Math.min(100, petData.health + 5); // Curar
           updateHUD(); savePetData();
-          showToast("¡Excelente! +10 puntos");
+          showToast("¡Excelente! +10 puntos. ¡Salud recuperada!");
           if (jumpAnimName) playAction(jumpAnimName, 2000);
           setTimeout(generateGrpGame, 1500);
         }
@@ -1132,8 +1170,9 @@
         
         if (grpPileItems.every(i => i.style.visibility === 'hidden')) {
           petData.points += 10; petData.happy = Math.min(100, petData.happy + 5);
+          petData.health = Math.min(100, petData.health + 5); // Curar
           updateHUD(); savePetData();
-          showToast("¡Excelente! +10 puntos");
+          showToast("¡Excelente! +10 puntos. ¡Salud recuperada!");
           if (jumpAnimName) playAction(jumpAnimName, 2000);
           setTimeout(generateGrpGame, 1500);
         }
@@ -1143,7 +1182,7 @@
       generateGrpGame();
 
       // =========================================
-      // 13. MINIJUEGO 4: LÓGICA (ESCALA MÚLTIPLOS)
+      // 14. MINIJUEGO 4: LÓGICA (ESCALA MÚLTIPLOS)
       // =========================================
       let multLevel = 1, multExercise = 1, multErrors = 0;
       let multBaseNum = 0, multCurrentTaps = 0, multCurrentMultiple = 0;
@@ -1217,7 +1256,6 @@
       function handleMultTap() {
         if (multIsGameOver || !multHasStarted) return;
         
-        // Prevenir toques dobles accidentales durante la animación de escalada
         if (isBusy) {
           triggerMultError("¡Te adelantaste! Espera a que termine de escalar.");
           return;
@@ -1229,7 +1267,6 @@
         updateMultUI();
 
         if (multCurrentTaps === multBaseNum) {
-          // Secuencia correcta completada
           multCurrentMultiple += multBaseNum;
           const bubble = document.createElement('div');
           bubble.className = 'mult-bubble';
@@ -1238,14 +1275,14 @@
           
           petData.points += 10;
           petData.happy = Math.min(100, petData.happy + 5);
+          petData.health = Math.min(100, petData.health + 10); // Cura mucha salud por ser un minijuego largo
           updateHUD(); savePetData();
-          showToast("¡Correcto! +10 puntos. Múltiplo: " + multCurrentMultiple);
+          showToast("¡Correcto! +10 pts. Múltiplo: " + multCurrentMultiple + ". ¡Salud +10!");
 
           multCurrentTaps = 0;
           multExercise++;
 
           if (multExercise > 10) {
-            // Nivel completado
             multLevel++;
             if (multLevel > 10) {
               multStatus.textContent = "¡Juego Completado! 🏆 Eres un campeón de los múltiplos.";
@@ -1261,7 +1298,7 @@
             setTimeout(() => startMultLevel(), 1500);
           } else {
             multStatus.textContent = "¡Excelente! Sigue tocando " + multBaseNum + " veces.";
-            if (climbAnimName) playAction(climbAnimName, 800); // Animación de escalada rápida
+            if (climbAnimName) playAction(climbAnimName, 800); 
           }
         }
       }
@@ -1328,11 +1365,10 @@
         });
       }
       
-      // Iniciar en estado de espera
       resetMultGameState();
 
       // =========================================
-      // 14. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
+      // 15. LÓGICA DE WEB AR (CÁMARA Y BOTONES)
       // =========================================
       const btnAR = document.getElementById('btnAR');
       const arOverlay = document.getElementById('arOverlay');
