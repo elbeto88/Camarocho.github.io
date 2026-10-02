@@ -50,6 +50,10 @@
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
 
+    /* --- MODELO 3D (REGLA CRITICAL QUE FALTABA) --- */
+    model-viewer { display: block; width: 100%; height: 100%; --poster-color: transparent; cursor: grab; }
+    model-viewer::part(default-progress-bar) { display: none; }
+
     /* --- WIDGET FLOTANTE DE LA MASCOTA (REDIMENSIONABLE) --- */
     .pet-widget { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 9997; background: rgba(26, 24, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 1.25rem; color: var(--bg); width: 320px; height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); resize: both; overflow: hidden; min-width: 260px; min-height: 400px; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; }
     .pet-widget.collapsed { width: 60px; height: 60px; padding: 0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: var(--accent); color: white; resize: none; min-width: 0; min-height: 0; }
@@ -57,7 +61,9 @@
     .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .widget-toggle { background: rgba(255,255,255,0.1); border: none; color: var(--bg); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
     .widget-content { display: flex; flex-direction: column; flex-grow: 1; gap: 1rem; overflow-y: auto; overflow-x: hidden; padding-right: 5px; }
-    .widget-viewer { width: 100%; flex-grow: 1; min-height: 150px; position: relative; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); }
+    .widget-viewer { width: 100%; flex-grow: 1; min-height: 180px; position: relative; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); }
+    .model-error-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; background: var(--fg); color: var(--bg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease; }
+    .model-error-msg.hide { opacity: 0; pointer-events: none; }
     @media (max-width: 768px) {
       .pet-widget { width: 260px; height: 450px; bottom: 1rem; left: 1rem; }
       .pet-widget.collapsed { width: 50px; height: 50px; }
@@ -209,7 +215,7 @@
       <div class="max-w-[1200px] mx-auto">
         
         <!-- Menú de Pestañas (Carrusel horizontal) -->
-        <div class="tabs-container reveal">
+        <div class="tabs-container">
           <button class="tab-btn active" data-tab="aprender">Aprender</button>
           <button class="tab-btn" data-tab="math">Reto Matemático</button>
           <button class="tab-btn" data-tab="minijuego">Salta y Suma</button>
@@ -219,7 +225,7 @@
         </div>
 
         <!-- Panel: Aprender -->
-        <div id="tab-aprender" class="activity-panel active reveal">
+        <div id="tab-aprender" class="activity-panel active">
           <div class="flex flex-col items-center mb-12">
             <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2>
           </div>
@@ -400,7 +406,7 @@
     </div>
   </footer>
 
-  <!-- WIDGET FLOTANTE DE LA MASCOTA (SIEMPRE ABIERTO Y REDIMENSIONABLE) -->
+  <!-- WIDGET FLOTANTE DE LA MASCOTA -->
   <div id="petWidget" class="pet-widget">
     <div class="widget-header">
       <input type="text" id="petNameInput" class="pet-name-input" placeholder="Nombre..." maxlength="12">
@@ -408,7 +414,7 @@
     </div>
     <div class="widget-content">
       <div class="widget-viewer">
-        <div class="model-error-msg" id="modelErrorMsg" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; background: var(--fg); color: var(--bg); z-index: 5;">
+        <div class="model-error-msg" id="modelErrorMsg">
           <div class="font-display text-xl italic font-light">Cargando...</div>
         </div>
         <model-viewer alt="Mascota 3D" auto-rotate camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
@@ -482,17 +488,11 @@
   <script>
     try {
       // 0. REVELAR ELEMENTOS, MENU MÓVIL Y SISTEMA DE PESTAÑAS
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
-      }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const navMenu = document.getElementById('navMenu');
       if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('open'));
       if (navMenu) navMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => navMenu.classList.remove('open')));
 
-      // Lógica del Carrusel de Pestañas
       const tabBtns = document.querySelectorAll('.tab-btn');
       tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -777,7 +777,7 @@
       if (btnAR) btnAR.addEventListener('click', async () => { try { arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); arVideo.srcObject = arStream; arOverlay.classList.add('active'); } catch (err) { console.error("Error al acceder a la cámara:", err); showToast("No se pudo acceder a la cámara."); } });
       if (exitAR) exitAR.addEventListener('click', () => { arOverlay.classList.remove('active'); if (arStream) { arStream.getTracks().forEach(track => track.stop()); arStream = null; } });
 
-    } catch (globalError) { console.error("Error global inicializando la app:", globalError); document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')); }
+    } catch (globalError) { console.error("Error global inicializando la app:", globalError); }
   </script>
 </body>
 </html>
