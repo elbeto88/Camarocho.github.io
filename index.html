@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f1ebe1">
   <link rel="apple-touch-icon" href="icon-192.png">
   
-  <title>MateMascota - Aprende Matemáticas</title>
+  <title>Math Live - Aprende Matemáticas</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -50,9 +50,11 @@
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
 
-    /* --- MODELO 3D (REGLA CRITICAL QUE FALTABA) --- */
+    /* --- MODELO 3D --- */
     model-viewer { display: block; width: 100%; height: 100%; --poster-color: transparent; cursor: grab; }
     model-viewer::part(default-progress-bar) { display: none; }
+    .model-error-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; background: var(--fg); color: var(--bg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease; }
+    .model-error-msg.hide { opacity: 0; pointer-events: none; }
 
     /* --- WIDGET FLOTANTE DE LA MASCOTA (REDIMENSIONABLE) --- */
     .pet-widget { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 9997; background: rgba(26, 24, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 1.25rem; color: var(--bg); width: 320px; height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); resize: both; overflow: hidden; min-width: 260px; min-height: 400px; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; }
@@ -62,8 +64,6 @@
     .widget-toggle { background: rgba(255,255,255,0.1); border: none; color: var(--bg); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
     .widget-content { display: flex; flex-direction: column; flex-grow: 1; gap: 1rem; overflow-y: auto; overflow-x: hidden; padding-right: 5px; }
     .widget-viewer { width: 100%; flex-grow: 1; min-height: 180px; position: relative; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2); }
-    .model-error-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; background: var(--fg); color: var(--bg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease; }
-    .model-error-msg.hide { opacity: 0; pointer-events: none; }
     @media (max-width: 768px) {
       .pet-widget { width: 260px; height: 450px; bottom: 1rem; left: 1rem; }
       .pet-widget.collapsed { width: 50px; height: 50px; }
@@ -181,7 +181,7 @@
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto relative">
       <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">
-        MateMascota<span style="color: var(--accent);">.</span>
+        Math Live<span style="color: var(--accent);">.</span>
       </a>
       <button class="mobile-menu-btn interactive" id="mobileMenuBtn">☰</button>
       <ul id="navMenu" class="hidden md:flex items-center gap-6 text-sm absolute md:relative left-0 right-0 md:left-auto md:right-auto">
@@ -193,20 +193,34 @@
 
   <main class="pt-24">
     
-    <!-- HERO -->
-    <section id="hero" class="relative min-h-[60vh] flex flex-col justify-center px-6 md:px-12 py-12 overflow-hidden">
-      <div class="max-w-[1000px] mx-auto text-center relative z-10">
-        <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Bienvenido</span>
-        <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">
-          Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span>
-        </h1>
-        <p class="mt-4 text-lg md:text-xl mb-10 mx-auto" style="color: var(--muted); max-width: 600px;">
-          Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, alimenta a tu mascota y diviértete aprendiendo.
-        </p>
-        <a href="#actividades" class="btn-primary interactive">
-          <span>Comenzar a Jugar</span>
-          <span class="arrow">↓</span>
-        </a>
+    <!-- HERO con Modelo 3D -->
+    <section id="hero" class="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-12 overflow-hidden">
+      <div class="max-w-[1200px] mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+        
+        <!-- Texto Hero -->
+        <div class="text-center md:text-left">
+          <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Bienvenido</span>
+          <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">
+            Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span>
+          </h1>
+          <p class="mt-4 text-lg md:text-xl mb-10 mx-auto md:mx-0" style="color: var(--muted); max-width: 600px;">
+            Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, alimenta a tu mascota y diviértete aprendiendo.
+          </p>
+          <a href="#actividades" class="btn-primary interactive">
+            <span>Comenzar a Jugar</span>
+            <span class="arrow">↓</span>
+          </a>
+          <p class="mt-8 text-xs uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
+        </div>
+
+        <!-- Modelo 3D Hero (Solo visible en escritorio para no sobrecargar móviles) -->
+        <div class="hidden md:block relative w-full aspect-square">
+          <div class="model-error-msg" id="heroModelErrorMsg">
+            <div class="font-display text-xl italic font-light">Cargando mascota...</div>
+          </div>
+          <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" auto-rotate camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
+        </div>
+
       </div>
     </section>
 
@@ -401,8 +415,9 @@
 
   <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);">
     <div class="max-w-[1800px] mx-auto text-center">
-      <p class="font-display text-xl italic font-light">MateMascota</p>
+      <p class="font-display text-xl italic font-light">Math Live</p>
       <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">© 2025 Proyecto Educativo</p>
+      <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
     </div>
   </footer>
 
@@ -414,7 +429,7 @@
     </div>
     <div class="widget-content">
       <div class="widget-viewer">
-        <div class="model-error-msg" id="modelErrorMsg">
+        <div class="model-error-msg" id="widgetModelErrorMsg">
           <div class="font-display text-xl italic font-light">Cargando...</div>
         </div>
         <model-viewer alt="Mascota 3D" auto-rotate camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
@@ -487,7 +502,7 @@
 
   <script>
     try {
-      // 0. REVELAR ELEMENTOS, MENU MÓVIL Y SISTEMA DE PESTAÑAS
+      // 0. MENU MÓVIL Y SISTEMA DE PESTAÑAS
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const navMenu = document.getElementById('navMenu');
       if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('open'));
@@ -541,46 +556,56 @@
         if (sleepBar) sleepBar.style.width = petData.sleep + '%';
       }
 
-      // 2. LÓGICA DE ANIMACIONES (MODEL-VIEWER)
-      const modelViewer = document.getElementById('modelViewer3D');
-      const modelErrorMsg = document.getElementById('modelErrorMsg');
+      // 2. LÓGICA DE ANIMACIONES (MULTIPLES MODEL-VIEWERS)
+      const widgetViewer = document.getElementById('modelViewer3D');
+      const heroViewer = document.getElementById('heroModelViewer');
+      const viewers = [widgetViewer, heroViewer].filter(v => v !== null);
+      
       let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName, climbAnimName, fallAnimName;
       let isBusy = false, isPetSick = false, actionTimeout = null;
 
       function loadPetModel(src) {
-        if (modelViewer) modelViewer.src = src;
+        viewers.forEach(v => v.src = src);
         const arModelViewer = document.getElementById('arModelViewer');
         if (arModelViewer) arModelViewer.src = src;
       }
 
-      if (modelViewer) {
-        modelViewer.addEventListener('load', () => {
-          if (modelErrorMsg) modelErrorMsg.classList.add('hide');
-          const animations = modelViewer.availableAnimations;
-          if (animations && animations.length > 0) {
-            idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
-            eatAnimName = animations.find(a => a.toLowerCase().includes('eat'));
-            sleepAnimName = animations.find(a => a.toLowerCase().includes('sleep'));
-            playAnimName = animations.find(a => a.toLowerCase().includes('run'));
-            jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
-            hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
-            climbAnimName = animations.find(a => a.toLowerCase().includes('climb'));
-            fallAnimName = animations.find(a => a.toLowerCase().includes('fall') || a.toLowerCase().includes('drop'));
-            if (idleAnimName) modelViewer.animationName = idleAnimName;
-          }
-        });
+      function setAllViewersAnimation(animName) {
+        viewers.forEach(v => { if (v && v.availableAnimations && v.availableAnimations.length > 0) v.animationName = animName; });
       }
 
+      viewers.forEach(v => {
+        if (!v) return;
+        v.addEventListener('load', () => {
+          const errMsg = v.parentElement.querySelector('.model-error-msg');
+          if (errMsg) errMsg.classList.add('hide');
+          const animations = v.availableAnimations;
+          if (animations && animations.length > 0) {
+            if (!idleAnimName) { 
+              idleAnimName = animations.find(a => a.toLowerCase().includes('idle')) || animations[0];
+              eatAnimName = animations.find(a => a.toLowerCase().includes('eat'));
+              sleepAnimName = animations.find(a => a.toLowerCase().includes('sleep'));
+              playAnimName = animations.find(a => a.toLowerCase().includes('run'));
+              jumpAnimName = animations.find(a => a.toLowerCase().includes('jump'));
+              hitAnimName = animations.find(a => a.toLowerCase().includes('hit'));
+              climbAnimName = animations.find(a => a.toLowerCase().includes('climb'));
+              fallAnimName = animations.find(a => a.toLowerCase().includes('fall') || a.toLowerCase().includes('drop'));
+            }
+            if (!isBusy && idleAnimName) v.animationName = idleAnimName;
+          }
+        });
+      });
+
       function playAction(animName, duration, force = false) {
-        if (!animName || !modelViewer) return;
+        if (!animName) return;
         if (isBusy && !force) return;
         isBusy = true;
-        modelViewer.animationName = animName;
+        setAllViewersAnimation(animName);
         clearTimeout(actionTimeout);
         actionTimeout = setTimeout(() => { 
           isBusy = false; 
-          if (isPetSick && sleepAnimName) modelViewer.animationName = sleepAnimName;
-          else if (idleAnimName) modelViewer.animationName = idleAnimName; 
+          if (isPetSick && sleepAnimName) setAllViewersAnimation(sleepAnimName);
+          else if (idleAnimName) setAllViewersAnimation(idleAnimName); 
         }, duration);
       }
 
@@ -588,9 +613,9 @@
       function checkPetStatus() {
         if (petData.health < 50) {
           if (!isPetSick) { isPetSick = true; showToast("Tu mascota se siente débil... ¡Resuelve retos!"); }
-          if (!isBusy && sleepAnimName) modelViewer.animationName = sleepAnimName;
+          if (!isBusy && sleepAnimName) setAllViewersAnimation(sleepAnimName);
         } else {
-          if (isPetSick) { isPetSick = false; showToast("¡Tu mascota se siente mucho mejor!"); if (!isBusy && idleAnimName) modelViewer.animationName = idleAnimName; }
+          if (isPetSick) { isPetSick = false; showToast("¡Tu mascota se siente mucho mejor!"); if (!isBusy && idleAnimName) setAllViewersAnimation(idleAnimName); }
         }
       }
 
@@ -721,16 +746,63 @@
       // 10. REGISTRO DEL SERVICE WORKER
       if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err)));
 
-      // 11. MINIJUEGO 1
-      const levelShapes = [{ name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' }, { name: 'Cuadrados', sides: 4, formula: 'P=4L, A=L^2' }, { name: 'Círculos', sides: 0, formula: 'P=2πr, A=πr^2' }, { name: 'Pentágonos', sides: 5, formula: 'P=5L, A=(P*a)/2' }, { name: 'Hexágonos', sides: 6, formula: 'P=6L, A=(P*a)/2' }, { name: 'Octágonos', sides: 8, formula: 'P=8L, A=(P*a)/2' }];
+      // 11. MINIJUEGO 1: LÓGICA (GEOMETRÍA POR NIVELES) - LÍMITE 5 NIVELES
+      const levelShapes = [
+        { name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' },
+        { name: 'Cuadrados', sides: 4, formula: 'P=4L, A=L^2' },
+        { name: 'Círculos', sides: 0, formula: 'P=2πr, A=πr^2' },
+        { name: 'Pentágonos', sides: 5, formula: 'P=5L, A=(P*a)/2' },
+        { name: 'Hexágonos', sides: 6, formula: 'P=6L, A=(P*a)/2' }
+      ];
       function initMiniGame1() {
         const canvas = document.getElementById('gameCanvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); const W = canvas.width, H = canvas.height; const GRAVITY = 0.8, GROUND_Y = H - 60, MAX_JUMPS = 3, LEVEL_WIDTH = 2400;
         const runFrames = []; ['run.png', 'run2.png', 'run3.png'].forEach(src => { const img = new Image(); img.src = src; runFrames.push(img); });
         const player = { x: 100, y: GROUND_Y, w: 60, h: 70, vx: 0, vy: 0, speed: 5, jumpPower: 13, grounded: true, jumpsLeft: MAX_JUMPS, frameCount: 0 };
-        let platforms = [], coins = [], enemies = [], keys = { left: false, right: false, jump: false }; let cameraX = 0, currentGameLevel = 1, totalCoins = 0, coinsCollected = 0;
+        let platforms = [], coins = [], enemies = [], keys = { left: false, right: false, jump: false }; let cameraX = 0, currentGameLevel = 1, totalCoins = 0, coinsCollected = 0, isLevelTransitioning = false;
+        
         function drawShape(x, y, w, h, sides) { ctx.fillStyle = '#ff4d4d'; ctx.beginPath(); if (sides === 0) { ctx.arc(x + w/2, y + h/2, w/2, 0, Math.PI * 2); } else if (sides === 4) { ctx.rect(x, y, w, h); } else if (sides === 3) { ctx.moveTo(x + w/2, y); ctx.lineTo(x + w, y + h); ctx.lineTo(x, y + h); ctx.closePath(); } else { let cx = x + w/2, cy = y + h/2, radius = w/2; for (let i = 0; i < sides; i++) { let angle = (Math.PI * 2 * i / sides) - Math.PI / 2; let px = cx + radius * Math.cos(angle), py = cy + radius * Math.sin(angle); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); } ctx.closePath(); } ctx.fill(); }
         function initGame() { player.x = 100; player.y = GROUND_Y; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS; platforms = [{ x: 0, y: GROUND_Y, w: 600, h: H - GROUND_Y }, { x: 750, y: GROUND_Y, w: 600, h: H - GROUND_Y }, { x: 1500, y: GROUND_Y, w: 900, h: H - GROUND_Y }, { x: 200, y: 280, w: 120, h: 20 }, { x: 450, y: 220, w: 120, h: 20 }, { x: 850, y: 260, w: 150, h: 20 }, { x: 1100, y: 200, w: 120, h: 20 }, { x: 1600, y: 280, w: 100, h: 20 }, { x: 1850, y: 220, w: 120, h: 20 }, { x: 2100, y: 260, w: 150, h: 20 }]; coins = [{ x: 250, y: 240, r: 10 }, { x: 500, y: 180, r: 10 }, { x: 900, y: 220, r: 10 }, { x: 1150, y: 160, r: 10 }, { x: 1650, y: 240, r: 10 }, { x: 1900, y: 180, r: 10 }, { x: 2150, y: 220, r: 10 }, { x: 2300, y: 320, r: 10 }].map(c => ({...c, collected: false})); totalCoins = coins.length; coinsCollected = 0; let speed = 1.5 + (currentGameLevel - 1) * 0.5; enemies = [{ x: 350, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 300, rangeEnd: 550 }, { x: 950, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 800, rangeEnd: 1300 }, { x: 1700, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 1550, rangeEnd: 1800 }, { x: 2050, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 1950, rangeEnd: 2300 }]; }
-        function gameLoop() { try { cameraX = player.x - W / 2 + player.w / 2; if (cameraX < 0) cameraX = 0; if (cameraX > LEVEL_WIDTH - W) cameraX = LEVEL_WIDTH - W; ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H); ctx.save(); ctx.translate(-cameraX, 0); if (keys.left) player.vx = -player.speed; else if (keys.right) player.vx = player.speed; else player.vx = 0; player.x += player.vx; player.y += player.vy; player.vy += GRAVITY; if (player.x < 0) player.x = 0; if (player.x + player.w > LEVEL_WIDTH) player.x = LEVEL_WIDTH - player.w; if (player.y > H + 100) { showToast("¡Caíste! Reintentando Nivel " + currentGameLevel); initGame(); } let onGround = false; platforms.forEach(p => { ctx.fillStyle = '#8B4513'; if (p.y !== GROUND_Y) ctx.fillStyle = '#2a8c4a'; ctx.fillRect(p.x, p.y, p.w, p.h); if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 15 && player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS; onGround = true; } }); if (!onGround) player.grounded = false; if (keys.jump && player.jumpsLeft > 0) { player.vy = -player.jumpPower; player.grounded = false; player.jumpsLeft--; keys.jump = false; playSound('jump'); } let shapeInfo = levelShapes[(currentGameLevel - 1) % levelShapes.length]; enemies.forEach(e => { e.x += e.vx; if (e.x < e.rangeStart || e.x + e.w > e.rangeEnd) e.vx *= -1; drawShape(e.x, e.y, e.w, e.h, shapeInfo.sides); ctx.font = 'bold 24px Space Grotesk'; const textWidth = ctx.measureText(shapeInfo.formula).width; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(e.x + e.w + 10, e.y - 5, textWidth + 16, 34); ctx.fillStyle = '#1a1814'; ctx.fillText(shapeInfo.formula, e.x + e.w + 18, e.y + 20); if (player.x < e.x + e.w && player.x + player.w > e.x && player.y + player.h > e.y) { showToast("¡Te atrapó un " + shapeInfo.name.slice(0, -1) + "! Reintentando..."); playSound('jump'); initGame(); } }); coins.forEach(c => { if (!c.collected) { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.closePath(); if (player.x < c.x + c.r && player.x + player.w > c.x - c.r && player.y < c.y + c.r && player.y + player.h > c.y - c.r) { c.collected = true; coinsCollected++; petData.points += 5; petData.happy = Math.min(100, petData.happy + 2); petData.health = Math.min(100, petData.health + 1); updateHUD(); savePetData(); showToast("¡Moneda! (" + coinsCollected + "/" + totalCoins + ")"); playSound('coin'); if (coinsCollected === totalCoins) { currentGameLevel++; let nextShape = levelShapes[(currentGameLevel - 1) % levelShapes.length]; showToast("¡Nivel Completado! Prepárate para " + nextShape.name); setTimeout(() => { initGame(); }, 1500); } } } }); player.frameCount++; let currentFrame = (player.vx !== 0 || !player.grounded) ? runFrames[Math.floor(player.frameCount / 5) % runFrames.length] : runFrames[0]; if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) { ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h); } else { ctx.fillStyle = '#ff4d1f'; ctx.fillRect(player.x, player.y, player.w, player.h); } ctx.restore(); ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; ctx.font = 'bold 18px Space Grotesk, sans-serif'; ctx.fillText("Nivel " + currentGameLevel + ": " + shapeInfo.name, 20, 30); ctx.fillText("Monedas: " + coinsCollected + "/" + totalCoins, 20, 55); } catch (e) { console.error("Error en el game loop:", e); } requestAnimationFrame(gameLoop); }
+        
+        function gameLoop() { 
+          try { 
+            cameraX = player.x - W / 2 + player.w / 2; if (cameraX < 0) cameraX = 0; if (cameraX > LEVEL_WIDTH - W) cameraX = LEVEL_WIDTH - W; ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H); ctx.save(); ctx.translate(-cameraX, 0); 
+            if (!isLevelTransitioning) {
+              if (keys.left) player.vx = -player.speed; else if (keys.right) player.vx = player.speed; else player.vx = 0; player.x += player.vx; player.y += player.vy; player.vy += GRAVITY; if (player.x < 0) player.x = 0; if (player.x + player.w > LEVEL_WIDTH) player.x = LEVEL_WIDTH - player.w; if (player.y > H + 100) { showToast("¡Caíste! Reintentando Nivel " + currentGameLevel); initGame(); } 
+              let onGround = false; platforms.forEach(p => { ctx.fillStyle = '#8B4513'; if (p.y !== GROUND_Y) ctx.fillStyle = '#2a8c4a'; ctx.fillRect(p.x, p.y, p.w, p.h); if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 15 && player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS; onGround = true; } }); if (!onGround) player.grounded = false; 
+              if (keys.jump && player.jumpsLeft > 0) { player.vy = -player.jumpPower; player.grounded = false; player.jumpsLeft--; keys.jump = false; playSound('jump'); } 
+              let shapeInfo = levelShapes[(currentGameLevel - 1) % levelShapes.length]; 
+              enemies.forEach(e => { e.x += e.vx; if (e.x < e.rangeStart || e.x + e.w > e.rangeEnd) e.vx *= -1; drawShape(e.x, e.y, e.w, e.h, shapeInfo.sides); ctx.font = 'bold 24px Space Grotesk'; const textWidth = ctx.measureText(shapeInfo.formula).width; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(e.x + e.w + 10, e.y - 5, textWidth + 16, 34); ctx.fillStyle = '#1a1814'; ctx.fillText(shapeInfo.formula, e.x + e.w + 18, e.y + 20); if (player.x < e.x + e.w && player.x + player.w > e.x && player.y + player.h > e.y) { showToast("¡Te atrapó un " + shapeInfo.name.slice(0, -1) + "! Reintentando..."); playSound('jump'); initGame(); } }); 
+              coins.forEach(c => { if (!c.collected) { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.closePath(); if (player.x < c.x + c.r && player.x + player.w > c.x - c.r && player.y < c.y + c.r && player.y + player.h > c.y - c.r) { c.collected = true; coinsCollected++; petData.points += 5; petData.happy = Math.min(100, petData.happy + 2); petData.health = Math.min(100, petData.health + 1); updateHUD(); savePetData(); showToast("¡Moneda! (" + coinsCollected + "/" + totalCoins + ")"); playSound('coin'); 
+              if (coinsCollected === totalCoins) {
+                isLevelTransitioning = true;
+                if (currentGameLevel >= 5) {
+                  // VICTORIA FINAL
+                  petData.points += 2; 
+                  petData.happy = Math.min(100, petData.happy + 10); 
+                  petData.health = Math.min(100, petData.health + 5);
+                  updateHUD(); savePetData();
+                  showToast("¡VICTORIA! Completaste los 5 niveles. ¡+2 pts!");
+                  if (jumpAnimName) playAction(jumpAnimName, 3000);
+                  setTimeout(() => {
+                    currentGameLevel = 1;
+                    isLevelTransitioning = false;
+                    initGame();
+                  }, 3000);
+                } else {
+                  // AVANCE DE NIVEL NORMAL
+                  currentGameLevel++;
+                  let nextShape = levelShapes[(currentGameLevel - 1) % levelShapes.length];
+                  showToast("¡Nivel Completado! Prepárate para " + nextShape.name);
+                  setTimeout(() => {
+                    isLevelTransitioning = false;
+                    initGame();
+                  }, 1500);
+                }
+              } } } }); 
+            }
+            player.frameCount++; let currentFrame = (player.vx !== 0 || !player.grounded) ? runFrames[Math.floor(player.frameCount / 5) % runFrames.length] : runFrames[0]; if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) { ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h); } else { ctx.fillStyle = '#ff4d1f'; ctx.fillRect(player.x, player.y, player.w, player.h); } ctx.restore(); ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; ctx.font = 'bold 18px Space Grotesk, sans-serif'; ctx.fillText("Nivel " + currentGameLevel + "/5: " + (levelShapes[(currentGameLevel - 1) % levelShapes.length].name), 20, 30); ctx.fillText("Monedas: " + coinsCollected + "/" + totalCoins, 20, 55); 
+          } catch (e) { console.error("Error en el game loop:", e); } requestAnimationFrame(gameLoop); 
+        }
         document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') keys.left = true; if (e.key === 'ArrowRight') keys.right = true; if (e.key === ' ' || e.key === 'ArrowUp') { if (!keys.jump) keys.jump = true; e.preventDefault(); } });
         document.addEventListener('keyup', (e) => { if (e.key === 'ArrowLeft') keys.left = false; if (e.key === 'ArrowRight') keys.right = false; if (e.key === ' ' || e.key === 'ArrowUp') keys.jump = false; });
         const btnLeft = document.getElementById('btnLeft'), btnRight = document.getElementById('btnRight'), btnJump = document.getElementById('btnJump');
