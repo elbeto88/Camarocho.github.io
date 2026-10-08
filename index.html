@@ -42,15 +42,12 @@
     body.ar-mode { background: transparent !important; }
     body.ar-mode #arVideoBg { display: block; }
     body.ar-mode .grain::before { opacity: 0; }
-    /* Asegurar legibilidad en Modo AR */
     body.ar-mode header { background: rgba(241, 235, 225, 0.8) !important; }
-    body.ar-mode .math-zone { background: rgba(235, 227, 214, 0.85) !important; backdrop-filter: blur(8px); }
-    body.ar-mode .learn-card { background: rgba(235, 227, 214, 0.85) !important; backdrop-filter: blur(8px); }
+    body.ar-mode .math-zone, body.ar-mode .learn-card, body.ar-mode .overlay-panel { background: rgba(235, 227, 214, 0.85) !important; backdrop-filter: blur(8px); }
     body.ar-mode .pet-widget { background: rgba(26, 24, 20, 0.8) !important; backdrop-filter: blur(8px); }
     body.ar-mode .tab-btn { background: rgba(241, 235, 225, 0.9); }
     body.ar-mode .toast { background: rgba(26, 24, 20, 0.9) !important; }
 
-    /* --- HEADER Y NAVEGACIÓN --- */
     header { backdrop-filter: blur(12px); background: rgba(241, 235, 225, 0.85); border-bottom: 1px solid var(--border); }
     .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--fg); }
     @media (max-width: 768px) {
@@ -63,13 +60,11 @@
     .nav-link span:nth-child(2) { position: absolute; top: 100%; left: 0; color: var(--accent); }
     .nav-link:hover span:nth-child(1), .nav-link:hover span:nth-child(2) { transform: translateY(-100%); }
 
-    /* --- MODELO 3D --- */
     model-viewer { display: block; width: 100%; height: 100%; --poster-color: transparent; cursor: grab; }
     model-viewer::part(default-progress-bar) { display: none; }
     .model-error-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; text-align: center; background: var(--fg); color: var(--bg); z-index: 5; pointer-events: none; opacity: 1; transition: opacity 0.3s ease; }
     .model-error-msg.hide { opacity: 0; pointer-events: none; }
 
-    /* --- WIDGET FLOTANTE DE LA MASCOTA (REDIMENSIONABLE) --- */
     .pet-widget { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 9997; background: rgba(26, 24, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 1.25rem; color: var(--bg); width: 320px; height: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); resize: both; overflow: hidden; min-width: 260px; min-height: 400px; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; }
     .pet-widget.collapsed { width: 60px; height: 60px; padding: 0; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: var(--accent); color: white; resize: none; min-width: 0; min-height: 0; }
     .pet-widget.collapsed .widget-content, .pet-widget.collapsed .widget-header { display: none; }
@@ -93,7 +88,6 @@
     .pet-action-btn:hover { background: var(--accent); color: white; transform: translateY(-2px); }
     .pet-action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: var(--bg); }
 
-    /* --- SISTEMA DE PESTAÑAS (CARRUSEL) --- */
     .tabs-container { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2rem; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-alt); }
     .tabs-container::-webkit-scrollbar { height: 6px; }
     .tabs-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
@@ -103,7 +97,6 @@
     .activity-panel.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- ESTILOS GENERALES --- */
     .math-zone { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
     .math-question { font-size: clamp(2rem, 5vw, 4rem); text-align: center; margin-bottom: 2rem; color: var(--fg); }
     .math-option { background: var(--bg); border: 2px solid var(--border); padding: 1.5rem; border-radius: 12px; font-size: 1.5rem; font-weight: bold; transition: all 0.2s; width: 100%; }
@@ -125,7 +118,6 @@
     .btn-primary .arrow { transition: transform 0.4s ease; }
     .btn-primary:hover .arrow { transform: translateX(4px); }
     
-    /* TOAST Y CHAT IA */
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--fg); color: var(--bg); padding: 1rem 1.75rem; border-radius: 999px; font-size: 1rem; z-index: 10000; transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1); display: flex; align-items: center; gap: 0.6rem; }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast::before { content: ''; width: 8px; height: 8px; background: var(--accent-2); border-radius: 50%; }
@@ -143,7 +135,6 @@
     .ai-send-btn { background: var(--fg); color: var(--bg); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background 0.2s; }
     .ai-send-btn:hover { background: var(--accent); }
     
-    /* MINIJUEGOS CSS */
     .game-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; }
     #gameCanvas { display: block; width: 100%; height: auto; background: #87CEEB; border-radius: 16px; border: 4px solid var(--fg); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
     .mobile-controls { display: flex; justify-content: space-between; padding: 1rem 0; }
@@ -161,7 +152,6 @@
     .grp-item-pile:hover { transform: scale(1.1); }
     .grp-item-pile.distributed { opacity: 0; transform: scale(0); pointer-events: none; }
 
-    /* MINIJUEGO 4: MÚLTIPLOS Y RITMO */
     #multTapArea { background: var(--accent); color: white; border: none; border-radius: 16px; width: 100%; padding: 1.5rem; font-size: 1.5rem; font-weight: bold; box-shadow: 0 6px 0 rgba(0,0,0,0.2); transition: transform 0.1s, box-shadow 0.1s; user-select: none; touch-action: manipulation; }
     #multTapArea:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
     #multTapArea.disabled { background: var(--muted); pointer-events: none; box-shadow: none; }
@@ -170,7 +160,6 @@
     .mult-progress-dot { width: 10px; height: 10px; background-color: var(--bg-alt); border-radius: 50%; transition: background-color 0.2s, transform 0.2s; }
     .mult-progress-dot.active { background-color: var(--accent); transform: scale(1.4); }
 
-    /* MINIJUEGO 5: FRACCIONES (CÍRCULO DIVISIBLE) */
     .frac-denom-btn { background: var(--bg); color: var(--fg); border: 2px solid var(--border); padding: 0.5rem 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
     .frac-denom-btn:hover { border-color: var(--accent); }
     .frac-denom-btn.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
@@ -180,21 +169,40 @@
     .frac-slice.shaded { fill: var(--accent); }
     .frac-slice.shaded:hover { fill: #ff7044; }
 
-    /* OVERLAYS */
-    .selection-overlay { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
-    .selection-overlay.active { display: flex; }
-    .selection-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 1000px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
+    .overlay-panel { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+    .overlay-panel.active { display: flex; }
+    .overlay-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 1000px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
     .pet-card { background: var(--card); border: 3px solid transparent; border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
     .pet-card:hover { border-color: var(--accent); transform: translateY(-5px); }
     .pet-card.selected { border-color: var(--accent-2); }
     .pet-card model-viewer { width: 100%; height: 150px; border-radius: 8px; }
+    .form-field { position: relative; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; text-align: left; }
+    .form-field input { background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg); }
+    .form-field label { position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem; }
+    .form-field input:focus + label, .form-field input:not(:placeholder-shown) + label { top: 0; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
   </style>
 </head>
 
 <body class="grain">
   <video id="arVideoBg" autoplay playsinline muted></video>
 
-  <!-- NAVEGACIÓN FIJA -->
+  <!-- OVERLAY DE REGISTRO INICIAL (ANALÍTICAS) -->
+  <div id="registerOverlay" class="overlay-panel active">
+    <div class="overlay-container" style="max-width: 500px;">
+      <h2 class="font-display text-4xl mb-4">¡Hola! 👋</h2>
+      <p class="mb-8" style="color: var(--muted);">Antes de empezar a jugar y cuidar de tu mascota, cuéntanos un poco sobre ti:</p>
+      <div class="form-field">
+        <input type="text" id="regName" placeholder=" " required>
+        <label for="regName">¿Cuál es tu nombre?</label>
+      </div>
+      <div class="form-field">
+        <input type="number" id="regAge" placeholder=" " required min="3" max="15">
+        <label for="regAge">¿Cuántos años tienes?</label>
+      </div>
+      <button id="btnRegister" class="btn-primary interactive"><span>Comenzar Aventura</span><span class="arrow">→</span></button>
+    </div>
+  </div>
+
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto relative">
       <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">
@@ -209,11 +217,8 @@
   </header>
 
   <main class="pt-24">
-    
-    <!-- HERO con Modelo 3D -->
     <section id="hero" class="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-12 overflow-hidden">
       <div class="max-w-[1200px] mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
-        
         <div class="text-center md:text-left">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Bienvenido</span>
           <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">
@@ -228,22 +233,17 @@
           </a>
           <p class="mt-8 text-xs uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
         </div>
-
-        <!-- SE ELIMINÓ auto-rotate DE AQUÍ -->
         <div class="hidden md:block relative w-full aspect-square">
           <div class="model-error-msg" id="heroModelErrorMsg">
             <div class="font-display text-xl italic font-light">Cargando mascota...</div>
           </div>
           <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
         </div>
-
       </div>
     </section>
 
-    <!-- SECCIÓN DE ACTIVIDADES EN CARRUSEL (TABS) -->
     <section id="actividades" class="py-12 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[1200px] mx-auto">
-        
         <div class="tabs-container">
           <button class="tab-btn active" data-tab="aprender">Aprender</button>
           <button class="tab-btn" data-tab="math">Reto Matemático</button>
@@ -254,239 +254,50 @@
           <button class="tab-btn" data-tab="fracciones">Fracciones</button>
         </div>
 
-        <!-- Panel: Aprender -->
         <div id="tab-aprender" class="activity-panel active">
-          <div class="flex flex-col items-center mb-12">
-            <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2>
-          </div>
+          <div class="flex flex-col items-center mb-12"><h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="learn-card">
-              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent);">Sumar</span></div>
-              <div class="visual-group" style="flex-direction: row; align-items: center;">
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
-                <span class="math-symbol">+</span>
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
-                <span class="math-symbol">=</span>
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
-              </div>
-              <p class="text-center font-bold text-xl mt-auto">3 + 2 = 5</p>
-            </div>
-            <div class="learn-card">
-              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent-2);">Restar</span></div>
-              <div class="visual-group" style="flex-direction: row; align-items: center;">
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
-                <span class="math-symbol">-</span>
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
-                <span class="math-symbol">=</span>
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
-              </div>
-              <p class="text-center font-bold text-xl mt-auto">4 - 2 = 2</p>
-            </div>
-            <div class="learn-card">
-              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #0066cc;">Multiplicar</span></div>
-              <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                  <div class="group-box"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div>
-                  <span class="math-symbol">×</span>
-                  <span class="font-display text-3xl font-light">2</span>
-                </div>
-                <span class="math-symbol">=</span>
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;">
-                  <span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span>
-                </div>
-              </div>
-              <p class="text-center font-bold text-xl mt-4">3 × 2 = 6</p>
-            </div>
-            <div class="learn-card">
-              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #cc0066;">Dividir</span></div>
-              <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
-                <div class="math-blocks" style="flex-direction: row; gap: 4px;">
-                  <span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span>
-                </div>
-                <span class="math-symbol">÷</span>
-                <span class="font-display text-3xl font-light">2</span>
-                <span class="math-symbol">=</span>
-                <div style="display: flex; gap: 1rem;">
-                  <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
-                  <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
-                </div>
-              </div>
-              <p class="text-center font-bold text-xl mt-4">6 ÷ 2 = 3</p>
-            </div>
+            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent);">Sumar</span></div><div class="visual-group" style="flex-direction: row; align-items: center;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">+</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div></div><p class="text-center font-bold text-xl mt-auto">3 + 2 = 5</p></div>
+            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent-2);">Restar</span></div><div class="visual-group" style="flex-direction: row; align-items: center;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">-</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div></div><p class="text-center font-bold text-xl mt-auto">4 - 2 = 2</p></div>
+            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #0066cc;">Multiplicar</span></div><div class="visual-group" style="flex-direction: column; gap: 0.75rem;"><div style="display: flex; gap: 0.5rem; align-items: center;"><div class="group-box"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div><span class="math-symbol">×</span><span class="font-display text-3xl font-light">2</span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div></div><p class="text-center font-bold text-xl mt-4">3 × 2 = 6</p></div>
+            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #cc0066;">Dividir</span></div><div class="visual-group" style="flex-direction: column; gap: 0.75rem;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div><span class="math-symbol">÷</span><span class="font-display text-3xl font-light">2</span><span class="math-symbol">=</span><div style="display: flex; gap: 1rem;"><div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div><div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div></div></div><p class="text-center font-bold text-xl mt-4">6 ÷ 2 = 3</p></div>
           </div>
         </div>
 
-        <!-- Panel: Reto Matemático -->
-        <div id="tab-math" class="activity-panel">
-          <div class="math-zone">
-            <div class="flex justify-center gap-4 mb-8 flex-wrap">
-              <button class="difficulty-btn interactive active" data-diff="1">Sumas y Restas</button>
-              <button class="difficulty-btn interactive" data-diff="2">Multiplicar</button>
-              <button class="difficulty-btn interactive" data-diff="3">Dividir</button>
-            </div>
-            <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer"></div>
-          </div>
-        </div>
-
-        <!-- Panel: Salta y Suma -->
-        <div id="tab-minijuego" class="activity-panel">
-          <div class="game-container">
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
-            <div class="mobile-controls">
-              <div class="flex gap-4">
-                <button class="game-btn interactive" id="btnLeft">◀</button>
-                <button class="game-btn interactive" id="btnRight">▶</button>
-              </div>
-              <button class="game-btn jump-btn interactive" id="btnJump">🆙 Saltar</button>
-            </div>
-            <p class="text-center text-sm" style="color: var(--muted);">En PC usa: ← → para moverte y Espacio para saltar.</p>
-          </div>
-        </div>
-
-        <!-- Panel: Cuenta y Toca -->
-        <div id="tab-contar" class="activity-panel">
-          <div class="math-zone text-center">
-            <div class="font-display text-5xl mb-4" id="countPrompt">3 + 2 = ?</div>
-            <div class="text-xl mb-8" id="countStatus" style="color: var(--accent-2);">Toca 5 objetos</div>
-            <div id="objectsContainer" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[200px]"></div>
-            <button id="resetCountBtn" class="btn-primary interactive"><span>Reiniciar</span></button>
-          </div>
-        </div>
-
-        <!-- Panel: Agrupa y Reparte -->
-        <div id="tab-grupos" class="activity-panel">
-          <div class="math-zone text-center">
-            <div class="font-display text-5xl mb-4" id="grpPrompt">3 × 2 = ?</div>
-            <div class="text-xl mb-8" id="grpStatus" style="color: var(--accent-2);">Toca cada caja 2 veces</div>
-            <div id="grpPileContainer" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[60px]"></div>
-            <div id="grpBoxesContainer" class="flex flex-wrap justify-center gap-4 mb-8"></div>
-            <button id="resetGrpBtn" class="btn-primary interactive"><span>Reiniciar</span></button>
-          </div>
-        </div>
-
-        <!-- Panel: Escala Múltiplos -->
-        <div id="tab-multiplos" class="activity-panel">
-          <div class="math-zone text-center">
-            <div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
-              <span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
-              <span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
-              <span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span>
-            </div>
-            <div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div>
-            <div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div>
-            <div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div>
-            
-            <button id="multTapArea" class="interactive disabled">¡TOCAR!</button>
-            <div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div>
-            
-            <div class="mt-6 flex justify-center gap-4 flex-wrap">
-              <button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);">
-                <span>Comenzar Juego</span>
-              </button>
-              <button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);">
-                <span>Reiniciar</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel: Fracciones -->
-        <div id="tab-fracciones" class="activity-panel">
-          <div class="math-zone text-center">
-            <div class="font-display text-4xl md:text-5xl mb-2" id="fracPrompt">1/2 + 1/4 = ?</div>
-            <div class="text-lg md:text-xl mb-8" id="fracStatus" style="color: var(--accent-2);">Divide el círculo y pinta la respuesta correcta</div>
-            
-            <div class="mb-6">
-              <p class="text-sm uppercase tracking-widest mb-2" style="color: var(--muted);">1. Divide el círculo</p>
-              <div id="fracDenomContainer" class="flex flex-wrap justify-center gap-2"></div>
-            </div>
-
-            <svg id="fracSvg" viewBox="0 0 100 100" class="frac-svg mb-6"></svg>
-
-            <button id="checkFracBtn" class="btn-primary interactive"><span>Comprobar</span></button>
-            <button id="resetFracBtn" class="btn-primary interactive mt-4" style="background: var(--muted);"><span>Saltar ejercicio</span></button>
-          </div>
-        </div>
-
+        <div id="tab-math" class="activity-panel"><div class="math-zone"><div class="flex justify-center gap-4 mb-8 flex-wrap"><button class="difficulty-btn interactive active" data-diff="1">Sumas y Restas</button><button class="difficulty-btn interactive" data-diff="2">Multiplicar</button><button class="difficulty-btn interactive" data-diff="3">Dividir</button></div><div class="math-question" id="mathQuestion">5 + 3 = ?</div><div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer"></div></div></div>
+        <div id="tab-minijuego" class="activity-panel"><div class="game-container"><canvas id="gameCanvas" width="800" height="400"></canvas><div class="mobile-controls"><div class="flex gap-4"><button class="game-btn interactive" id="btnLeft">◀</button><button class="game-btn interactive" id="btnRight">▶</button></div><button class="game-btn jump-btn interactive" id="btnJump">🆙 Saltar</button></div><p class="text-center text-sm" style="color: var(--muted);">En PC usa: ← → para moverte y Espacio para saltar.</p></div></div>
+        <div id="tab-contar" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-5xl mb-4" id="countPrompt">3 + 2 = ?</div><div class="text-xl mb-8" id="countStatus" style="color: var(--accent-2);">Toca 5 objetos</div><div id="objectsContainer" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[200px]"></div><button id="resetCountBtn" class="btn-primary interactive"><span>Reiniciar</span></button></div></div>
+        <div id="tab-grupos" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-5xl mb-4" id="grpPrompt">3 × 2 = ?</div><div class="text-xl mb-8" id="grpStatus" style="color: var(--accent-2);">Toca cada caja 2 veces</div><div id="grpPileContainer" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[60px]"></div><div id="grpBoxesContainer" class="flex flex-wrap justify-center gap-4 mb-8"></div><button id="resetGrpBtn" class="btn-primary interactive"><span>Reiniciar</span></button></div></div>
+        <div id="tab-multiplos" class="activity-panel"><div class="math-zone text-center"><div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);"><span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span></div><div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div><div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div><div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div><button id="multTapArea" class="interactive disabled">¡TOCAR!</button><div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div><div class="mt-6 flex justify-center gap-4 flex-wrap"><button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);"><span>Comenzar Juego</span></button><button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);"><span>Reiniciar</span></button></div></div></div>
+        <div id="tab-fracciones" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-4xl md:text-5xl mb-2" id="fracPrompt">1/2 + 1/4 = ?</div><div class="text-lg md:text-xl mb-8" id="fracStatus" style="color: var(--accent-2);">Divide el círculo y pinta la respuesta correcta</div><div class="mb-6"><p class="text-sm uppercase tracking-widest mb-2" style="color: var(--muted);">1. Divide el círculo</p><div id="fracDenomContainer" class="flex flex-wrap justify-center gap-2"></div></div><svg id="fracSvg" viewBox="0 0 100 100" class="frac-svg mb-6"></svg><button id="checkFracBtn" class="btn-primary interactive"><span>Comprobar</span></button><button id="resetFracBtn" class="btn-primary interactive mt-4" style="background: var(--muted);"><span>Saltar ejercicio</span></button></div></div>
       </div>
     </section>
 
-    <!-- CONTACTO -->
     <section id="contacto" class="py-24 px-6 md:px-12">
       <div class="max-w-[800px] mx-auto">
-        <div class="text-center mb-12">
-          <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span>
-          <h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2>
-        </div>
+        <div class="text-center mb-12"><span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span><h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2></div>
         <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
-          <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc">
-          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div style="position: relative; border-bottom: 1px solid var(--border);">
-              <input type="text" id="name" name="name" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);">
-              <label for="name" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu nombre</label>
-            </div>
-            <div style="position: relative; border-bottom: 1px solid var(--border);">
-              <input type="email" id="email" name="email" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);">
-              <label for="email" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu correo electrónico</label>
-            </div>
-          </div>
-          <div style="position: relative; border-bottom: 1px solid var(--border);">
-            <textarea id="message" name="message" rows="4" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg); resize: none;"></textarea>
-            <label for="message" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Escribe tu mensaje...</label>
-          </div>
-          <div class="pt-4 text-center">
-            <button type="submit" id="submitBtn" class="btn-primary interactive">
-              <span id="submitBtnText">Enviar mensaje</span>
-              <span class="arrow">→</span>
-            </button>
-          </div>
+          <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc"><input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div style="position: relative; border-bottom: 1px solid var(--border);"><input type="text" id="name" name="name" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);"><label for="name" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu nombre</label></div><div style="position: relative; border-bottom: 1px solid var(--border);"><input type="email" id="email" name="email" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);"><label for="email" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu correo electrónico</label></div></div>
+          <div style="position: relative; border-bottom: 1px solid var(--border);"><textarea id="message" name="message" rows="4" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg); resize: none;"></textarea><label for="message" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Escribe tu mensaje...</label></div>
+          <div class="pt-4 text-center"><button type="submit" id="submitBtn" class="btn-primary interactive"><span id="submitBtnText">Enviar mensaje</span><span class="arrow">→</span></button></div>
         </form>
       </div>
     </section>
   </main>
 
-  <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);">
-    <div class="max-w-[1800px] mx-auto text-center">
-      <p class="font-display text-xl italic font-light">Math Live</p>
-      <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">© 2025 Proyecto Educativo</p>
-      <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
-    </div>
-  </footer>
+  <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);"><div class="max-w-[1800px] mx-auto text-center"><p class="font-display text-xl italic font-light">Math Live</p><p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">© 2025 Proyecto Educativo</p><p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p></div></footer>
 
-  <!-- WIDGET FLOTANTE DE LA MASCOTA -->
   <div id="petWidget" class="pet-widget">
-    <div class="widget-header">
-      <input type="text" id="petNameInput" class="pet-name-input" placeholder="Nombre..." maxlength="12">
-      <button id="widgetToggleBtn" class="widget-toggle interactive">_</button>
-    </div>
+    <div class="widget-header"><input type="text" id="petNameInput" class="pet-name-input" placeholder="Nombre..." maxlength="12"><button id="widgetToggleBtn" class="widget-toggle interactive">_</button></div>
     <div class="widget-content">
-      <div class="widget-viewer">
-        <div class="model-error-msg" id="widgetModelErrorMsg">
-          <div class="font-display text-xl italic font-light">Cargando...</div>
-        </div>
-        <!-- SE ELIMINÓ auto-rotate DE AQUÍ -->
-        <model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
-      </div>
-      
-      <div class="flex justify-between items-baseline">
-        <div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Puntos</div>
-        <div class="font-display text-3xl" style="color: var(--accent);" id="petPoints">10</div>
-      </div>
-      
-      <div class="stat-row" style="margin-top: 0.5rem; margin-bottom: 1.25rem;">
-        <div class="stat-label" style="color: var(--accent); font-weight: bold;">Nivel <span id="petLevel">1</span></div>
-        <div class="stat-bar-bg" style="height: 10px;">
-          <div class="stat-bar-fill" id="xpBar" style="width: 1%; background: var(--accent);"></div>
-        </div>
-      </div>
-      
+      <div class="widget-viewer"><div class="model-error-msg" id="widgetModelErrorMsg"><div class="font-display text-xl italic font-light">Cargando...</div></div><model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer></div>
+      <div class="flex justify-between items-baseline"><div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Puntos</div><div class="font-display text-3xl" style="color: var(--accent);" id="petPoints">10</div></div>
+      <div class="stat-row" style="margin-top: 0.5rem; margin-bottom: 1.25rem;"><div class="stat-label" style="color: var(--accent); font-weight: bold;">Nivel <span id="petLevel">1</span></div><div class="stat-bar-bg" style="height: 10px;"><div class="stat-bar-fill" id="xpBar" style="width: 1%; background: var(--accent);"></div></div></div>
       <div class="stat-row"><div class="stat-label">Salud</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Sueño</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Hambre</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Felicidad</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div></div>
-      
       <div class="mt-2">
         <button class="pet-action-btn interactive" id="btnSelectPet" style="background: var(--accent-2); color: white;">🐶 Elegir Mascota</button>
         <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar (-2 pts)</button>
@@ -498,29 +309,15 @@
   </div>
 
   <div class="toast" id="toast">¡Mensaje!</div>
-
-  <!-- ASISTENTE DE IA -->
   <div class="ai-bubble interactive" id="aiBubble" title="Pregúntale a la Profe IA">🤖</div>
   <div class="ai-chat-window" id="aiChatWindow">
-    <div class="ai-header">
-      <div>
-        <h3 class="font-display text-xl">Profe IA</h3>
-        <p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas, restas, multiplicar o dividir</p>
-      </div>
-      <button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button>
-    </div>
-    <div class="ai-messages" id="aiMessages">
-      <div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio, ¡pregúntame!</div>
-    </div>
-    <div class="ai-input-area">
-      <input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí...">
-      <button id="aiSendBtn" class="ai-send-btn interactive">➤</button>
-    </div>
+    <div class="ai-header"><div><h3 class="font-display text-xl">Profe IA</h3><p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas, restas, multiplicar o dividir</p></div><button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button></div>
+    <div class="ai-messages" id="aiMessages"><div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio, ¡pregúntame!</div></div>
+    <div class="ai-input-area"><input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí..."><button id="aiSendBtn" class="ai-send-btn interactive">➤</button></div>
   </div>
 
-  <!-- OVERLAYS -->
-  <div class="selection-overlay" id="selectionOverlay">
-    <div class="selection-container">
+  <div class="overlay-panel" id="selectionOverlay">
+    <div class="overlay-container">
       <h2 class="font-display text-4xl mb-8">Elige a tu compañero</h2>
       <div id="petGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
       <button id="closeSelection" class="btn-primary interactive"><span>¡Listo!</span></button>
@@ -529,6 +326,51 @@
 
   <script>
     try {
+      // --- CONFIGURACIÓN DE SUPABASE ---
+      const SUPABASE_URL = 'TU_SUPABASE_URL'; // Reemplaza esto
+      const SUPABASE_KEY = 'TU_SUPABASE_ANON_KEY'; // Reemplaza esto
+
+      // --- SISTEMA DE ANALÍTICAS ---
+      let analytics = {
+        user_id: localStorage.getItem('mathLiveUserId') || 'user_' + Math.random().toString(36).substr(2, 9),
+        name: '', age: null, device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+        playtime: 0, correct_answers: 0, wrong_answers: 0,
+        games_played: {}, pet_actions: {}, ai_questions: []
+      };
+      localStorage.setItem('mathLiveUserId', analytics.user_id);
+
+      async function syncAnalytics() {
+        if (!SUPABASE_URL || SUPABASE_URL === 'TU_SUPABASE_URL') return; 
+        try {
+          await fetch(`${SUPABASE_URL}/rest/v1/user_stats?user_id=eq.${analytics.user_id}`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(analytics)
+          });
+        } catch (e) { console.error("Error sync", e); }
+      }
+
+      setInterval(() => { analytics.playtime += 30; syncAnalytics(); }, 30000); 
+      window.addEventListener('beforeunload', syncAnalytics); 
+
+      const registerOverlay = document.getElementById('registerOverlay');
+      const btnRegister = document.getElementById('btnRegister');
+      if (btnRegister) {
+        btnRegister.addEventListener('click', () => {
+          const name = document.getElementById('regName').value;
+          const age = document.getElementById('regAge').value;
+          if (!name || !age) { alert("Por favor ingresa tu nombre y edad."); return; }
+          analytics.name = name; analytics.age = parseInt(age);
+          registerOverlay.classList.remove('active');
+          syncAnalytics();
+        });
+      }
+
       // 0. MENU MÓVIL Y SISTEMA DE PESTAÑAS
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const navMenu = document.getElementById('navMenu');
@@ -542,6 +384,8 @@
           btn.classList.add('active');
           document.querySelectorAll('.activity-panel').forEach(panel => panel.classList.remove('active'));
           document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+          analytics.games_played[btn.dataset.tab] = (analytics.games_played[btn.dataset.tab] || 0) + 1;
+          syncAnalytics();
         });
       });
 
@@ -573,7 +417,6 @@
         if (petData.name) petNameInput.value = petData.name;
         petNameInput.addEventListener('input', (e) => { petData.name = e.target.value; savePetData(); });
       }
-
       if (petWidget) {
         petWidget.addEventListener('click', (e) => {
           if (petWidget.classList.contains('collapsed') || e.target === widgetToggleBtn || e.target.closest('#widgetToggleBtn')) {
@@ -587,24 +430,18 @@
         if (petLevelEl) petLevelEl.textContent = petData.level || 1;
         if (xpBar) {
           const currentLevelXp = (petData.level - 1) * 1000;
-          const nextLevelXp = petData.level * 1000;
           const progress = ((petData.xp - currentLevelXp) / 1000) * 100;
           xpBar.style.width = Math.max(1, Math.min(100, progress)) + '%';
         }
         if (hungerBar) hungerBar.style.width = petData.hunger + '%';
         if (happyBar) happyBar.style.width = petData.happy + '%';
-        if (healthBar) {
-          healthBar.style.width = petData.health + '%';
-          healthBar.style.opacity = petData.health < 50 ? '0.6' : '1';
-        }
+        if (healthBar) { healthBar.style.width = petData.health + '%'; healthBar.style.opacity = petData.health < 50 ? '0.6' : '1'; }
         if (sleepBar) sleepBar.style.width = petData.sleep + '%';
       }
 
-      // 2. LÓGICA DE ANIMACIONES Y EVOLUCIÓN
       const widgetViewer = document.getElementById('modelViewer3D');
       const heroViewer = document.getElementById('heroModelViewer');
       const viewers = [widgetViewer, heroViewer].filter(v => v !== null);
-      
       let idleAnimName, eatAnimName, playAnimName, sleepAnimName, jumpAnimName, hitAnimName, climbAnimName, fallAnimName;
       let isBusy = false, isPetSick = false, actionTimeout = null;
 
@@ -615,21 +452,11 @@
       }
 
       async function doesModelExist(url) {
-        try {
-          const res = await fetch(url, { method: 'HEAD' });
-          return res.ok;
-        } catch (e) {
-          return true; 
-        }
+        try { const res = await fetch(url, { method: 'HEAD' }); return res.ok; } catch (e) { return true; }
       }
 
-      function loadPetModel(src) {
-        viewers.forEach(v => v.src = src);
-      }
-
-      function setAllViewersAnimation(animName) {
-        viewers.forEach(v => { if (v && v.availableAnimations && v.availableAnimations.length > 0) v.animationName = animName; });
-      }
+      function loadPetModel(src) { viewers.forEach(v => v.src = src); }
+      function setAllViewersAnimation(animName) { viewers.forEach(v => { if (v && v.availableAnimations && v.availableAnimations.length > 0) v.animationName = animName; }); }
 
       viewers.forEach(v => {
         if (!v) return;
@@ -649,6 +476,14 @@
               fallAnimName = animations.find(a => a.toLowerCase().includes('fall') || a.toLowerCase().includes('drop'));
             }
             if (!isBusy && idleAnimName) v.animationName = idleAnimName;
+          }
+        });
+        // MANEJO DE ERROR SI EL ARCHIVO NO EXISTE
+        v.addEventListener('error', () => {
+          const errMsg = v.parentElement.querySelector('.model-error-msg');
+          if (errMsg) {
+            errMsg.innerHTML = '<div class="font-display text-xl italic font-light">Error al cargar</div><p class="text-sm">Falta el archivo 3D.</p>';
+            errMsg.classList.remove('hide');
           }
         });
       });
@@ -671,21 +506,16 @@
         if (newLevel > (petData.level || 1)) {
           const newModelUrl = (newLevel === 1) ? petData.model : petData.model.replace('.glb', `-${newLevel}.glb`);
           const exists = await doesModelExist(newModelUrl);
-          
           if (exists) {
             petData.level = newLevel;
             loadPetModel(newModelUrl);
             showToast("¡EVOLUCIÓN! Tu mascota ha subido al Nivel " + newLevel + " 🎉");
             if (jumpAnimName) playAction(jumpAnimName, 3000);
-          } else {
-            console.log("Modelo " + newModelUrl + " no encontrado. Manteniendo nivel actual visualmente.");
           }
-          savePetData();
-          updateHUD();
+          savePetData(); updateHUD();
         }
       }
 
-      // 3. SISTEMA DE DECAIMIENTO DE SALUD
       function checkPetStatus() {
         if (petData.health < 50) {
           if (!isPetSick) { isPetSick = true; showToast("Tu mascota se siente débil... ¡Resuelve retos!"); }
@@ -702,7 +532,6 @@
         checkPetStatus(); savePetData(); updateHUD();
       }, 5000);
 
-      // 4. SELECCIÓN DE MASCOTA
       const availablePets = [
         { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
         { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' }, { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
@@ -726,21 +555,18 @@
         });
       }
       function selectPet(pet) { 
-        petData.model = pet.src; 
-        petData.level = 1; 
-        petData.xp = 0; 
-        savePetData(); 
-        loadPetModel(pet.src); 
-        initPetSelection(); 
-        showToast("¡Has elegido a " + pet.name + "!"); 
-        updateHUD();
+        petData.model = pet.src; petData.level = 1; petData.xp = 0; savePetData(); loadPetModel(pet.src); initPetSelection(); 
+        showToast("¡Has elegido a " + pet.name + "!"); updateHUD();
       }
       if (btnSelectPet) btnSelectPet.addEventListener('click', () => { selectionOverlay.classList.add('active'); initPetSelection(); });
       if (closeSelection) closeSelection.addEventListener('click', () => selectionOverlay.classList.remove('active'));
-      if (!petData.model && availablePets.length > 0) { petData.model = availablePets[0].src; savePetData(); }
+      
+      // VALIDACIÓN PARA EVITAR MODELOS INEXISTENTES EN LOCALSTORAGE
+      if (!petData.model || !availablePets.some(p => p.src === petData.model)) { 
+        petData.model = availablePets[0].src; savePetData(); 
+      }
       if (petData.model) loadPetModel(getEvolvedModelUrl());
 
-      // 5. ACCIONES DE LA MASCOTA
       const btnFeed = document.getElementById('btnFeed'), btnPlay = document.getElementById('btnPlay'), btnSleep = document.getElementById('btnSleep');
       if (btnFeed) btnFeed.addEventListener('click', () => {
         if (isBusy) return;
@@ -748,6 +574,7 @@
         petData.points -= 2; petData.hunger = Math.min(100, petData.hunger + 15); petData.health = Math.min(100, petData.health + 5); petData.sleep = Math.max(0, petData.sleep - 5); 
         if (eatAnimName) playAction(eatAnimName, 3000);
         updateHUD(); savePetData(); showToast("¡" + (petData.name || "Tu mascota") + " está comiendo!");
+        analytics.pet_actions.feed = (analytics.pet_actions.feed || 0) + 1; syncAnalytics();
       });
       if (btnPlay) btnPlay.addEventListener('click', () => {
         if (isBusy) return;
@@ -755,6 +582,7 @@
         petData.points -= 2; petData.happy = Math.min(100, petData.happy + 15); petData.hunger = Math.max(0, petData.hunger - 10); petData.sleep = Math.max(0, petData.sleep - 15); 
         if (playAnimName) playAction(playAnimName, 3000);
         updateHUD(); savePetData(); showToast("¡Jugando con " + (petData.name || "tu mascota") + "!");
+        analytics.pet_actions.play = (analytics.pet_actions.play || 0) + 1; syncAnalytics();
       });
       if (btnSleep) btnSleep.addEventListener('click', () => {
         if (isBusy) return;
@@ -762,9 +590,9 @@
         petData.points -= 2; petData.sleep = Math.min(100, petData.sleep + 40); petData.health = Math.min(100, petData.health + 15); petData.hunger = Math.max(0, petData.hunger - 5); 
         if (sleepAnimName) playAction(sleepAnimName, 4000);
         updateHUD(); savePetData(); showToast((petData.name || "Tu mascota") + " está descansando...");
+        analytics.pet_actions.sleep = (analytics.pet_actions.sleep || 0) + 1; syncAnalytics();
       });
 
-      // 6. RETO MATEMÁTICO
       let currentDifficulty = 1, currentAnswer = 0;
       const difficultyBtns = document.querySelectorAll('.difficulty-btn');
       const mathQuestionEl = document.getElementById('mathQuestion');
@@ -786,9 +614,106 @@
         if (selected === currentAnswer) {
           btn.classList.add('correct'); petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); 
           showToast("¡Correcto! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); updateHUD(); savePetData(); checkPetEvolution(); setTimeout(generateQuestion, 1500);
-        } else { btn.classList.add('wrong'); showToast("¡Casi! Inténtalo de nuevo."); if (hitAnimName) playAction(hitAnimName, 1500); }
+          analytics.correct_answers++; syncAnalytics();
+        } else { btn.classList.add('wrong'); showToast("¡Casi! Inténtalo de nuevo."); if (hitAnimName) playAction(hitAnimName, 1500); analytics.wrong_answers++; syncAnalytics(); }
       }
 
-      // 7. FORMULARIO DE CONTACTO
       const contactForm = document.getElementById('contactForm'), submitBtn = document.getElementById('submitBtn'), submitBtnText = document.getElementById('submitBtnText');
-      if (contactForm) contactForm.addEventListener
+      if (contactForm) contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); if (submitBtnText) submitBtnText.textContent = "Enviando..."; if (submitBtn) submitBtn.disabled = true;
+        const formData = new FormData(contactForm); const object = Object.fromEntries(formData); const json = JSON.stringify(object);
+        try { const response = await fetch(contactForm.action, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: json }); const result = await response.json(); if (result.success) { showToast("¡Mensaje enviado con éxito!"); contactForm.reset(); } else { showToast("Hubo un error. Intenta de nuevo."); } } catch (error) { contactForm.submit(); }
+        if (submitBtnText) submitBtnText.textContent = "Enviar mensaje"; if (submitBtn) submitBtn.disabled = false;
+      });
+
+      const aiBubble = document.getElementById('aiBubble'), aiChatWindow = document.getElementById('aiChatWindow'), closeAiChat = document.getElementById('closeAiChat'), aiMessages = document.getElementById('aiMessages'), aiInput = document.getElementById('aiInput'), aiSendBtn = document.getElementById('aiSendBtn');
+      if (aiBubble) aiBubble.addEventListener('click', () => aiChatWindow.classList.add('open'));
+      if (closeAiChat) closeAiChat.addEventListener('click', () => aiChatWindow.classList.remove('open'));
+      async function sendAiMessage() {
+        if (!aiInput || !aiMessages) return; const userText = aiInput.value.trim(); if (!userText) return;
+        const userMsgEl = document.createElement('div'); userMsgEl.className = 'ai-msg user'; userMsgEl.textContent = userText; aiMessages.appendChild(userMsgEl); aiInput.value = ''; aiMessages.scrollTop = aiMessages.scrollHeight;
+        const typingEl = document.createElement('div'); typingEl.className = 'ai-msg bot typing-indicator'; typingEl.textContent = "Escribiendo..."; aiMessages.appendChild(typingEl); aiMessages.scrollTop = aiMessages.scrollHeight;
+        try { const systemPrompt = "Eres un profesor de matemáticas amigable para niños de 5 a 7 años. Explicas sumas, restas, multiplicaciones, divisiones y figuras geométricas de forma muy sencilla, usando ejemplos visuales y muchos emojis. Tus respuestas deben ser cortas y motivadoras."; const response = await puter.ai.chat(userText, { systemPrompt: systemPrompt }); typingEl.remove(); const botMsgEl = document.createElement('div'); botMsgEl.className = 'ai-msg bot'; botMsgEl.textContent = response.message.content || response; aiMessages.appendChild(botMsgEl); aiMessages.scrollTop = aiMessages.scrollHeight; } 
+        catch (error) { typingEl.remove(); const errorMsgEl = document.createElement('div'); errorMsgEl.className = 'ai-msg bot'; errorMsgEl.textContent = "¡Ups! Se me desconectó el cerebro por un segundo. Intenta preguntarme de nuevo. 🤖"; aiMessages.appendChild(errorMsgEl); }
+        analytics.ai_questions.push(userText); syncAnalytics();
+      }
+      if (aiSendBtn) aiSendBtn.addEventListener('click', sendAiMessage);
+      if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAiMessage(); });
+
+      const toast = document.getElementById('toast');
+      function showToast(message) { if (!toast) return; toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+      let audioCtx = null;
+      function playSound(type) {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
+          if (type === 'jump' || type === 'climb') { osc.type = 'square'; osc.frequency.value = 440; osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } 
+          else if (type === 'coin') { osc.type = 'triangle'; osc.frequency.value = 880; osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.05); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15); osc.start(); osc.stop(audioCtx.currentTime + 0.15); } 
+          else if (type === 'pop') { osc.type = 'sine'; osc.frequency.value = 600; osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } 
+          else if (type === 'fail') { osc.type = 'sawtooth'; osc.frequency.value = 200; osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); }
+        } catch(e) {}
+      }
+      updateHUD(); generateQuestion(); 
+
+      if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err)));
+
+      const levelShapes = [{ name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' }, { name: 'Cuadrados', sides: 4, formula: 'P=4L, A=L^2' }, { name: 'Círculos', sides: 0, formula: 'P=2πr, A=πr^2' }, { name: 'Pentágonos', sides: 5, formula: 'P=5L, A=(P*a)/2' }, { name: 'Hexágonos', sides: 6, formula: 'P=6L, A=(P*a)/2' }];
+      function initMiniGame1() {
+        const canvas = document.getElementById('gameCanvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); const W = canvas.width, H = canvas.height; const GRAVITY = 0.8, GROUND_Y = H - 60, MAX_JUMPS = 3, LEVEL_WIDTH = 2400;
+        const runFrames = []; ['run.png', 'run2.png', 'run3.png'].forEach(src => { const img = new Image(); img.src = src; runFrames.push(img); });
+        const player = { x: 100, y: GROUND_Y, w: 60, h: 70, vx: 0, vy: 0, speed: 5, jumpPower: 13, grounded: true, jumpsLeft: MAX_JUMPS, frameCount: 0 };
+        let platforms = [], coins = [], enemies = [], keys = { left: false, right: false, jump: false }; let cameraX = 0, currentGameLevel = 1, totalCoins = 0, coinsCollected = 0, isLevelTransitioning = false;
+        function drawShape(x, y, w, h, sides) { ctx.fillStyle = '#ff4d4d'; ctx.beginPath(); if (sides === 0) { ctx.arc(x + w/2, y + h/2, w/2, 0, Math.PI * 2); } else if (sides === 4) { ctx.rect(x, y, w, h); } else if (sides === 3) { ctx.moveTo(x + w/2, y); ctx.lineTo(x + w, y + h); ctx.lineTo(x, y + h); ctx.closePath(); } else { let cx = x + w/2, cy = y + h/2, radius = w/2; for (let i = 0; i < sides; i++) { let angle = (Math.PI * 2 * i / sides) - Math.PI / 2; let px = cx + radius * Math.cos(angle), py = cy + radius * Math.sin(angle); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); } ctx.closePath(); } ctx.fill(); }
+        function initGame() { player.x = 100; player.y = GROUND_Y; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS; platforms = [{ x: 0, y: GROUND_Y, w: 600, h: H - GROUND_Y }, { x: 750, y: GROUND_Y, w: 600, h: H - GROUND_Y }, { x: 1500, y: GROUND_Y, w: 900, h: H - GROUND_Y }, { x: 200, y: 280, w: 120, h: 20 }, { x: 450, y: 220, w: 120, h: 20 }, { x: 850, y: 260, w: 150, h: 20 }, { x: 1100, y: 200, w: 120, h: 20 }, { x: 1600, y: 280, w: 100, h: 20 }, { x: 1850, y: 220, w: 120, h: 20 }, { x: 2100, y: 260, w: 150, h: 20 }]; coins = [{ x: 250, y: 240, r: 10 }, { x: 500, y: 180, r: 10 }, { x: 900, y: 220, r: 10 }, { x: 1150, y: 160, r: 10 }, { x: 1650, y: 240, r: 10 }, { x: 1900, y: 180, r: 10 }, { x: 2150, y: 220, r: 10 }, { x: 2300, y: 320, r: 10 }].map(c => ({...c, collected: false})); totalCoins = coins.length; coinsCollected = 0; let speed = 1.5 + (currentGameLevel - 1) * 0.5; enemies = [{ x: 350, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 300, rangeEnd: 550 }, { x: 950, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 800, rangeEnd: 1300 }, { x: 1700, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 1550, rangeEnd: 1800 }, { x: 2050, y: GROUND_Y - 30, w: 30, h: 30, vx: speed, rangeStart: 1950, rangeEnd: 2300 }]; }
+        function gameLoop() { try { cameraX = player.x - W / 2 + player.w / 2; if (cameraX < 0) cameraX = 0; if (cameraX > LEVEL_WIDTH - W) cameraX = LEVEL_WIDTH - W; ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#87CEEB'; ctx.fillRect(0, 0, W, H); ctx.save(); ctx.translate(-cameraX, 0); if (!isLevelTransitioning) { if (keys.left) player.vx = -player.speed; else if (keys.right) player.vx = player.speed; else player.vx = 0; player.x += player.vx; player.y += player.vy; player.vy += GRAVITY; if (player.x < 0) player.x = 0; if (player.x + player.w > LEVEL_WIDTH) player.x = LEVEL_WIDTH - player.w; if (player.y > H + 100) { showToast("¡Caíste! Reintentando Nivel " + currentGameLevel); initGame(); } let onGround = false; platforms.forEach(p => { ctx.fillStyle = '#8B4513'; if (p.y !== GROUND_Y) ctx.fillStyle = '#2a8c4a'; ctx.fillRect(p.x, p.y, p.w, p.h); if (player.x < p.x + p.w && player.x + player.w > p.x && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 15 && player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.grounded = true; player.jumpsLeft = MAX_JUMPS; onGround = true; } }); if (!onGround) player.grounded = false; if (keys.jump && player.jumpsLeft > 0) { player.vy = -player.jumpPower; player.grounded = false; player.jumpsLeft--; keys.jump = false; playSound('jump'); } let shapeInfo = levelShapes[(currentGameLevel - 1) % levelShapes.length]; enemies.forEach(e => { e.x += e.vx; if (e.x < e.rangeStart || e.x + e.w > e.rangeEnd) e.vx *= -1; drawShape(e.x, e.y, e.w, e.h, shapeInfo.sides); ctx.font = 'bold 24px Space Grotesk'; const textWidth = ctx.measureText(shapeInfo.formula).width; ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fillRect(e.x + e.w + 10, e.y - 5, textWidth + 16, 34); ctx.fillStyle = '#1a1814'; ctx.fillText(shapeInfo.formula, e.x + e.w + 18, e.y + 20); if (player.x < e.x + e.w && player.x + player.w > e.x && player.y + player.h > e.y) { showToast("¡Te atrapó un " + shapeInfo.name.slice(0, -1) + "! Reintentando..."); playSound('jump'); initGame(); } }); coins.forEach(c => { if (!c.collected) { ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.closePath(); if (player.x < c.x + c.r && player.x + player.w > c.x - c.r && player.y < c.y + c.r && player.y + player.h > c.y - c.r) { c.collected = true; coinsCollected++; petData.points += 5; petData.xp += 5; petData.happy = Math.min(100, petData.happy + 2); petData.health = Math.min(100, petData.health + 1); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Moneda! (" + coinsCollected + "/" + totalCoins + ")"); playSound('coin'); if (coinsCollected === totalCoins) { isLevelTransitioning = true; if (currentGameLevel >= 5) { petData.points += 2; petData.xp += 50; petData.happy = Math.min(100, petData.happy + 10); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡VICTORIA! Completaste los 5 niveles. ¡+2 pts y +50 XP!"); if (jumpAnimName) playAction(jumpAnimName, 3000); setTimeout(() => { currentGameLevel = 1; isLevelTransitioning = false; initGame(); }, 3000); } else { currentGameLevel++; let nextShape = levelShapes[(currentGameLevel - 1) % levelShapes.length]; showToast("¡Nivel Completado! Prepárate para " + nextShape.name); setTimeout(() => { isLevelTransitioning = false; initGame(); }, 1500); } } } } }); } player.frameCount++; let currentFrame = (player.vx !== 0 || !player.grounded) ? runFrames[Math.floor(player.frameCount / 5) % runFrames.length] : runFrames[0]; if (currentFrame && currentFrame.complete && currentFrame.naturalWidth !== 0) { ctx.drawImage(currentFrame, player.x, player.y, player.w, player.h); } else { ctx.fillStyle = '#ff4d1f'; ctx.fillRect(player.x, player.y, player.w, player.h); } ctx.restore(); ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; ctx.font = 'bold 18px Space Grotesk, sans-serif'; ctx.fillText("Nivel " + currentGameLevel + "/5: " + (levelShapes[(currentGameLevel - 1) % levelShapes.length].name), 20, 30); ctx.fillText("Monedas: " + coinsCollected + "/" + totalCoins, 20, 55); } catch (e) { console.error("Error en el game loop:", e); } requestAnimationFrame(gameLoop); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') keys.left = true; if (e.key === 'ArrowRight') keys.right = true; if (e.key === ' ' || e.key === 'ArrowUp') { if (!keys.jump) keys.jump = true; e.preventDefault(); } });
+        document.addEventListener('keyup', (e) => { if (e.key === 'ArrowLeft') keys.left = false; if (e.key === 'ArrowRight') keys.right = false; if (e.key === ' ' || e.key === 'ArrowUp') keys.jump = false; });
+        const btnLeft = document.getElementById('btnLeft'), btnRight = document.getElementById('btnRight'), btnJump = document.getElementById('btnJump');
+        function setupTouch(btn, key) { if(!btn) return; btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }); btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }); btn.addEventListener('mousedown', () => keys[key] = true); btn.addEventListener('mouseup', () => keys[key] = false); btn.addEventListener('mouseleave', () => keys[key] = false); }
+        setupTouch(btnLeft, 'left'); setupTouch(btnRight, 'right');
+        if(btnJump) { btnJump.addEventListener('touchstart', (e) => { e.preventDefault(); keys.jump = true; }); btnJump.addEventListener('touchend', (e) => { e.preventDefault(); keys.jump = false; }); btnJump.addEventListener('mousedown', () => keys.jump = true); btnJump.addEventListener('mouseup', () => keys.jump = false); }
+        initGame(); gameLoop();
+      }
+      initMiniGame1();
+
+      let countNum1, countNum2, countIsAddition, countTarget, countTapped;
+      const objectsContainer = document.getElementById('objectsContainer'), countPrompt = document.getElementById('countPrompt'), countStatus = document.getElementById('countStatus'), resetCountBtn = document.getElementById('resetCountBtn');
+      function generateCountGame() { if (!objectsContainer) return; countIsAddition = Math.random() > 0.5; countNum1 = Math.floor(Math.random() * 5) + 2; countNum2 = Math.floor(Math.random() * 5) + 1; countTapped = 0; objectsContainer.innerHTML = ''; const emojis = ['🍎', '🔵', '⭐', '🐱', '🟢']; const emoji = emojis[Math.floor(Math.random() * emojis.length)]; if (countIsAddition) { countTarget = countNum1 + countNum2; countPrompt.textContent = `${countNum1} + ${countNum2} = ?`; countStatus.textContent = `Toca ${countTarget} objetos`; for (let i = 0; i < countTarget; i++) { const obj = document.createElement('div'); obj.className = 'count-obj interactive'; obj.innerHTML = `<span>${emoji}</span>`; obj.addEventListener('click', () => handleTap(obj)); objectsContainer.appendChild(obj); } } else { if (countNum2 > countNum1) [countNum1, countNum2] = [countNum2, countNum1]; countTarget = countNum2; countPrompt.textContent = `${countNum1} - ${countNum2} = ?`; countStatus.textContent = `Quita ${countTarget} objetos (tócalos)`; for (let i = 0; i < countNum1; i++) { const obj = document.createElement('div'); obj.className = 'count-obj interactive'; obj.innerHTML = `<span>${emoji}</span>`; obj.addEventListener('click', () => handleTap(obj)); objectsContainer.appendChild(obj); } } }
+      function handleTap(obj) { if (obj.classList.contains('tapped')) return; obj.classList.add('tapped'); playSound('pop'); countTapped++; if (countTapped === countTarget) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateCountGame, 1500); analytics.correct_answers++; syncAnalytics(); } else if (countTapped > countTarget) { showToast("¡Oops! Tocaste demasiados. Reiniciando."); setTimeout(generateCountGame, 1000); analytics.wrong_answers++; syncAnalytics(); } }
+      if (resetCountBtn) resetCountBtn.addEventListener('click', generateCountGame); generateCountGame();
+
+      let grpIsMult, grpNum1, grpNum2, grpBoxes = [], grpPileItems = [], grpDistIndex = 0;
+      const grpPrompt = document.getElementById('grpPrompt'), grpStatus = document.getElementById('grpStatus'), grpPileContainer = document.getElementById('grpPileContainer'), grpBoxesContainer = document.getElementById('grpBoxesContainer'), resetGrpBtn = document.getElementById('resetGrpBtn');
+      function generateGrpGame() { if (!grpBoxesContainer) return; grpIsMult = Math.random() > 0.5; grpBoxes = []; grpPileItems = []; grpDistIndex = 0; grpPileContainer.innerHTML = ''; grpBoxesContainer.innerHTML = ''; const emojis = ['🍎', '🔵', '⭐', '🐱', '🟢', '🍊']; const currentEmoji = emojis[Math.floor(Math.random() * emojis.length)]; if (grpIsMult) { grpNum1 = Math.floor(Math.random() * 4) + 2; grpNum2 = Math.floor(Math.random() * 4) + 2; grpPrompt.textContent = `${grpNum1} × ${grpNum2} = ?`; grpStatus.textContent = `Toca cada caja ${grpNum2} veces`; for (let i = 0; i < grpNum1; i++) { const box = { count: 0, full: false, element: null }; const div = document.createElement('div'); div.className = 'grp-box interactive'; div.innerHTML = `<div class="grp-box-content"></div>`; div.addEventListener('click', () => handleMultTap(box, currentEmoji)); box.element = div; grpBoxes.push(box); grpBoxesContainer.appendChild(div); } } else { grpNum2 = Math.floor(Math.random() * 3) + 2; let mult = Math.floor(Math.random() * 3) + 2; grpNum1 = grpNum2 * mult; grpPrompt.textContent = `${grpNum1} ÷ ${grpNum2} = ?`; grpStatus.textContent = `Toca los objetos para repartir en ${grpNum2} cajas`; for (let i = 0; i < grpNum2; i++) { const div = document.createElement('div'); div.className = 'grp-box'; div.innerHTML = `<div class="grp-box-content"></div>`; grpBoxesContainer.appendChild(div); } for (let i = 0; i < grpNum1; i++) { const item = document.createElement('div'); item.className = 'grp-item-pile interactive'; item.innerHTML = `<span>${currentEmoji}</span>`; item.addEventListener('click', () => handleDivTap(item, currentEmoji)); grpPileContainer.appendChild(item); grpPileItems.push(item); } } }
+      function handleMultTap(box, emoji) { if (box.full) return; box.count++; playSound('pop'); const content = box.element.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; if (box.count === grpNum2) { box.full = true; box.element.classList.add('full'); } if (grpBoxes.every(b => b.full)) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
+      function handleDivTap(item, emoji) { item.style.visibility = 'hidden'; playSound('pop'); const box = grpBoxesContainer.children[grpDistIndex]; const content = box.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; grpDistIndex = (grpDistIndex + 1) % grpNum2; if (grpPileItems.every(i => i.style.visibility === 'hidden')) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
+      if (resetGrpBtn) resetGrpBtn.addEventListener('click', generateGrpGame); generateGrpGame();
+
+      let multLevel = 1, multExercise = 1, multErrors = 0, multBaseNum = 0, multCurrentTaps = 0, multCurrentMultiple = 0, multLastTapTime = 0, multTimerInterval = null, multIsGameOver = false, multHasStarted = false;
+      const multTapArea = document.getElementById('multTapArea'), multBubblesContainer = document.getElementById('multBubblesContainer'), multLevelEl = document.getElementById('multLevel'), multExerciseEl = document.getElementById('multExercise'), multErrorsEl = document.getElementById('multErrors'), multTargetText = document.getElementById('multTargetText'), multStatus = document.getElementById('multStatus'), resetMultBtn = document.getElementById('resetMultBtn'), startMultBtn = document.getElementById('startMultBtn'), multProgressDots = document.getElementById('multProgressDots');
+      function resetMultGameState() { multLevel = 1; multErrors = 0; multIsGameOver = false; multHasStarted = false; multCurrentTaps = 0; multCurrentMultiple = 0; multBubblesContainer.innerHTML = ''; multProgressDots.innerHTML = ''; multLevelEl.textContent = 0; multExerciseEl.textContent = 0; multErrorsEl.textContent = 0; multTargetText.textContent = "Prepárate"; multStatus.textContent = "Pulsa 'Comenzar' cuando estés listo"; multStatus.style.color = "var(--accent-2)"; multTapArea.classList.add('disabled'); clearInterval(multTimerInterval); if(startMultBtn) startMultBtn.style.display = 'inline-flex'; }
+      function startMultLevel() { multBaseNum = Math.floor(Math.random() * 10) + 1; multCurrentMultiple = 0; multExercise = 1; multCurrentTaps = 0; multBubblesContainer.innerHTML = ''; multProgressDots.innerHTML = ''; for(let i = 0; i < multBaseNum; i++) { const dot = document.createElement('div'); dot.className = 'mult-progress-dot'; multProgressDots.appendChild(dot); } updateMultUI(); multStatus.textContent = "¡Toca " + multBaseNum + " veces seguidas!"; multStatus.style.color = "var(--accent-2)"; multTapArea.classList.remove('disabled'); startMultTimer(); }
+      function updateMultUI() { multLevelEl.textContent = multLevel; multExerciseEl.textContent = multExercise; multErrorsEl.textContent = multErrors; multTargetText.textContent = "Toca " + multBaseNum + " veces (" + multCurrentTaps + "/" + multBaseNum + ")"; const dots = multProgressDots.children; for(let i = 0; i < dots.length; i++) { if(i < multCurrentTaps) dots[i].classList.add('active'); else dots[i].classList.remove('active'); } }
+      function handleMultTap() { if (multIsGameOver || !multHasStarted) return; if (isBusy) { triggerMultError("¡Te adelantaste! Espera a que termine de escalar."); return; } multLastTapTime = Date.now(); multCurrentTaps++; playSound('climb'); updateMultUI(); if (multCurrentTaps === multBaseNum) { multCurrentMultiple += multBaseNum; const bubble = document.createElement('div'); bubble.className = 'mult-bubble'; bubble.textContent = multCurrentMultiple; multBubblesContainer.appendChild(bubble); petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 10); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Correcto! +10 pts y +10 XP. Múltiplo: " + multCurrentMultiple); multCurrentTaps = 0; multExercise++; if (multExercise > 10) { multLevel++; if (multLevel > 10) { multStatus.textContent = "¡Juego Completado! 🏆"; multStatus.style.color = "var(--accent)"; multIsGameOver = true; multHasStarted = false; clearInterval(multTimerInterval); if (jumpAnimName) playAction(jumpAnimName, 3000); showToast("¡Felicidades! Completaste todos los niveles."); return; } showToast("¡Nivel " + (multLevel - 1) + " completado!"); setTimeout(() => startMultLevel(), 1500); } else { multStatus.textContent = "¡Excelente! Sigue tocando " + multBaseNum + " veces."; if (climbAnimName) playAction(climbAnimName, 800); } analytics.correct_answers++; syncAnalytics(); } }
+      function triggerMultError(reason) { if (multIsGameOver || !multHasStarted) return; multErrors++; multCurrentTaps = 0; updateMultUI(); playSound('fail'); if (multErrors >= 5) { multIsGameOver = true; multHasStarted = false; clearInterval(multTimerInterval); multStatus.textContent = "¡Caíste! Demasiados errores. Reiniciando..."; multStatus.style.color = "#ff4d4d"; multTapArea.classList.add('disabled'); if (fallAnimName) playAction(fallAnimName, 1500); if (sleepAnimName) setTimeout(() => { playAction(sleepAnimName, 3000); }, 1500); showToast("¡Te quedaste dormido! Volviendo al inicio..."); setTimeout(() => { resetMultGameState(); }, 4000); } else { multStatus.textContent = reason + " Llevas " + multErrors + "/5 errores."; multStatus.style.color = "#ff4d4d"; showToast(reason); } analytics.wrong_answers++; syncAnalytics(); }
+      function startMultTimer() { clearInterval(multTimerInterval); multLastTapTime = Date.now(); multTimerInterval = setInterval(() => { if (multIsGameOver || !multHasStarted) return; if (Date.now() - multLastTapTime > 4000) { triggerMultError("¡Muy lento! Te demoraste más de 4 segundos."); multLastTapTime = Date.now(); } }, 500); }
+      if (multTapArea) { multTapArea.addEventListener('click', handleMultTap); multTapArea.addEventListener('touchstart', (e) => { e.preventDefault(); handleMultTap(); }, { passive: false }); }
+      if (startMultBtn) startMultBtn.addEventListener('click', () => { multHasStarted = true; startMultBtn.style.display = 'none'; startMultLevel(); });
+      if (resetMultBtn) resetMultBtn.addEventListener('click', () => { resetMultGameState(); });
+      resetMultGameState();
+
+      let fracCurrentDenom = 0, fracShadedCount = 0, fracCorrectValue = 0;
+      const fracPrompt = document.getElementById('fracPrompt'), fracStatus = document.getElementById('fracStatus'), fracDenomContainer = document.getElementById('fracDenomContainer'), fracSvg = document.getElementById('fracSvg'), checkFracBtn = document.getElementById('checkFracBtn'), resetFracBtn = document.getElementById('resetFracBtn');
+      function generateFractionGame() { if (!fracPrompt) return; const operations = [{ text: "1/2 + 1/4 = ?", value: 3/4 }, { text: "1/2 + 1/3 = ?", value: 5/6 }, { text: "1/4 + 1/4 = ?", value: 1/2 }, { text: "3/4 - 1/4 = ?", value: 1/2 }, { text: "1/2 - 1/4 = ?", value: 1/4 }, { text: "1/2 * 1/2 = ?", value: 1/4 }, { text: "1/3 * 1/2 = ?", value: 1/6 }, { text: "1/2 ÷ 2 = ?", value: 1/4 }, { text: "1/4 ÷ 2 = ?", value: 1/8 }, { text: "2/3 + 1/3 = ?", value: 1 }, { text: "3/4 - 1/2 = ?", value: 1/4 }, { text: "1 - 1/2 = ?", value: 1/2 }]; const op = operations[Math.floor(Math.random() * operations.length)]; fracPrompt.textContent = op.text; fracCorrectValue = op.value; fracStatus.textContent = "Divide el círculo y pinta la respuesta correcta"; fracStatus.style.color = "var(--accent-2)"; fracDenomContainer.innerHTML = ''; fracSvg.innerHTML = ''; fracCurrentDenom = 0; fracShadedCount = 0; [2, 3, 4, 5, 6, 8].forEach(d => { const btn = document.createElement('button'); btn.className = 'frac-denom-btn interactive'; btn.textContent = `÷ ${d}`; btn.dataset.denom = d; btn.addEventListener('click', () => setFractionDenominator(d, btn)); fracDenomContainer.appendChild(btn); }); }
+      function setFractionDenominator(denom, btn) { fracCurrentDenom = denom; fracShadedCount = 0; document.querySelectorAll('.frac-denom-btn').forEach(b => b.classList.remove('active')); if (btn) btn.classList.add('active'); let html = ''; const r = 40, cx = 50, cy = 50; for (let i = 0; i < denom; i++) { const startAngle = (i * 2 * Math.PI / denom) - Math.PI / 2; const endAngle = ((i + 1) * 2 * Math.PI / denom) - Math.PI / 2; const x1 = cx + r * Math.cos(startAngle); const y1 = cy + r * Math.sin(startAngle); const x2 = cx + r * Math.cos(endAngle); const y2 = cy + r * Math.sin(endAngle); const largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0; html += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z" class="frac-slice interactive" data-index="${i}" />`; } fracSvg.innerHTML = html; fracSvg.querySelectorAll('.frac-slice').forEach(slice => slice.addEventListener('click', () => toggleFractionSlice(slice))); }
+      function toggleFractionSlice(slice) { if (slice.classList.contains('shaded')) { slice.classList.remove('shaded'); fracShadedCount--; } else { slice.classList.add('shaded'); fracShadedCount++; playSound('pop'); } }
+      if (checkFracBtn) checkFracBtn.addEventListener('click', () => { if (fracCurrentDenom === 0 || fracShadedCount === 0) { showToast("Divide y pinta el círculo primero."); return; } const userValue = fracShadedCount / fracCurrentDenom; if (Math.abs(userValue - fracCorrectValue) < 0.01) { petData.points += 15; petData.xp += 15; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Fracción correcta! +15 puntos y +15 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateFractionGame, 1500); analytics.correct_answers++; syncAnalytics(); } else { showToast("¡Casi! Revisa tus porciones."); if (hitAnimName) playAction(hitAnimName, 1500); analytics.wrong_answers++; syncAnalytics(); } });
+      if (resetFracBtn) resetFracBtn.addEventListener('click', generateFractionGame); generateFractionGame();
+
+      const btnAR = document.getElementById('btnAR'), arVideoBg = document.getElementById('arVideoBg'); let arBgStream = null;
+      if (btnAR) { btnAR.addEventListener('click', async () => { if (document.body.classList.contains('ar-mode')) { document.body.classList.remove('ar-mode'); btnAR.textContent = "📱 Modo Realidad Aumentada"; if (arBgStream) { arBgStream.getTracks().forEach(track => track.stop()); arBgStream = null; } showToast("Modo Realidad Aumentada desactivado."); } else { try { arBgStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); arVideoBg.srcObject = arBgStream; document.body.classList.add('ar-mode'); btnAR.textContent = "🚫 Salir de AR"; showToast("¡Modo AR activado! Juega en tu mundo real."); } catch (err) { console.error("Error al acceder a la cámara:", err); showToast("No se pudo acceder a la cámara. Revisa los permisos."); } } }); }
+
+    } catch (globalError) { console.error("Error global inicializando la app:", globalError); }
+  </script>
+</body>
+</html>
