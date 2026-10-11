@@ -169,6 +169,15 @@
     .frac-slice.shaded { fill: var(--accent); }
     .frac-slice.shaded:hover { fill: #ff7044; }
 
+    /* --- ESTILOS ENCUESTA GAMEX --- */
+    .gamex-dimension { margin-bottom: 2.5rem; }
+    .gamex-dimension h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; color: var(--accent); margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    .gamex-question { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .gamex-question p { margin-bottom: 0.75rem; font-weight: 500; }
+    .gamex-scale { display: flex; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+    .gamex-scale label { display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 0.75rem; color: var(--muted); flex: 1; text-align: center; }
+    .gamex-scale input[type="radio"] { margin-top: 0.25rem; accent-color: var(--accent); transform: scale(1.2); cursor: pointer; }
+    
     .overlay-panel { position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
     .overlay-panel.active { display: flex; }
     .overlay-container { background: var(--bg); padding: 2rem; border-radius: 16px; max-width: 1000px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; }
@@ -186,28 +195,19 @@
 <body class="grain">
   <video id="arVideoBg" autoplay playsinline muted></video>
 
-  <!-- OVERLAY DE REGISTRO INICIAL (ANALÍTICAS) -->
   <div id="registerOverlay" class="overlay-panel active">
     <div class="overlay-container" style="max-width: 500px;">
       <h2 class="font-display text-4xl mb-4">¡Hola! 👋</h2>
       <p class="mb-8" style="color: var(--muted);">Antes de empezar a jugar y cuidar de tu mascota, cuéntanos un poco sobre ti:</p>
-      <div class="form-field">
-        <input type="text" id="regName" placeholder=" " required>
-        <label for="regName">¿Cuál es tu nombre?</label>
-      </div>
-      <div class="form-field">
-        <input type="number" id="regAge" placeholder=" " required min="3" max="15">
-        <label for="regAge">¿Cuántos años tienes?</label>
-      </div>
+      <div class="form-field"><input type="text" id="regName" placeholder=" " required><label for="regName">¿Cuál es tu nombre?</label></div>
+      <div class="form-field"><input type="number" id="regAge" placeholder=" " required min="3" max="15"><label for="regAge">¿Cuántos años tienes?</label></div>
       <button id="btnRegister" class="btn-primary interactive"><span>Comenzar Aventura</span><span class="arrow">→</span></button>
     </div>
   </div>
 
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto relative">
-      <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">
-        Math Live<span style="color: var(--accent);">.</span>
-      </a>
+      <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">Math Live<span style="color: var(--accent);">.</span></a>
       <button class="mobile-menu-btn interactive" id="mobileMenuBtn">☰</button>
       <ul id="navMenu" class="hidden md:flex items-center gap-6 text-sm absolute md:relative left-0 right-0 md:left-auto md:right-auto">
         <li><a href="#actividades" class="nav-link interactive"><span>Actividades</span><span>Actividades</span></a></li>
@@ -221,22 +221,13 @@
       <div class="max-w-[1200px] mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
         <div class="text-center md:text-left">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Bienvenido</span>
-          <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">
-            Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span>
-          </h1>
-          <p class="mt-4 text-lg md:text-xl mb-10 mx-auto md:mx-0" style="color: var(--muted); max-width: 600px;">
-            Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, evoluciona a tu mascota y diviértete aprendiendo.
-          </p>
-          <a href="#actividades" class="btn-primary interactive">
-            <span>Comenzar a Jugar</span>
-            <span class="arrow">↓</span>
-          </a>
+          <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span></h1>
+          <p class="mt-4 text-lg md:text-xl mb-10 mx-auto md:mx-0" style="color: var(--muted); max-width: 600px;">Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, evoluciona a tu mascota y diviértete aprendiendo.</p>
+          <a href="#actividades" class="btn-primary interactive"><span>Comenzar a Jugar</span><span class="arrow">↓</span></a>
           <p class="mt-8 text-xs uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
         </div>
         <div class="hidden md:block relative w-full aspect-square">
-          <div class="model-error-msg" id="heroModelErrorMsg">
-            <div class="font-display text-xl italic font-light">Cargando mascota...</div>
-          </div>
+          <div class="model-error-msg" id="heroModelErrorMsg"><div class="font-display text-xl italic font-light">Cargando mascota...</div></div>
           <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
         </div>
       </div>
@@ -252,6 +243,7 @@
           <button class="tab-btn" data-tab="grupos">Agrupa y Reparte</button>
           <button class="tab-btn" data-tab="multiplos">Escala Múltiplos</button>
           <button class="tab-btn" data-tab="fracciones">Fracciones</button>
+          <button class="tab-btn" data-tab="gamex">Encuesta GAMEX</button>
         </div>
 
         <div id="tab-aprender" class="activity-panel active">
@@ -270,6 +262,21 @@
         <div id="tab-grupos" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-5xl mb-4" id="grpPrompt">3 × 2 = ?</div><div class="text-xl mb-8" id="grpStatus" style="color: var(--accent-2);">Toca cada caja 2 veces</div><div id="grpPileContainer" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[60px]"></div><div id="grpBoxesContainer" class="flex flex-wrap justify-center gap-4 mb-8"></div><button id="resetGrpBtn" class="btn-primary interactive"><span>Reiniciar</span></button></div></div>
         <div id="tab-multiplos" class="activity-panel"><div class="math-zone text-center"><div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);"><span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span></div><div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div><div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div><div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div><button id="multTapArea" class="interactive disabled">¡TOCAR!</button><div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div><div class="mt-6 flex justify-center gap-4 flex-wrap"><button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);"><span>Comenzar Juego</span></button><button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);"><span>Reiniciar</span></button></div></div></div>
         <div id="tab-fracciones" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-4xl md:text-5xl mb-2" id="fracPrompt">1/2 + 1/4 = ?</div><div class="text-lg md:text-xl mb-8" id="fracStatus" style="color: var(--accent-2);">Divide el círculo y pinta la respuesta correcta</div><div class="mb-6"><p class="text-sm uppercase tracking-widest mb-2" style="color: var(--muted);">1. Divide el círculo</p><div id="fracDenomContainer" class="flex flex-wrap justify-center gap-2"></div></div><svg id="fracSvg" viewBox="0 0 100 100" class="frac-svg mb-6"></svg><button id="checkFracBtn" class="btn-primary interactive"><span>Comprobar</span></button><button id="resetFracBtn" class="btn-primary interactive mt-4" style="background: var(--muted);"><span>Saltar ejercicio</span></button></div></div>
+        
+        <div id="tab-gamex" class="activity-panel">
+          <div class="math-zone">
+            <div class="flex flex-col items-center mb-12 text-center">
+              <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Evaluación</span>
+              <h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">Escala GAMEX</h2>
+              <p class="mt-4 max-w-2xl" style="color: var(--muted);">Por favor, responde las siguientes preguntas sobre tu experiencia jugando Math Live. Selecciona del 1 (Totalmente en desacuerdo) al 5 (Totalmente de acuerdo).</p>
+            </div>
+            <form id="gamexForm"></form>
+            <div class="text-center mt-8">
+              <button id="submitGamexBtn" class="btn-primary interactive"><span>Enviar Respuestas</span><span class="arrow">→</span></button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -326,30 +333,30 @@
 
   <script>
     try {
-      // --- CONFIGURACIÓN DE SUPABASE ---
-      const SUPABASE_URL = 'TU_SUPABASE_URL'; // Reemplaza esto
-      const SUPABASE_KEY = 'TU_SUPABASE_ANON_KEY'; // Reemplaza esto
+      const SUPABASE_URL = 'TU_SUPABASE_URL'; 
+      const SUPABASE_KEY = 'TU_SUPABASE_ANON_KEY'; 
 
-      // --- SISTEMA DE ANALÍTICAS ---
+      // Safe LocalStorage wrapper
+      function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+      function safeLocalStorageSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
       let analytics = {
-        user_id: localStorage.getItem('mathLiveUserId') || 'user_' + Math.random().toString(36).substr(2, 9),
+        user_id: 'user_' + Math.random().toString(36).substr(2, 9),
         name: '', age: null, device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
         playtime: 0, correct_answers: 0, wrong_answers: 0,
-        games_played: {}, pet_actions: {}, ai_questions: []
+        games_played: {}, pet_actions: {}, ai_questions: [], gamex: null
       };
-      localStorage.setItem('mathLiveUserId', analytics.user_id);
+      
+      const savedId = safeLocalStorageGet('mathLiveUserId');
+      if (savedId) analytics.user_id = savedId;
+      else safeLocalStorageSet('mathLiveUserId', analytics.user_id);
 
       async function syncAnalytics() {
         if (!SUPABASE_URL || SUPABASE_URL === 'TU_SUPABASE_URL') return; 
         try {
           await fetch(`${SUPABASE_URL}/rest/v1/user_stats?user_id=eq.${analytics.user_id}`, {
             method: 'POST',
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json',
-              'Prefer': 'resolution=merge-duplicates'
-            },
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
             body: JSON.stringify(analytics)
           });
         } catch (e) { console.error("Error sync", e); }
@@ -358,20 +365,26 @@
       setInterval(() => { analytics.playtime += 30; syncAnalytics(); }, 30000); 
       window.addEventListener('beforeunload', syncAnalytics); 
 
+      const toast = document.getElementById('toast');
+      function showToast(message) { if (!toast) return; toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+
       const registerOverlay = document.getElementById('registerOverlay');
       const btnRegister = document.getElementById('btnRegister');
       if (btnRegister) {
         btnRegister.addEventListener('click', () => {
-          const name = document.getElementById('regName').value;
-          const age = document.getElementById('regAge').value;
-          if (!name || !age) { alert("Por favor ingresa tu nombre y edad."); return; }
+          const name = document.getElementById('regName').value.trim();
+          const age = document.getElementById('regAge').value.trim();
+          if (!name || !age) { 
+            showToast("Por favor, ingresa tu nombre y edad."); 
+            return; 
+          }
           analytics.name = name; analytics.age = parseInt(age);
           registerOverlay.classList.remove('active');
           syncAnalytics();
+          showToast("¡Bienvenido, " + name + "! 🎉");
         });
       }
 
-      // 0. MENU MÓVIL Y SISTEMA DE PESTAÑAS
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const navMenu = document.getElementById('navMenu');
       if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', () => navMenu.classList.toggle('open'));
@@ -389,10 +402,9 @@
         });
       });
 
-      // 1. SISTEMA DE MASCOTA, XP Y EVOLUCIONES
       let petData = { name: '', model: '', points: 10, xp: 0, level: 1, hunger: 80, happy: 80, health: 100, sleep: 100 };
       try { 
-        const savedData = localStorage.getItem('matePetData'); 
+        const savedData = safeLocalStorageGet('matePetData'); 
         if (savedData) {
           petData = JSON.parse(savedData);
           if (petData.xp === undefined) petData.xp = 0;
@@ -400,7 +412,7 @@
         } 
       } catch (e) {}
       
-      function savePetData() { try { localStorage.setItem('matePetData', JSON.stringify(petData)); } catch (e) {} }
+      function savePetData() { safeLocalStorageSet('matePetData', JSON.stringify(petData)); }
 
       const petWidget = document.getElementById('petWidget');
       const widgetToggleBtn = document.getElementById('widgetToggleBtn');
@@ -478,7 +490,6 @@
             if (!isBusy && idleAnimName) v.animationName = idleAnimName;
           }
         });
-        // MANEJO DE ERROR SI EL ARCHIVO NO EXISTE
         v.addEventListener('error', () => {
           const errMsg = v.parentElement.querySelector('.model-error-msg');
           if (errMsg) {
@@ -561,7 +572,6 @@
       if (btnSelectPet) btnSelectPet.addEventListener('click', () => { selectionOverlay.classList.add('active'); initPetSelection(); });
       if (closeSelection) closeSelection.addEventListener('click', () => selectionOverlay.classList.remove('active'));
       
-      // VALIDACIÓN PARA EVITAR MODELOS INEXISTENTES EN LOCALSTORAGE
       if (!petData.model || !availablePets.some(p => p.src === petData.model)) { 
         petData.model = availablePets[0].src; savePetData(); 
       }
@@ -640,8 +650,6 @@
       if (aiSendBtn) aiSendBtn.addEventListener('click', sendAiMessage);
       if (aiInput) aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAiMessage(); });
 
-      const toast = document.getElementById('toast');
-      function showToast(message) { if (!toast) return; toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
       let audioCtx = null;
       function playSound(type) {
         try {
@@ -656,6 +664,71 @@
       updateHUD(); generateQuestion(); 
 
       if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err)));
+
+      const gamexData = [
+        { dim: "1. Disfrute (Enjoyment)", questions: ["Jugar el juego fue divertido.", "Me gustó jugar el juego.", "Disfruté mucho jugando el juego.", "Mi experiencia de juego fue agradable.", "Creo que jugar el juego es muy entretenido.", "Jugaría a este juego por sí mismo, no solo cuando me lo pidan."] },
+        { dim: "2. Absorción (Absorption)", questions: ["Jugar el juego me hizo olvidar dónde estoy.", "Me olvidé de mi entorno inmediato mientras jugaba.", "Después de jugar, sentí como si volviera al 'mundo real' tras un viaje.", "Jugar el juego me alejó de todo.", "Mientras jugaba, era completamente ajeno/a a todo lo que me rodeaba.", "Mientras jugaba, perdí la noción del tiempo."] },
+        { dim: "3. Pensamiento Creativo (Creative Thinking)", questions: ["Jugar el juego despertó mi imaginación.", "Mientras jugaba me sentí creativo/a.", "Mientras jugaba sentí que podía explorar cosas.", "Mientras jugaba me sentí aventurero/a."] },
+        { dim: "4. Activación (Activation)", questions: ["Mientras jugaba me sentí activado/a.", "Mientras jugaba me sentí inquieto/a.", "Mientras jugaba me sentí frenético/a.", "Mientras jugaba me sentí emocionado/a."] },
+        { dim: "5. Ausencia de Afecto Negativo (Absence of Negative Affect)", questions: ["Mientras jugaba me sentí molesto/a.", "Mientras jugaba me sentí hostil.", "Mientras jugaba me sentí frustrado/a."] },
+        { dim: "6. Dominio (Dominance)", questions: ["Mientras jugaba sentía que tenía el control.", "Mientras jugaba me sentí influyente.", "Mientras jugaba me sentí autónomo/a.", "Mientras jugaba me sentí seguro/a."] }
+      ];
+      
+      const gamexForm = document.getElementById('gamexForm');
+      if (gamexForm) {
+        let html = '';
+        gamexData.forEach((dimData, dIndex) => {
+          html += `<div class="gamex-dimension"><h3>${dimData.dim}</h3>`;
+          dimData.questions.forEach((q, qIndex) => {
+            const qId = `gamex_${dIndex}_${qIndex}`;
+            html += `
+              <div class="gamex-question">
+                <p>${q}</p>
+                <div class="gamex-scale">
+                  <label>1<input type="radio" name="${qId}" value="1" required></label>
+                  <label>2<input type="radio" name="${qId}" value="2"></label>
+                  <label>3 (Neutral)<input type="radio" name="${qId}" value="3"></label>
+                  <label>4<input type="radio" name="${qId}" value="4"></label>
+                  <label>5<input type="radio" name="${qId}" value="5"></label>
+                </div>
+              </div>`;
+          });
+          html += `</div>`;
+        });
+        gamexForm.innerHTML = html;
+      }
+
+      const submitGamexBtn = document.getElementById('submitGamexBtn');
+      if (submitGamexBtn) {
+        submitGamexBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const formData = new FormData(gamexForm);
+          let responses = {};
+          let allAnswered = true;
+          
+          gamexData.forEach((dimData, dIndex) => {
+            responses[dimData.dim] = [];
+            dimData.questions.forEach((q, qIndex) => {
+              const qId = `gamex_${dIndex}_${qIndex}`;
+              const val = formData.get(qId);
+              if (!val) allAnswered = false;
+              responses[dimData.dim].push(val ? parseInt(val) : null);
+            });
+          });
+
+          if (!allAnswered) {
+            showToast("Por favor, responde todas las preguntas.");
+            return;
+          }
+
+          analytics.gamex = responses;
+          syncAnalytics();
+          showToast("¡Gracias por tus respuestas! 📝");
+          gamexForm.reset();
+          submitGamexBtn.disabled = true;
+          submitGamexBtn.textContent = "Enviado ✓";
+        });
+      }
 
       const levelShapes = [{ name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' }, { name: 'Cuadrados', sides: 4, formula: 'P=4L, A=L^2' }, { name: 'Círculos', sides: 0, formula: 'P=2πr, A=πr^2' }, { name: 'Pentágonos', sides: 5, formula: 'P=5L, A=(P*a)/2' }, { name: 'Hexágonos', sides: 6, formula: 'P=6L, A=(P*a)/2' }];
       function initMiniGame1() {
