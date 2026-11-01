@@ -130,7 +130,7 @@
     .grp-box:hover { border-color: var(--accent); }
     .grp-box.full { border-color: var(--accent-2); border-style: solid; background: rgba(42, 140, 74, 0.1); }
     .grp-box-content { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 10px; }
-    .grp-item-pile { width: 50px; height: 50px; background-color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s, opacity 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; }
+    .grp-item-pile { width: 50px; height: 50px; background-color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s, opacity  0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; }
     .grp-item-pile:hover { transform: scale(1.1); }
     .grp-item-pile.distributed { opacity: 0; transform: scale(0); pointer-events: none; }
 
@@ -186,6 +186,7 @@
 
 <body class="grain">
 
+  <!-- OVERLAY DE REALIDAD AUMENTADA PURA -->
   <div id="pureArOverlay" class="pure-ar-overlay">
     <video id="arVideoBg" autoplay playsinline muted></video>
     <model-viewer id="arModelViewer" alt="Mascota AR" shadow-intensity="0.8" camera-controls autoplay touch-action="none" style="background-color: transparent;"></model-viewer>
@@ -200,6 +201,7 @@
     </div>
   </div>
 
+  <!-- OVERLAY DE REGISTRO INICIAL (ANALÍTICAS) -->
   <div id="registerOverlay" class="overlay-panel active">
     <div class="overlay-container" style="max-width: 500px;">
       <h2 class="font-display text-4xl mb-4">¡Hola! 👋</h2>
@@ -210,6 +212,7 @@
     </div>
   </div>
 
+  <!-- NAVEGACIÓN FIJA -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto relative">
       <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">Math Live<span style="color: var(--accent);">.</span></a>
@@ -222,24 +225,41 @@
   </header>
 
   <main class="pt-24">
+    
+    <!-- HERO con Modelo 3D -->
     <section id="hero" class="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-12 overflow-hidden">
       <div class="max-w-[1200px] mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+        
         <div class="text-center md:text-left">
           <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Bienvenido</span>
-          <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span></h1>
-          <p class="mt-4 text-lg md:text-xl mb-10 mx-auto md:mx-0" style="color: var(--muted); max-width: 600px;">Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, evoluciona a tu mascota y diviértete aprendiendo.</p>
-          <a href="#actividades" class="btn-primary interactive"><span>Comenzar a Jugar</span><span class="arrow">↓</span></a>
+          <h1 class="font-display font-light tracking-tight leading-[0.92] mb-6" style="font-size: clamp(3rem, 8vw, 7rem);">
+            Aprende matemáticas con tu <span class="font-display italic font-normal" style="color: var(--accent);">mascota virtual</span>
+          </h1>
+          <p class="mt-4 text-lg md:text-xl mb-10 mx-auto md:mx-0" style="color: var(--muted); max-width: 600px;">
+            Cuida de tu compañero resolviendo retos matemáticos. Gana puntos, evoluciona a tu mascota y diviértete aprendiendo.
+          </p>
+          <a href="#actividades" class="btn-primary interactive">
+            <span>Comenzar a Jugar</span>
+            <span class="arrow">↓</span>
+          </a>
           <p class="mt-8 text-xs uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
         </div>
+
         <div class="hidden md:block relative w-full aspect-square">
-          <div class="model-error-msg" id="heroModelErrorMsg"><div class="font-display text-xl italic font-light">Cargando mascota...</div></div>
+          <div class="model-error-msg" id="heroModelErrorMsg">
+            <div class="font-display text-xl italic font-light">Cargando mascota...</div>
+          </div>
           <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
         </div>
+
       </div>
     </section>
 
+    <!-- SECCIÓN DE ACTIVIDADES EN CARRUSEL (TABS) -->
     <section id="actividades" class="py-12 px-6 md:px-12" style="background: var(--bg-alt);">
       <div class="max-w-[1200px] mx-auto">
+        
+        <!-- Menú de Pestañas (Carrusel horizontal) -->
         <div class="tabs-container">
           <button class="tab-btn active" data-tab="aprender">Aprender</button>
           <button class="tab-btn" data-tab="math">Reto Matemático</button>
@@ -251,23 +271,166 @@
           <button class="tab-btn" data-tab="gamex">Encuesta GAMEX</button>
         </div>
 
+        <!-- Panel: Aprender -->
         <div id="tab-aprender" class="activity-panel active">
-          <div class="flex flex-col items-center mb-12"><h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2></div>
+          <div class="flex flex-col items-center mb-12">
+            <h2 class="font-display font-light tracking-tight text-center" style="font-size: clamp(2rem, 4vw, 3rem);">¿Cómo calculamos?</h2>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent);">Sumar</span></div><div class="visual-group" style="flex-direction: row; align-items: center;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">+</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div></div><p class="text-center font-bold text-xl mt-auto">3 + 2 = 5</p></div>
-            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent-2);">Restar</span></div><div class="visual-group" style="flex-direction: row; align-items: center;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">-</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div></div><p class="text-center font-bold text-xl mt-auto">4 - 2 = 2</p></div>
-            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #0066cc;">Multiplicar</span></div><div class="visual-group" style="flex-direction: column; gap: 0.75rem;"><div style="display: flex; gap: 0.5rem; align-items: center;"><div class="group-box"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div><span class="math-symbol">×</span><span class="font-display text-3xl font-light">2</span></div><span class="math-symbol">=</span><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div></div><p class="text-center font-bold text-xl mt-4">3 × 2 = 6</p></div>
-            <div class="learn-card"><div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #cc0066;">Dividir</span></div><div class="visual-group" style="flex-direction: column; gap: 0.75rem;"><div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div><span class="math-symbol">÷</span><span class="font-display text-3xl font-light">2</span><span class="math-symbol">=</span><div style="display: flex; gap: 1rem;"><div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div><div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div></div></div><p class="text-center font-bold text-xl mt-4">6 ÷ 2 = 3</p></div>
+            <!-- Sumar -->
+            <div class="learn-card">
+              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent);">Sumar</span></div>
+              <div class="visual-group" style="flex-direction: row; align-items: center;">
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+                <span class="math-symbol">+</span>
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
+                <span class="math-symbol">=</span>
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+              </div>
+              <p class="text-center font-bold text-xl mt-auto">3 + 2 = 5</p>
+            </div>
+            <!-- Restar -->
+            <div class="learn-card">
+              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: var(--accent-2);">Restar</span></div>
+              <div class="visual-group" style="flex-direction: row; align-items: center;">
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span><span class="unit-dot"></span></div>
+                <span class="math-symbol">-</span>
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
+                <span class="math-symbol">=</span>
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;"><span class="unit-dot"></span><span class="unit-dot"></span></div>
+              </div>
+              <p class="text-center font-bold text-xl mt-auto">4 - 2 = 2</p>
+            </div>
+            <!-- Multiplicar -->
+            <div class="learn-card">
+              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #0066cc;">Multiplicar</span></div>
+              <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <div class="group-box"><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span></div>
+                  <span class="math-symbol">×</span>
+                  <span class="font-display text-3xl font-light">2</span>
+                </div>
+                <span class="math-symbol">=</span>
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;">
+                  <span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span><span class="unit-dot" style="background-color: #0066cc;"></span>
+                </div>
+              </div>
+              <p class="text-center font-bold text-xl mt-4">3 × 2 = 6</p>
+            </div>
+            <!-- Dividir -->
+            <div class="learn-card">
+              <div class="text-center mb-4"><span class="font-display text-3xl font-light" style="color: #cc0066;">Dividir</span></div>
+              <div class="visual-group" style="flex-direction: column; gap: 0.75rem;">
+                <div class="math-blocks" style="flex-direction: row; gap: 4px;">
+                  <span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span>
+                </div>
+                <span class="math-symbol">÷</span>
+                <span class="font-display text-3xl font-light">2</span>
+                <span class="math-symbol">=</span>
+                <div style="display: flex; gap: 1rem;">
+                  <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
+                  <div class="group-box"><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span><span class="unit-dot" style="background-color: #cc0066;"></span></div>
+                </div>
+              </div>
+              <p class="text-center font-bold text-xl mt-4">6 ÷ 2 = 3</p>
+            </div>
           </div>
         </div>
 
-        <div id="tab-math" class="activity-panel"><div class="math-zone"><div class="flex justify-center gap-4 mb-8 flex-wrap"><button class="difficulty-btn interactive active" data-diff="1">Sumas y Restas</button><button class="difficulty-btn interactive" data-diff="2">Multiplicar</button><button class="difficulty-btn interactive" data-diff="3">Dividir</button></div><div class="math-question" id="mathQuestion">5 + 3 = ?</div><div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer"></div></div></div>
-        <div id="tab-minijuego" class="activity-panel"><div class="game-container"><canvas id="gameCanvas" width="800" height="400"></canvas><div class="mobile-controls"><div class="flex gap-4"><button class="game-btn interactive" id="btnLeft">◀</button><button class="game-btn interactive" id="btnRight">▶</button></div><button class="game-btn jump-btn interactive" id="btnJump">🆙 Saltar</button></div><p class="text-center text-sm" style="color: var(--muted);">En PC usa: ← → para moverte y Espacio para saltar.</p></div></div>
-        <div id="tab-contar" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-5xl mb-4" id="countPrompt">3 + 2 = ?</div><div class="text-xl mb-8" id="countStatus" style="color: var(--accent-2);">Toca 5 objetos</div><div id="objectsContainer" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[200px]"></div><button id="resetCountBtn" class="btn-primary interactive"><span>Reiniciar</span></button></div></div>
-        <div id="tab-grupos" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-5xl mb-4" id="grpPrompt">3 × 2 = ?</div><div class="text-xl mb-8" id="grpStatus" style="color: var(--accent-2);">Toca cada caja 2 veces</div><div id="grpPileContainer" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[60px]"></div><div id="grpBoxesContainer" class="flex flex-wrap justify-center gap-4 mb-8"></div><button id="resetGrpBtn" class="btn-primary interactive"><span>Reiniciar</span></button></div></div>
-        <div id="tab-multiplos" class="activity-panel"><div class="math-zone text-center"><div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);"><span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span><span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span></div><div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div><div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div><div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div><button id="multTapArea" class="interactive disabled">¡TOCAR!</button><div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div><div class="mt-6 flex justify-center gap-4 flex-wrap"><button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);"><span>Comenzar Juego</span></button><button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);"><span>Reiniciar</span></button></div></div></div>
-        <div id="tab-fracciones" class="activity-panel"><div class="math-zone text-center"><div class="font-display text-4xl md:text-5xl mb-2" id="fracPrompt">1/2 + 1/4 = ?</div><div class="text-lg md:text-xl mb-8" id="fracStatus" style="color: var(--accent-2);">Divide el círculo y pinta la respuesta correcta</div><div class="mb-6"><p class="text-sm uppercase tracking-widest mb-2" style="color: var(--muted);">1. Divide el círculo</p><div id="fracDenomContainer" class="flex flex-wrap justify-center gap-2"></div></div><svg id="fracSvg" viewBox="0 0 100 100" class="frac-svg mb-6"></svg><button id="checkFracBtn" class="btn-primary interactive"><span>Comprobar</span></button><button id="resetFracBtn" class="btn-primary interactive mt-4" style="background: var(--muted);"><span>Saltar ejercicio</span></button></div></div>
-        
+        <!-- Panel: Reto Matemático -->
+        <div id="tab-math" class="activity-panel">
+          <div class="math-zone">
+            <div class="flex justify-center gap-4 mb-8 flex-wrap">
+              <button class="difficulty-btn interactive active" data-diff="1">Sumas y Restas</button>
+              <button class="difficulty-btn interactive" data-diff="2">Multiplicar</button>
+              <button class="difficulty-btn interactive" data-diff="3">Dividir</button>
+            </div>
+            <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="mathOptionsContainer"></div>
+          </div>
+        </div>
+
+        <!-- Panel: Salta y Suma -->
+        <div id="tab-minijuego" class="activity-panel">
+          <div class="game-container">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <div class="mobile-controls">
+              <div class="flex gap-4">
+                <button class="game-btn interactive" id="btnLeft">◀</button>
+                <button class="game-btn interactive" id="btnRight">▶</button>
+              </div>
+              <button class="game-btn jump-btn interactive" id="btnJump">🆙 Saltar</button>
+            </div>
+            <p class="text-center text-sm" style="color: var(--muted);">En PC usa: ← → para moverte y Espacio para saltar.</p>
+          </div>
+        </div>
+
+        <!-- Panel: Cuenta y Toca -->
+        <div id="tab-contar" class="activity-panel">
+          <div class="math-zone text-center">
+            <div class="font-display text-5xl mb-4" id="countPrompt">3 + 2 = ?</div>
+            <div class="text-xl mb-8" id="countStatus" style="color: var(--accent-2);">Toca 5 objetos</div>
+            <div id="objectsContainer" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[200px]"></div>
+            <button id="resetCountBtn" class="btn-primary interactive"><span>Reiniciar</span></button>
+          </div>
+        </div>
+
+        <!-- Panel: Agrupa y Reparte -->
+        <div id="tab-grupos" class="activity-panel">
+          <div class="math-zone text-center">
+            <div class="font-display text-5xl mb-4" id="grpPrompt">3 × 2 = ?</div>
+            <div class="text-xl mb-8" id="grpStatus" style="color: var(--accent-2);">Toca cada caja 2 veces</div>
+            <div id="grpPileContainer" class="flex flex-wrap justify-center gap-2 mb-8 min-h-[60px]"></div>
+            <div id="grpBoxesContainer" class="flex flex-wrap justify-center gap-4 mb-8"></div>
+            <button id="resetGrpBtn" class="btn-primary interactive"><span>Reiniciar</span></button>
+          </div>
+        </div>
+
+        <!-- Panel: Escala Múltiplos -->
+        <div id="tab-multiplos" class="activity-panel">
+          <div class="math-zone text-center">
+            <div class="flex justify-between mb-4 text-xs uppercase tracking-widest" style="color: var(--muted);">
+              <span>Nivel: <span id="multLevel" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
+              <span>Ejercicio: <span id="multExercise" style="color: var(--fg); font-weight: bold;">0</span>/10</span>
+              <span>Errores: <span id="multErrors" style="color: var(--accent); font-weight: bold;">0</span>/5</span>
+            </div>
+            <div class="font-display text-2xl mb-2" id="multTargetText">Prepárate</div>
+            <div id="multProgressDots" class="flex justify-center gap-2 mb-4"></div>
+            <div id="multBubblesContainer" class="flex flex-wrap justify-center gap-2 mb-6 min-h-[40px]"></div>
+            
+            <button id="multTapArea" class="interactive disabled">¡TOCAR!</button>
+            <div class="text-md mt-4" id="multStatus" style="color: var(--accent-2);">Pulsa 'Comenzar' cuando estés listo</div>
+            
+            <div class="mt-6 flex justify-center gap-4 flex-wrap">
+              <button id="startMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--accent-2);">
+                <span>Comenzar Juego</span>
+              </button>
+              <button id="resetMultBtn" class="btn-primary interactive text-sm" style="padding: 0.8rem 1.5rem; background: var(--muted);">
+                <span>Reiniciar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Fracciones -->
+        <div id="tab-fracciones" class="activity-panel">
+          <div class="math-zone text-center">
+            <div class="font-display text-4xl md:text-5xl mb-2" id="fracPrompt">1/2 + 1/4 = ?</div>
+            <div class="text-lg md:text-xl mb-8" id="fracStatus" style="color: var(--accent-2);">Divide el círculo y pinta la respuesta correcta</div>
+            
+            <div class="mb-6">
+              <p class="text-sm uppercase tracking-widest mb-2" style="color: var(--muted);">1. Divide el círculo</p>
+              <div id="fracDenomContainer" class="flex flex-wrap justify-center gap-2"></div>
+            </div>
+
+            <svg id="fracSvg" viewBox="0 0 100 100" class="frac-svg mb-6"></svg>
+
+            <button id="checkFracBtn" class="btn-primary interactive"><span>Comprobar</span></button>
+            <button id="resetFracBtn" class="btn-primary interactive mt-4" style="background: var(--muted);"><span>Saltar ejercicio</span></button>
+          </div>
+        </div>
+
+        <!-- Panel: Encuesta GAMEX -->
         <div id="tab-gamex" class="activity-panel">
           <div class="math-zone">
             <div class="flex flex-col items-center mb-12 text-center">
@@ -285,31 +448,80 @@
       </div>
     </section>
 
+    <!-- CONTACTO -->
     <section id="contacto" class="py-24 px-6 md:px-12">
       <div class="max-w-[800px] mx-auto">
-        <div class="text-center mb-12"><span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span><h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2></div>
+        <div class="text-center mb-12">
+          <span class="font-display italic font-light text-xl mb-2 block" style="color: var(--accent);">Contacto</span>
+          <h2 class="font-display font-light tracking-tight" style="font-size: clamp(2rem, 4vw, 3rem);">¿Tienes dudas o sugerencias?</h2>
+        </div>
         <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
-          <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc"><input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div style="position: relative; border-bottom: 1px solid var(--border);"><input type="text" id="name" name="name" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);"><label for="name" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu nombre</label></div><div style="position: relative; border-bottom: 1px solid var(--border);"><input type="email" id="email" name="email" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);"><label for="email" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu correo electrónico</label></div></div>
-          <div style="position: relative; border-bottom: 1px solid var(--border);"><textarea id="message" name="message" rows="4" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg); resize: none;"></textarea><label for="message" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Escribe tu mensaje...</label></div>
-          <div class="pt-4 text-center"><button type="submit" id="submitBtn" class="btn-primary interactive"><span id="submitBtnText">Enviar mensaje</span><span class="arrow">→</span></button></div>
+          <input type="hidden" name="access_key" value="d23d9800-6502-4a8b-a7d7-fd2b81e098bc">
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div style="position: relative; border-bottom: 1px solid var(--border);">
+              <input type="text" id="name" name="name" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);">
+              <label for="name" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu nombre</label>
+            </div>
+            <div style="position: relative; border-bottom: 1px solid var(--border);">
+              <input type="email" id="email" name="email" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg);">
+              <label for="email" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Tu correo electrónico</label>
+            </div>
+          </div>
+          <div style="position: relative; border-bottom: 1px solid var(--border);">
+            <textarea id="message" name="message" rows="4" placeholder=" " required style="background: transparent; border: none; outline: none; width: 100%; padding: 1.5rem 0 1rem; font-size: 1.125rem; color: var(--fg); resize: none;"></textarea>
+            <label for="message" style="position: absolute; top: 1.5rem; left: 0; color: var(--muted); transition: all 0.4s; pointer-events: none; font-size: 1.125rem;">Escribe tu mensaje...</label>
+          </div>
+          <div class="pt-4 text-center">
+            <button type="submit" id="submitBtn" class="btn-primary interactive">
+              <span id="submitBtnText">Enviar mensaje</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
         </form>
       </div>
     </section>
   </main>
 
-  <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);"><div class="max-w-[1800px] mx-auto text-center"><p class="font-display text-xl italic font-light">Math Live</p><p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">© 2025 Proyecto Educativo</p><p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p></div></footer>
+  <footer class="px-6 md:px-12 py-12" style="background: var(--fg); color: var(--bg);">
+    <div class="max-w-[1800px] mx-auto text-center">
+      <p class="font-display text-xl italic font-light">Math Live</p>
+      <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">© 2025 Proyecto Educativo</p>
+      <p class="text-xs mt-2 uppercase tracking-widest" style="color: var(--muted);">Creado por Jorge A. Mena Riezco</p>
+    </div>
+  </footer>
 
+  <!-- WIDGET FLOTANTE DE LA MASCOTA -->
   <div id="petWidget" class="pet-widget">
-    <div class="widget-header"><input type="text" id="petNameInput" class="pet-name-input" placeholder="Nombre..." maxlength="12"><button id="widgetToggleBtn" class="widget-toggle interactive">_</button></div>
+    <div class="widget-header">
+      <input type="text" id="petNameInput" class="pet-name-input" placeholder="Nombre..." maxlength="12">
+      <button id="widgetToggleBtn" class="widget-toggle interactive">_</button>
+    </div>
     <div class="widget-content">
-      <div class="widget-viewer"><div class="model-error-msg" id="widgetModelErrorMsg"><div class="font-display text-xl italic font-light">Cargando...</div></div><model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer></div>
-      <div class="flex justify-between items-baseline"><div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Puntos</div><div class="font-display text-3xl" style="color: var(--accent);" id="petPoints">10</div></div>
-      <div class="stat-row" style="margin-top: 0.5rem; margin-bottom: 1.25rem;"><div class="stat-label" style="color: var(--accent); font-weight: bold;">Nivel <span id="petLevel">1</span></div><div class="stat-bar-bg" style="height: 10px;"><div class="stat-bar-fill" id="xpBar" style="width: 1%; background: var(--accent);"></div></div></div>
+      <div class="widget-viewer">
+        <div class="model-error-msg" id="widgetModelErrorMsg">
+          <div class="font-display text-xl italic font-light">Cargando...</div>
+        </div>
+        <model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
+      </div>
+      
+      <div class="flex justify-between items-baseline">
+        <div class="text-xs uppercase tracking-widest" style="color: var(--muted);">Puntos</div>
+        <div class="font-display text-3xl" style="color: var(--accent);" id="petPoints">10</div>
+      </div>
+      
+      <div class="stat-row" style="margin-top: 0.5rem; margin-bottom: 1.25rem;">
+        <div class="stat-label" style="color: var(--accent); font-weight: bold;">Nivel <span id="petLevel">1</span></div>
+        <div class="stat-bar-bg" style="height: 10px;">
+          <div class="stat-bar-fill" id="xpBar" style="width: 1%; background: var(--accent);"></div>
+        </div>
+      </div>
+      
       <div class="stat-row"><div class="stat-label">Salud</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-health" id="healthBar" style="width: 100%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Sueño</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-sleep" id="sleepBar" style="width: 100%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Hambre</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-hunger" id="hungerBar" style="width: 80%;"></div></div></div>
       <div class="stat-row"><div class="stat-label">Felicidad</div><div class="stat-bar-bg"><div class="stat-bar-fill fill-happy" id="happyBar" style="width: 80%;"></div></div></div>
+      
       <div class="mt-2">
         <button class="pet-action-btn interactive" id="btnSelectPet" style="background: var(--accent-2); color: white;">🐶 Elegir Mascota</button>
         <button class="pet-action-btn interactive" id="btnFeed">🍖 Alimentar (-2 pts)</button>
@@ -321,13 +533,27 @@
   </div>
 
   <div class="toast" id="toast">¡Mensaje!</div>
+
+  <!-- ASISTENTE DE IA -->
   <div class="ai-bubble interactive" id="aiBubble" title="Pregúntale a la Profe IA">🤖</div>
   <div class="ai-chat-window" id="aiChatWindow">
-    <div class="ai-header"><div><h3 class="font-display text-xl">Profe IA</h3><p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas, restas, multiplicar o dividir</p></div><button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button></div>
-    <div class="ai-messages" id="aiMessages"><div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio, ¡pregúntame!</div></div>
-    <div class="ai-input-area"><input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí..."><button id="aiSendBtn" class="ai-send-btn interactive">➤</button></div>
+    <div class="ai-header">
+      <div>
+        <h3 class="font-display text-xl">Profe IA</h3>
+        <p class="text-xs" style="color: var(--muted);">Pregúntame sobre sumas, restas, multiplicar o dividir</p>
+      </div>
+      <button id="closeAiChat" class="text-2xl interactive" style="color: var(--bg);">×</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg bot">¡Hola! Soy tu Profe IA 🧑‍🏫. Si no entiendes algún ejercicio, ¡pregúntame!</div>
+    </div>
+    <div class="ai-input-area">
+      <input type="text" id="aiInput" class="ai-input" placeholder="Escribe tu duda aquí...">
+      <button id="aiSendBtn" class="ai-send-btn interactive">➤</button>
+    </div>
   </div>
 
+  <!-- SELECCIÓN DE MASCOTA -->
   <div class="overlay-panel" id="selectionOverlay">
     <div class="overlay-container">
       <h2 class="font-display text-4xl mb-8">Elige a tu compañero</h2>
