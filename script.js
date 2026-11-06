@@ -1,7 +1,8 @@
 try {
-  const SUPABASE_URL = 'TU_SUPABASE_URL'; 
-  const SUPABASE_KEY = 'TU_SUPABASE_ANON_KEY'; 
+const SUPABASE_URL = 'https://wpurrdflwijuvxmlxoh.supabase.co'; 
+const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx'; 
 
+  
   function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
   function safeLocalStorageSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
 
