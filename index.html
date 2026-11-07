@@ -130,7 +130,7 @@
     .grp-box:hover { border-color: var(--accent); }
     .grp-box.full { border-color: var(--accent-2); border-style: solid; background: rgba(42, 140, 74, 0.1); }
     .grp-box-content { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 10px; }
-    .grp-item-pile { width: 50px; height: 50px; background-color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s, opacity  0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; }
+    .grp-item-pile { width: 50px; height: 50px; background-color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: transform 0.2s, opacity: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); user-select: none; }
     .grp-item-pile:hover { transform: scale(1.1); }
     .grp-item-pile.distributed { opacity: 0; transform: scale(0); pointer-events: none; }
 
@@ -189,7 +189,7 @@
   <!-- OVERLAY DE REALIDAD AUMENTADA PURA -->
   <div id="pureArOverlay" class="pure-ar-overlay">
     <video id="arVideoBg" autoplay playsinline muted></video>
-    <model-viewer id="arModelViewer" alt="Mascota AR" shadow-intensity="0.8" camera-controls autoplay touch-action="none" style="background-color: transparent;"></model-viewer>
+    <model-viewer id="arModelViewer" alt="Mascota AR" shadow-intensity="1" shadow-softness="1" exposure="1.2" environment-intensity="1.5" camera-controls autoplay touch-action="none" style="background-color: transparent;"></model-viewer>
     <div class="ar-ui-layer">
       <button id="exitPureAR" class="ar-exit-btn">✕ Salir</button>
       <div class="ar-controls">
@@ -249,7 +249,7 @@
           <div class="model-error-msg" id="heroModelErrorMsg">
             <div class="font-display text-xl italic font-light">Cargando mascota...</div>
           </div>
-          <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
+          <model-viewer id="heroModelViewer" alt="Mascota 3D Hero" camera-controls ar autoplay shadow-intensity="1" shadow-softness="1" exposure="1.2" environment-intensity="1.5" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;"></model-viewer>
         </div>
 
       </div>
@@ -502,7 +502,7 @@
         <div class="model-error-msg" id="widgetModelErrorMsg">
           <div class="font-display text-xl italic font-light">Cargando...</div>
         </div>
-        <model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="0.8" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
+        <model-viewer alt="Mascota 3D" camera-controls ar autoplay shadow-intensity="1" shadow-softness="1" exposure="1.2" environment-intensity="1.5" camera-orbit="0deg 80deg 105deg" style="background-color: transparent; width: 100%; height: 100%;" id="modelViewer3D"></model-viewer>
       </div>
       
       <div class="flex justify-between items-baseline">
