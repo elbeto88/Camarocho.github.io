@@ -1,5 +1,5 @@
 try {
-const SUPABASE_URL = 'https://wpvumrdflwjivuxmlxoh.supabase.co'; 
+const SUPABASE_URL = 'https://wpurrdflwijuvxmlxoh.supabase.co'; 
 const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx'; 
 
   
