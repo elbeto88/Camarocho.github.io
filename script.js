@@ -1,8 +1,7 @@
 try {
-const SUPABASE_URL = 'https://wpurrdflwijuvxmlxoh.supabase.co'; 
-const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx'; 
+  const SUPABASE_URL = 'TU_SUPABASE_URL'; 
+  const SUPABASE_KEY = 'TU_SUPABASE_ANON_KEY'; 
 
-  
   function safeLocalStorageGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
   function safeLocalStorageSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
 
@@ -10,12 +9,22 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
     user_id: 'user_' + Math.random().toString(36).substr(2, 9),
     name: '', age: null, device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
     playtime: 0, correct_answers: 0, wrong_answers: 0,
-    games_played: {}, pet_actions: {}, ai_questions: []
+    games_played: {}, pet_actions: {}, ai_questions: [], gamex: null
   };
   
   const savedId = safeLocalStorageGet('mathLiveUserId');
   if (savedId) analytics.user_id = savedId;
   else safeLocalStorageSet('mathLiveUserId', analytics.user_id);
+
+  // OCULTAR VENTANA SI YA SE REGISTRÓ
+  const savedName = safeLocalStorageGet('mathLiveUserName');
+  const savedAge = safeLocalStorageGet('mathLiveUserAge');
+  if (savedName && savedAge) {
+    analytics.name = savedName;
+    analytics.age = parseInt(savedAge);
+    const regOverlay = document.getElementById('registerOverlay');
+    if (regOverlay) regOverlay.classList.remove('active');
+  }
 
   async function syncAnalytics() {
     if (!SUPABASE_URL || SUPABASE_URL === 'TU_SUPABASE_URL') return; 
@@ -34,104 +43,8 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   const toast = document.getElementById('toast');
   function showToast(message) { if (!toast) return; toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
 
-  // --- MODO NOCTURNO ---
-  const darkModeToggle = document.getElementById('darkModeToggle');
-  if (darkModeToggle) {
-    // Aplicar preferencia guardada al cargar
-    if (safeLocalStorageGet('mathLiveDarkMode') === 'true') {
-      document.body.classList.add('dark-mode');
-      darkModeToggle.textContent = '☀️';
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
-      safeLocalStorageSet('mathLiveDarkMode', isDark ? 'true' : 'false');
-      darkModeToggle.textContent = isDark ? '☀️' : '🌙';
-    });
-  }
-  
-  // --- FUNCIÓN DE PARTÍCULAS EN LA MASCOTA ---
-  function showParticlesAtPet() {
-    const petViewer = document.getElementById('modelViewer3D');
-    let x = window.innerWidth / 2;
-    let y = window.innerHeight / 2;
-    
-    if (petViewer && petViewer.getBoundingClientRect().width > 0) {
-      const rect = petViewer.getBoundingClientRect();
-      x = rect.left + rect.width / 2;
-      y = rect.top + rect.height / 2;
-    }
-
-    const container = document.createElement('div');
-    container.className = 'particle-container';
-    document.body.appendChild(container);
-    const colors = ['#ff4d1f', '#2a8c4a', '#ffcc00', '#8a4dff', '#0066cc', '#cc0066'];
-    const numParticles = 25;
-    for (let i = 0; i < numParticles; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = x + 'px';
-      particle.style.top = y + 'px';
-      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      const angle = Math.random() * Math.PI * 2;
-      const velocity = 80 + Math.random() * 120;
-      const tx = Math.cos(angle) * velocity;
-      const ty = Math.sin(angle) * velocity;
-      particle.style.setProperty('--tx', tx + 'px');
-      particle.style.setProperty('--ty', ty + 'px');
-      container.appendChild(particle);
-    }
-    setTimeout(() => container.remove(), 800);
-  }
-
-  // --- SISTEMA DE CONSENTIMIENTO Y REGISTRO ---
-  const consentOverlay = document.getElementById('consentOverlay');
-  const consentCheck = document.getElementById('consentCheck');
-  const btnAcceptConsent = document.getElementById('btnAcceptConsent');
   const registerOverlay = document.getElementById('registerOverlay');
   const btnRegister = document.getElementById('btnRegister');
-
-  // Habilitar/deshabilitar botón según el checkbox
-  if (consentCheck) {
-    consentCheck.addEventListener('change', () => {
-      if (consentCheck.checked) {
-        btnAcceptConsent.disabled = false;
-        btnAcceptConsent.style.opacity = '1';
-      } else {
-        btnAcceptConsent.disabled = true;
-        btnAcceptConsent.style.opacity = '0.5';
-      }
-    });
-  }
-
-  // Verificar si ya se aceptó el consentimiento
-  const consentAccepted = safeLocalStorageGet('mathLiveConsentAccepted');
-  if (consentAccepted === 'true') {
-    if (consentOverlay) consentOverlay.classList.remove('active');
-    
-    const savedName = safeLocalStorageGet('mathLiveUserName');
-    const savedAge = safeLocalStorageGet('mathLiveUserAge');
-    if (savedName && savedAge) {
-      analytics.name = savedName;
-      analytics.age = parseInt(savedAge);
-      if (registerOverlay) registerOverlay.classList.remove('active');
-    } else {
-      if (registerOverlay) registerOverlay.classList.add('active');
-    }
-  }
-
-  // Botón de aceptar consentimiento
-  if (btnAcceptConsent) {
-    btnAcceptConsent.addEventListener('click', () => {
-      if (!consentCheck || !consentCheck.checked) return;
-      safeLocalStorageSet('mathLiveConsentAccepted', 'true');
-      consentOverlay.classList.remove('active');
-      registerOverlay.classList.add('active');
-    });
-  }
-
-  // Botón de registro
   if (btnRegister) {
     btnRegister.addEventListener('click', () => {
       const name = document.getElementById('regName').value.trim();
@@ -305,23 +218,14 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
     petData.hunger = Math.max(0, petData.hunger - 1);
     petData.sleep = Math.max(0, petData.sleep - 1);
     checkPetStatus(); savePetData(); updateHUD();
-  }, 60000);
-  
+  }, 5000);
 
   const availablePets = [
-    { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, 
-    { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
-    { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' }, 
-    { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
-    { id: 'robot', name: 'Robot', src: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb' },
-    { id: 'modelo5', name: 'Mascota 6', src: 'modelo5.glb' },
-    { id: 'modelo6', name: 'Mascota 7', src: 'modelo6.glb' },
-    { id: 'modelo7', name: 'Mascota 8', src: 'modelo7.glb' },
-    { id: 'modelo8', name: 'Mascota 9', src: 'modelo8.glb' },
-    { id: 'modelo9', name: 'Mascota 10', src: 'modelo9.glb' },
-    { id: 'modelo10', name: 'Mascota 11', src: 'modelo10.glb' }
+    { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
+    { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' }, { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
+    { id: 'modelo5', name: 'Mascota 5', src: 'modelo5.glb' }, { id: 'modelo6', name: 'Mascota 6', src: 'modelo6.glb' },
+    { id: 'modelo7', name: 'Mascota 7', src: 'modelo7.glb' }, { id: 'modelo8', name: 'Mascota 8', src: 'modelo8.glb' }
   ];
-  
   const selectionOverlay = document.getElementById('selectionOverlay');
   const petGrid = document.getElementById('petGrid');
   const btnSelectPet = document.getElementById('btnSelectPet');
@@ -396,9 +300,7 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   function checkAnswer(selected, btn) {
     if (selected === currentAnswer) {
       btn.classList.add('correct'); petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); 
-      showToast("¡Correcto! +10 puntos y +10 XP."); 
-      showParticlesAtPet(); 
-      if (jumpAnimName) playAction(jumpAnimName, 2000); updateHUD(); savePetData(); checkPetEvolution(); setTimeout(generateQuestion, 1500);
+      showToast("¡Correcto! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); updateHUD(); savePetData(); checkPetEvolution(); setTimeout(generateQuestion, 1500);
       analytics.correct_answers++; syncAnalytics();
     } else { btn.classList.add('wrong'); showToast("¡Casi! Inténtalo de nuevo."); if (hitAnimName) playAction(hitAnimName, 1500); analytics.wrong_answers++; syncAnalytics(); }
   }
@@ -440,7 +342,6 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
 
   if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Error SW:', err)));
 
-  // --- ENCUESTA GAMEX ---
   const gamexData = [
     { dim: "1. Disfrute (Enjoyment)", questions: ["Jugar el juego fue divertido.", "Me gustó jugar el juego.", "Disfruté mucho jugando el juego.", "Mi experiencia de juego fue agradable.", "Creo que jugar el juego es muy entretenido.", "Jugaría a este juego por sí mismo, no solo cuando me lo pidan."] },
     { dim: "2. Absorción (Absorption)", questions: ["Jugar el juego me hizo olvidar dónde estoy.", "Me olvidé de mi entorno inmediato mientras jugaba.", "Después de jugar, sentí como si volviera al 'mundo real' tras un viaje.", "Jugar el juego me alejó de todo.", "Mientras jugaba, era completamente ajeno/a a todo lo que me rodeaba.", "Mientras jugaba, perdí la noción del tiempo."] },
@@ -479,16 +380,16 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
     submitGamexBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const formData = new FormData(gamexForm);
+      let responses = {};
       let allAnswered = true;
-      let qCounter = 1;
       
       gamexData.forEach((dimData, dIndex) => {
+        responses[dimData.dim] = [];
         dimData.questions.forEach((q, qIndex) => {
           const qId = `gamex_${dIndex}_${qIndex}`;
           const val = formData.get(qId);
           if (!val) allAnswered = false;
-          analytics['gamex_q' + qCounter] = val ? parseInt(val) : null;
-          qCounter++;
+          responses[dimData.dim].push(val ? parseInt(val) : null);
         });
       });
 
@@ -497,6 +398,7 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
         return;
       }
 
+      analytics.gamex = responses;
       syncAnalytics();
       showToast("¡Gracias por tus respuestas! 📝");
       gamexForm.reset();
@@ -505,7 +407,6 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
     });
   }
 
-  // --- MINIJUEGO 1: SALTA Y SUMA ---
   const levelShapes = [{ name: 'Triángulos', sides: 3, formula: 'P=3L, A=(b*h)/2' }, { name: 'Cuadrados', sides: 4, formula: 'P=4L, A=L^2' }, { name: 'Círculos', sides: 0, formula: 'P=2πr, A=πr^2' }, { name: 'Pentágonos', sides: 5, formula: 'P=5L, A=(P*a)/2' }, { name: 'Hexágonos', sides: 6, formula: 'P=6L, A=(P*a)/2' }];
   function initMiniGame1() {
     const canvas = document.getElementById('gameCanvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); const W = canvas.width, H = canvas.height; const GRAVITY = 0.8, GROUND_Y = H - 60, MAX_JUMPS = 3, LEVEL_WIDTH = 2400;
@@ -525,28 +426,25 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   }
   initMiniGame1();
 
-  // --- MINIJUEGO 2: CUENTA Y TOCA ---
   let countNum1, countNum2, countIsAddition, countTarget, countTapped;
   const objectsContainer = document.getElementById('objectsContainer'), countPrompt = document.getElementById('countPrompt'), countStatus = document.getElementById('countStatus'), resetCountBtn = document.getElementById('resetCountBtn');
   function generateCountGame() { if (!objectsContainer) return; countIsAddition = Math.random() > 0.5; countNum1 = Math.floor(Math.random() * 5) + 2; countNum2 = Math.floor(Math.random() * 5) + 1; countTapped = 0; objectsContainer.innerHTML = ''; const emojis = ['🍎', '🔵', '⭐', '🐱', '🟢']; const emoji = emojis[Math.floor(Math.random() * emojis.length)]; if (countIsAddition) { countTarget = countNum1 + countNum2; countPrompt.textContent = `${countNum1} + ${countNum2} = ?`; countStatus.textContent = `Toca ${countTarget} objetos`; for (let i = 0; i < countTarget; i++) { const obj = document.createElement('div'); obj.className = 'count-obj interactive'; obj.innerHTML = `<span>${emoji}</span>`; obj.addEventListener('click', () => handleTap(obj)); objectsContainer.appendChild(obj); } } else { if (countNum2 > countNum1) [countNum1, countNum2] = [countNum2, countNum1]; countTarget = countNum2; countPrompt.textContent = `${countNum1} - ${countNum2} = ?`; countStatus.textContent = `Quita ${countTarget} objetos (tócalos)`; for (let i = 0; i < countNum1; i++) { const obj = document.createElement('div'); obj.className = 'count-obj interactive'; obj.innerHTML = `<span>${emoji}</span>`; obj.addEventListener('click', () => handleTap(obj)); objectsContainer.appendChild(obj); } } }
-  function handleTap(obj) { if (obj.classList.contains('tapped')) return; obj.classList.add('tapped'); playSound('pop'); countTapped++; if (countTapped === countTarget) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); showParticlesAtPet(); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateCountGame, 1500); analytics.correct_answers++; syncAnalytics(); } else if (countTapped > countTarget) { showToast("¡Oops! Tocaste demasiados. Reiniciando."); setTimeout(generateCountGame, 1000); analytics.wrong_answers++; syncAnalytics(); } }
+  function handleTap(obj) { if (obj.classList.contains('tapped')) return; obj.classList.add('tapped'); playSound('pop'); countTapped++; if (countTapped === countTarget) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateCountGame, 1500); analytics.correct_answers++; syncAnalytics(); } else if (countTapped > countTarget) { showToast("¡Oops! Tocaste demasiados. Reiniciando."); setTimeout(generateCountGame, 1000); analytics.wrong_answers++; syncAnalytics(); } }
   if (resetCountBtn) resetCountBtn.addEventListener('click', generateCountGame); generateCountGame();
 
-  // --- MINIJUEGO 3: AGRUPA Y REPARTE ---
   let grpIsMult, grpNum1, grpNum2, grpBoxes = [], grpPileItems = [], grpDistIndex = 0;
   const grpPrompt = document.getElementById('grpPrompt'), grpStatus = document.getElementById('grpStatus'), grpPileContainer = document.getElementById('grpPileContainer'), grpBoxesContainer = document.getElementById('grpBoxesContainer'), resetGrpBtn = document.getElementById('resetGrpBtn');
   function generateGrpGame() { if (!grpBoxesContainer) return; grpIsMult = Math.random() > 0.5; grpBoxes = []; grpPileItems = []; grpDistIndex = 0; grpPileContainer.innerHTML = ''; grpBoxesContainer.innerHTML = ''; const emojis = ['🍎', '🔵', '⭐', '🐱', '🟢', '🍊']; const currentEmoji = emojis[Math.floor(Math.random() * emojis.length)]; if (grpIsMult) { grpNum1 = Math.floor(Math.random() * 4) + 2; grpNum2 = Math.floor(Math.random() * 4) + 2; grpPrompt.textContent = `${grpNum1} × ${grpNum2} = ?`; grpStatus.textContent = `Toca cada caja ${grpNum2} veces`; for (let i = 0; i < grpNum1; i++) { const box = { count: 0, full: false, element: null }; const div = document.createElement('div'); div.className = 'grp-box interactive'; div.innerHTML = `<div class="grp-box-content"></div>`; div.addEventListener('click', () => handleMultTap(box, currentEmoji)); box.element = div; grpBoxes.push(box); grpBoxesContainer.appendChild(div); } } else { grpNum2 = Math.floor(Math.random() * 3) + 2; let mult = Math.floor(Math.random() * 3) + 2; grpNum1 = grpNum2 * mult; grpPrompt.textContent = `${grpNum1} ÷ ${grpNum2} = ?`; grpStatus.textContent = `Toca los objetos para repartir en ${grpNum2} cajas`; for (let i = 0; i < grpNum2; i++) { const div = document.createElement('div'); div.className = 'grp-box'; div.innerHTML = `<div class="grp-box-content"></div>`; grpBoxesContainer.appendChild(div); } for (let i = 0; i < grpNum1; i++) { const item = document.createElement('div'); item.className = 'grp-item-pile interactive'; item.innerHTML = `<span>${currentEmoji}</span>`; item.addEventListener('click', () => handleDivTap(item, currentEmoji)); grpPileContainer.appendChild(item); grpPileItems.push(item); } } }
-  function handleMultTap(box, emoji) { if (box.full) return; box.count++; playSound('pop'); const content = box.element.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; if (box.count === grpNum2) { box.full = true; box.element.classList.add('full'); } if (grpBoxes.every(b => b.full)) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); showParticlesAtPet(); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
-  function handleDivTap(item, emoji) { item.style.visibility = 'hidden'; playSound('pop'); const box = grpBoxesContainer.children[grpDistIndex]; const content = box.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; grpDistIndex = (grpDistIndex + 1) % grpNum2; if (grpPileItems.every(i => i.style.visibility === 'hidden')) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); showParticlesAtPet(); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
+  function handleMultTap(box, emoji) { if (box.full) return; box.count++; playSound('pop'); const content = box.element.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; if (box.count === grpNum2) { box.full = true; box.element.classList.add('full'); } if (grpBoxes.every(b => b.full)) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
+  function handleDivTap(item, emoji) { item.style.visibility = 'hidden'; playSound('pop'); const box = grpBoxesContainer.children[grpDistIndex]; const content = box.querySelector('.grp-box-content'); content.innerHTML += `<span style="font-size: 1.8rem">${emoji}</span>`; grpDistIndex = (grpDistIndex + 1) % grpNum2; if (grpPileItems.every(i => i.style.visibility === 'hidden')) { petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Excelente! +10 puntos y +10 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateGrpGame, 1500); analytics.correct_answers++; syncAnalytics(); } }
   if (resetGrpBtn) resetGrpBtn.addEventListener('click', generateGrpGame); generateGrpGame();
 
-  // --- MINIJUEGO 4: ESCALA MÚLTIPLOS ---
   let multLevel = 1, multExercise = 1, multErrors = 0, multBaseNum = 0, multCurrentTaps = 0, multCurrentMultiple = 0, multLastTapTime = 0, multTimerInterval = null, multIsGameOver = false, multHasStarted = false;
   const multTapArea = document.getElementById('multTapArea'), multBubblesContainer = document.getElementById('multBubblesContainer'), multLevelEl = document.getElementById('multLevel'), multExerciseEl = document.getElementById('multExercise'), multErrorsEl = document.getElementById('multErrors'), multTargetText = document.getElementById('multTargetText'), multStatus = document.getElementById('multStatus'), resetMultBtn = document.getElementById('resetMultBtn'), startMultBtn = document.getElementById('startMultBtn'), multProgressDots = document.getElementById('multProgressDots');
   function resetMultGameState() { multLevel = 1; multErrors = 0; multIsGameOver = false; multHasStarted = false; multCurrentTaps = 0; multCurrentMultiple = 0; multBubblesContainer.innerHTML = ''; multProgressDots.innerHTML = ''; multLevelEl.textContent = 0; multExerciseEl.textContent = 0; multErrorsEl.textContent = 0; multTargetText.textContent = "Prepárate"; multStatus.textContent = "Pulsa 'Comenzar' cuando estés listo"; multStatus.style.color = "var(--accent-2)"; multTapArea.classList.add('disabled'); clearInterval(multTimerInterval); if(startMultBtn) startMultBtn.style.display = 'inline-flex'; }
   function startMultLevel() { multBaseNum = Math.floor(Math.random() * 10) + 1; multCurrentMultiple = 0; multExercise = 1; multCurrentTaps = 0; multBubblesContainer.innerHTML = ''; multProgressDots.innerHTML = ''; for(let i = 0; i < multBaseNum; i++) { const dot = document.createElement('div'); dot.className = 'mult-progress-dot'; multProgressDots.appendChild(dot); } updateMultUI(); multStatus.textContent = "¡Toca " + multBaseNum + " veces seguidas!"; multStatus.style.color = "var(--accent-2)"; multTapArea.classList.remove('disabled'); startMultTimer(); }
   function updateMultUI() { multLevelEl.textContent = multLevel; multExerciseEl.textContent = multExercise; multErrorsEl.textContent = multErrors; multTargetText.textContent = "Toca " + multBaseNum + " veces (" + multCurrentTaps + "/" + multBaseNum + ")"; const dots = multProgressDots.children; for(let i = 0; i < dots.length; i++) { if(i < multCurrentTaps) dots[i].classList.add('active'); else dots[i].classList.remove('active'); } }
-  function handleMultTap() { if (multIsGameOver || !multHasStarted) return; if (isBusy) { triggerMultError("¡Te adelantaste! Espera a que termine de escalar."); return; } multLastTapTime = Date.now(); multCurrentTaps++; playSound('climb'); updateMultUI(); if (multCurrentTaps === multBaseNum) { multCurrentMultiple += multBaseNum; const bubble = document.createElement('div'); bubble.className = 'mult-bubble'; bubble.textContent = multCurrentMultiple; multBubblesContainer.appendChild(bubble); petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 10); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Correcto! +10 pts y +10 XP. Múltiplo: " + multCurrentMultiple); showParticlesAtPet(); multCurrentTaps = 0; multExercise++; if (multExercise > 10) { multLevel++; if (multLevel > 10) { multStatus.textContent = "¡Juego Completado! 🏆"; multStatus.style.color = "var(--accent)"; multIsGameOver = true; multHasStarted = false; clearInterval(multTimerInterval); if (jumpAnimName) playAction(jumpAnimName, 3000); showToast("¡Felicidades! Completaste todos los niveles."); return; } showToast("¡Nivel " + (multLevel - 1) + " completado!"); setTimeout(() => startMultLevel(), 1500); } else { multStatus.textContent = "¡Excelente! Sigue tocando " + multBaseNum + " veces."; if (climbAnimName) playAction(climbAnimName, 800); } analytics.correct_answers++; syncAnalytics(); } }
+  function handleMultTap() { if (multIsGameOver || !multHasStarted) return; if (isBusy) { triggerMultError("¡Te adelantaste! Espera a que termine de escalar."); return; } multLastTapTime = Date.now(); multCurrentTaps++; playSound('climb'); updateMultUI(); if (multCurrentTaps === multBaseNum) { multCurrentMultiple += multBaseNum; const bubble = document.createElement('div'); bubble.className = 'mult-bubble'; bubble.textContent = multCurrentMultiple; multBubblesContainer.appendChild(bubble); petData.points += 10; petData.xp += 10; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 10); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Correcto! +10 pts y +10 XP. Múltiplo: " + multCurrentMultiple); multCurrentTaps = 0; multExercise++; if (multExercise > 10) { multLevel++; if (multLevel > 10) { multStatus.textContent = "¡Juego Completado! 🏆"; multStatus.style.color = "var(--accent)"; multIsGameOver = true; multHasStarted = false; clearInterval(multTimerInterval); if (jumpAnimName) playAction(jumpAnimName, 3000); showToast("¡Felicidades! Completaste todos los niveles."); return; } showToast("¡Nivel " + (multLevel - 1) + " completado!"); setTimeout(() => startMultLevel(), 1500); } else { multStatus.textContent = "¡Excelente! Sigue tocando " + multBaseNum + " veces."; if (climbAnimName) playAction(climbAnimName, 800); } analytics.correct_answers++; syncAnalytics(); } }
   function triggerMultError(reason) { if (multIsGameOver || !multHasStarted) return; multErrors++; multCurrentTaps = 0; updateMultUI(); playSound('fail'); if (multErrors >= 5) { multIsGameOver = true; multHasStarted = false; clearInterval(multTimerInterval); multStatus.textContent = "¡Caíste! Demasiados errores. Reiniciando..."; multStatus.style.color = "#ff4d4d"; multTapArea.classList.add('disabled'); if (fallAnimName) playAction(fallAnimName, 1500); if (sleepAnimName) setTimeout(() => { playAction(sleepAnimName, 3000); }, 1500); showToast("¡Te quedaste dormido! Volviendo al inicio..."); setTimeout(() => { resetMultGameState(); }, 4000); } else { multStatus.textContent = reason + " Llevas " + multErrors + "/5 errores."; multStatus.style.color = "#ff4d4d"; showToast(reason); } analytics.wrong_answers++; syncAnalytics(); }
   function startMultTimer() { clearInterval(multTimerInterval); multLastTapTime = Date.now(); multTimerInterval = setInterval(() => { if (multIsGameOver || !multHasStarted) return; if (Date.now() - multLastTapTime > 4000) { triggerMultError("¡Muy lento! Te demoraste más de 4 segundos."); multLastTapTime = Date.now(); } }, 500); }
   if (multTapArea) { multTapArea.addEventListener('click', handleMultTap); multTapArea.addEventListener('touchstart', (e) => { e.preventDefault(); handleMultTap(); }, { passive: false }); }
@@ -554,16 +452,15 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   if (resetMultBtn) resetMultBtn.addEventListener('click', () => { resetMultGameState(); });
   resetMultGameState();
 
-  // --- MINIJUEGO 5: FRACCIONES ---
   let fracCurrentDenom = 0, fracShadedCount = 0, fracCorrectValue = 0;
   const fracPrompt = document.getElementById('fracPrompt'), fracStatus = document.getElementById('fracStatus'), fracDenomContainer = document.getElementById('fracDenomContainer'), fracSvg = document.getElementById('fracSvg'), checkFracBtn = document.getElementById('checkFracBtn'), resetFracBtn = document.getElementById('resetFracBtn');
   function generateFractionGame() { if (!fracPrompt) return; const operations = [{ text: "1/2 + 1/4 = ?", value: 3/4 }, { text: "1/2 + 1/3 = ?", value: 5/6 }, { text: "1/4 + 1/4 = ?", value: 1/2 }, { text: "3/4 - 1/4 = ?", value: 1/2 }, { text: "1/2 - 1/4 = ?", value: 1/4 }, { text: "1/2 * 1/2 = ?", value: 1/4 }, { text: "1/3 * 1/2 = ?", value: 1/6 }, { text: "1/2 ÷ 2 = ?", value: 1/4 }, { text: "1/4 ÷ 2 = ?", value: 1/8 }, { text: "2/3 + 1/3 = ?", value: 1 }, { text: "3/4 - 1/2 = ?", value: 1/4 }, { text: "1 - 1/2 = ?", value: 1/2 }]; const op = operations[Math.floor(Math.random() * operations.length)]; fracPrompt.textContent = op.text; fracCorrectValue = op.value; fracStatus.textContent = "Divide el círculo y pinta la respuesta correcta"; fracStatus.style.color = "var(--accent-2)"; fracDenomContainer.innerHTML = ''; fracSvg.innerHTML = ''; fracCurrentDenom = 0; fracShadedCount = 0; [2, 3, 4, 5, 6, 8].forEach(d => { const btn = document.createElement('button'); btn.className = 'frac-denom-btn interactive'; btn.textContent = `÷ ${d}`; btn.dataset.denom = d; btn.addEventListener('click', () => setFractionDenominator(d, btn)); fracDenomContainer.appendChild(btn); }); }
   function setFractionDenominator(denom, btn) { fracCurrentDenom = denom; fracShadedCount = 0; document.querySelectorAll('.frac-denom-btn').forEach(b => b.classList.remove('active')); if (btn) btn.classList.add('active'); let html = ''; const r = 40, cx = 50, cy = 50; for (let i = 0; i < denom; i++) { const startAngle = (i * 2 * Math.PI / denom) - Math.PI / 2; const endAngle = ((i + 1) * 2 * Math.PI / denom) - Math.PI / 2; const x1 = cx + r * Math.cos(startAngle); const y1 = cy + r * Math.sin(startAngle); const x2 = cx + r * Math.cos(endAngle); const y2 = cy + r * Math.sin(endAngle); const largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0; html += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z" class="frac-slice interactive" data-index="${i}" />`; } fracSvg.innerHTML = html; fracSvg.querySelectorAll('.frac-slice').forEach(slice => slice.addEventListener('click', () => toggleFractionSlice(slice))); }
   function toggleFractionSlice(slice) { if (slice.classList.contains('shaded')) { slice.classList.remove('shaded'); fracShadedCount--; } else { slice.classList.add('shaded'); fracShadedCount++; playSound('pop'); } }
-  if (checkFracBtn) checkFracBtn.addEventListener('click', () => { if (fracCurrentDenom === 0 || fracShadedCount === 0) { showToast("Divide y pinta el círculo primero."); return; } const userValue = fracShadedCount / fracCurrentDenom; if (Math.abs(userValue - fracCorrectValue) < 0.01) { petData.points += 15; petData.xp += 15; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Fracción correcta! +15 puntos y +15 XP."); showParticlesAtPet(); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateFractionGame, 1500); analytics.correct_answers++; syncAnalytics(); } else { showToast("¡Casi! Revisa tus porciones."); if (hitAnimName) playAction(hitAnimName, 1500); analytics.wrong_answers++; syncAnalytics(); } });
+  if (checkFracBtn) checkFracBtn.addEventListener('click', () => { if (fracCurrentDenom === 0 || fracShadedCount === 0) { showToast("Divide y pinta el círculo primero."); return; } const userValue = fracShadedCount / fracCurrentDenom; if (Math.abs(userValue - fracCorrectValue) < 0.01) { petData.points += 15; petData.xp += 15; petData.happy = Math.min(100, petData.happy + 5); petData.health = Math.min(100, petData.health + 5); updateHUD(); savePetData(); checkPetEvolution(); showToast("¡Fracción correcta! +15 puntos y +15 XP."); if (jumpAnimName) playAction(jumpAnimName, 2000); setTimeout(generateFractionGame, 1500); analytics.correct_answers++; syncAnalytics(); } else { showToast("¡Casi! Revisa tus porciones."); if (hitAnimName) playAction(hitAnimName, 1500); analytics.wrong_answers++; syncAnalytics(); } });
   if (resetFracBtn) resetFracBtn.addEventListener('click', generateFractionGame); generateFractionGame();
 
-  // --- LÓGICA AR PURO ---
+  // LÓGICA AR PURO
   const btnAR = document.getElementById('btnAR');
   const pureArOverlay = document.getElementById('pureArOverlay');
   const arVideoBg = document.getElementById('arVideoBg');
@@ -612,6 +509,9 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
         arBgStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         arVideoBg.srcObject = arBgStream;
         arModelViewer.src = getEvolvedModelUrl();
+        // Resetear posición al entrar al AR
+        currentX = 0; currentY = 0;
+        arModelViewer.style.transform = 'translate(0px, 0px)';
         pureArOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       } catch (err) {
