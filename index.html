@@ -189,6 +189,17 @@
       0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
       100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
     }
+        /* --- MODO NOCTURNO --- */
+    body.dark-mode {
+      --bg: #1a1814; --bg-alt: #242424; --fg: #f1ebe1; --muted: #8a7e6e;
+      --accent: #ff7044; --accent-2: #4caf50; --border: rgba(255, 255, 255, 0.14); --card: #2d2d2d;
+    }
+    body.dark-mode header { background: rgba(26, 24, 20, 0.85) !important; }
+    body.dark-mode .pet-widget { background: rgba(45, 45, 45, 0.95) !important; }
+    body.dark-mode .ai-chat-window { background: var(--bg) !important; }
+    body.dark-mode .contact-field input, body.dark-mode .contact-field textarea { color: var(--fg) !important; }
+    body.dark-mode .form-field input, body.dark-mode .form-field textarea { color: var(--fg) !important; }
+    body.dark-mode .ar-controls { background: rgba(0, 0, 0, 0.6) !important; }
   </style>
 </head>
 
