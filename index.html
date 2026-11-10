@@ -267,11 +267,13 @@
     </div>
   </div>
 
-  <!-- NAVEGACIÓN FIJA -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4">
     <nav class="flex items-center justify-between max-w-[1800px] mx-auto relative">
       <a href="#hero" class="font-display text-2xl font-bold tracking-tight interactive">Math Live<span style="color: var(--accent);">.</span></a>
-      <button class="mobile-menu-btn interactive" id="mobileMenuBtn">☰</button>
+      <div class="flex items-center gap-4">
+        <button id="darkModeToggle" class="interactive" style="font-size: 1.2rem; background: none; border: none;">🌙</button>
+        <button class="mobile-menu-btn interactive" id="mobileMenuBtn">☰</button>
+      </div>
       <ul id="navMenu" class="hidden md:flex items-center gap-6 text-sm absolute md:relative left-0 right-0 md:left-auto md:right-auto">
         <li><a href="#actividades" class="nav-link interactive"><span>Actividades</span><span>Actividades</span></a></li>
         <li><a href="#contacto" class="nav-link interactive"><span>Contacto</span><span>Contacto</span></a></li>
