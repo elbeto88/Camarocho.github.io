@@ -288,7 +288,8 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
     petData.hunger = Math.max(0, petData.hunger - 1);
     petData.sleep = Math.max(0, petData.sleep - 1);
     checkPetStatus(); savePetData(); updateHUD();
-  }, 5000);
+  }, 60000);
+  
 
   const availablePets = [
     { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, 
