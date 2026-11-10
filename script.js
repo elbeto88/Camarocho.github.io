@@ -34,6 +34,23 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   const toast = document.getElementById('toast');
   function showToast(message) { if (!toast) return; toast.textContent = message; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
 
+  // --- MODO NOCTURNO ---
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  if (darkModeToggle) {
+    // Aplicar preferencia guardada al cargar
+    if (safeLocalStorageGet('mathLiveDarkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      darkModeToggle.textContent = '☀️';
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      safeLocalStorageSet('mathLiveDarkMode', isDark ? 'true' : 'false');
+      darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+    });
+  }
+  
   // --- FUNCIÓN DE PARTÍCULAS EN LA MASCOTA ---
   function showParticlesAtPet() {
     const petViewer = document.getElementById('modelViewer3D');
