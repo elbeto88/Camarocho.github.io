@@ -209,8 +209,44 @@
     </div>
   </div>
 
-  <!-- OVERLAY DE REGISTRO INICIAL (ANALÍTICAS) -->
-  <div id="registerOverlay" class="overlay-panel active">
+   <!-- OVERLAY DE CONSENTIMIENTO PARENTAL (PRIMER PASO) -->
+  <div id="consentOverlay" class="overlay-panel active">
+    <div class="overlay-container" style="max-width: 600px; max-height: 85vh; overflow-y: auto;">
+      <h2 class="font-display text-3xl mb-4" style="color: var(--accent);">📋 Consentimiento Parental</h2>
+      <p class="mb-4 text-sm" style="color: var(--muted);">Math Live es un juego educativo diseñado para niños. Antes de que tu hijo/a pueda jugar, necesitamos tu autorización como padre, madre o tutor legal.</p>
+      
+      <div style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; max-height: 300px; overflow-y: auto; text-align: left; font-size: 0.85rem; line-height: 1.6;">
+        <h3 style="font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">🔒 Política de Privacidad</h3>
+        <p style="margin-bottom: 0.75rem;"><strong>Datos que recopilamos:</strong> Nombre, edad, tiempo de juego, respuestas correctas/incorrectas, preguntas realizadas a la IA y respuestas a encuestas.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Uso de los datos:</strong> Los datos se utilizan exclusivamente con fines educativos y de investigación para mejorar la experiencia de aprendizaje.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Almacenamiento:</strong> Los datos se guardan de forma segura en servidores encriptados (Supabase). No se solicita ni almacena información de contacto (correo, teléfono).</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Datos locales:</strong> El progreso del juego se guarda en el navegador del dispositivo para que el niño pueda continuar donde lo dejó.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Inteligigencia Artificial:</strong> Las preguntas que el niño hace a la "Profe IA" se procesan mediante Puter.js. No se almacenan datos personales identificables.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Cámara (AR):</strong> La cámara solo se activa cuando el niño presiona el botón de Realidad Aumentada. El video nunca se graba ni se almacena; es solo para visualización en tiempo real.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Terceros:</strong> No vendemos ni compartimos datos con terceros. Los servicios que usamos (Supabase, Puter.js) tienen sus propias políticas de privacidad.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Derechos del menor:</strong> El niño puede jugar sin proporcionar datos personales. Si desea que se eliminen sus datos, puede contactarnos en cualquier momento.</p>
+        
+        <h3 style="font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--accent);">⚖️ Aviso Legal</h3>
+        <p style="margin-bottom: 0.75rem;"><strong>Edad recomendada:</strong> 5 a 12 años.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Responsabilidad:</strong> Math Live es una herramienta educativa complementaria. No sustituye la enseñanza formal ni la supervisión de un adulto.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Contenido:</strong> El juego incluye animaciones 3D, sonidos y efectos visuales que podrían no ser adecuados para personas con fotosensibilidad.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Uso responsable:</strong> Se recomienda limitar el tiempo de pantalla. Los padres deben supervisar el uso del dispositivo.</p>
+        <p style="margin-bottom: 0.75rem;"><strong>Propiedad intelectual:</strong> © 2025 Math Live. Creado por Jorge A. Mena Riezco. Todos los derechos reservados.</p>
+      </div>
+
+      <div style="margin-bottom: 1rem; text-align: left;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
+          <input type="checkbox" id="consentCheck" style="margin-top: 3px; accent-color: var(--accent); transform: scale(1.3); cursor: pointer;">
+          <span>He leído la Política de Privacidad y el Aviso Legal. Soy el padre, madre o tutor legal del niño/a y <strong>autorizo</strong> el uso de esta aplicación y el tratamiento de los datos para fines educativos.</span>
+        </label>
+      </div>
+
+      <button id="btnAcceptConsent" class="btn-primary interactive" disabled style="opacity: 0.5;"><span>Acepto y Continuar</span><span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE REGISTRO INICIAL (SEGUNDO PASO) -->
+  <div id="registerOverlay" class="overlay-panel">
     <div class="overlay-container" style="max-width: 500px;">
       <h2 class="font-display text-4xl mb-4">¡Hola! 👋</h2>
       <p class="mb-8" style="color: var(--muted);">Antes de empezar a jugar y cuidar de tu mascota, cuéntanos un poco sobre ti:</p>
