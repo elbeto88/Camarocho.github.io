@@ -291,10 +291,14 @@ const SUPABASE_KEY = 'sb_publishable_uZFWpeGtIlzsNb2z0KrDFQ_r0FVYunx';
   }, 5000);
 
   const availablePets = [
-    { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
-    { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' }, { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
-    { id: 'modelo5', name: 'Mascota 5', src: 'modelo5.glb' }, { id: 'modelo6', name: 'Mascota 6', src: 'modelo6.glb' },
-    { id: 'modelo7', name: 'Mascota 7', src: 'modelo7.glb' }, { id: 'modelo8', name: 'Mascota 8', src: 'modelo8.glb' }
+    { id: 'modelo', name: 'Mascota 1', src: 'modelo.glb' }, 
+    { id: 'modelo1', name: 'Mascota 2', src: 'modelo1.glb' },
+    { id: 'modelo2', name: 'Mascota 3', src: 'modelo2.glb' }, 
+    { id: 'modelo4', name: 'Mascota 4', src: 'modelo4.glb' },
+    { id: 'astronaut', name: 'Astronauta', src: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb' },
+    { id: 'fox', name: 'Zorro', src: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb' },
+    { id: 'neil', name: 'Neil Armstrong', src: 'https://modelviewer.dev/shared-assets/models/NeilArmstrong.glb' },
+    { id: 'robot', name: 'Robot', src: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb' }
   ];
   const selectionOverlay = document.getElementById('selectionOverlay');
   const petGrid = document.getElementById('petGrid');
